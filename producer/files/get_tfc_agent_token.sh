@@ -39,7 +39,7 @@ cat << EOM > payload.json
   "data": {
     "type": "authentication-tokens",
     "attributes": {
-      "description":"api"
+      "description":"via-api-for-aws-ecs"
     }
   }
 }
