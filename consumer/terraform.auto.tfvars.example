@@ -1,0 +1,3 @@
+dev_role_arn = "arn:aws:iam::753646501470:role/terraform_dev_role"
+
+prefix = "name-prefix"

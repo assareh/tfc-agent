@@ -12,7 +12,7 @@ provider "aws" {
 In this model it is vital to enforce least privilege on Terraform Cloud workspace access using [Single Sign-on](https://www.terraform.io/docs/cloud/users-teams-organizations/single-sign-on.html) and the built-in [RBAC controls](https://www.terraform.io/docs/cloud/workspaces/access.html).
 
 ## Steps
-Set `dev_role_arn` to the value of output `terraform_dev_role` from the Producer workspace. The provided tfvars file may be used.
+Set `dev_role_arn` to the value of output `terraform_dev_role` from the Producer workspace. The provided tfvars file may be used. (Remove .example from the file name.)
 
 Provide values for required variables
 
