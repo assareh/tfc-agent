@@ -29,3 +29,5 @@ override.tf.json
 # example: *tfplan*
 
 remote_backend.tf
+
+.DS_Store
