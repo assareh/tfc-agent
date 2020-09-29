@@ -2,19 +2,25 @@ provider "aws" {
   region = var.region
 }
 
-# get an agent token (tfe provider not yet implemented)
-# maybe better as a provisioner? writes to tmp file on worker and read it in?
-data "external" "get_tfc_agent_token" {
-  program = ["sh", "${path.module}/files/get_tfc_agent_token.sh"]
+# create an agent token (tfe provider not yet implemented)
+# an external data source works but runs every operation, creating orphan tokens
+module "tfc_agent_token" {
+  source  = "matti/resource/shell"
+  version = "1.0.7"
 
-  query = {
-    tfc_org   = var.tfc_org
-    tfc_token = var.tfc_token
+  command              = "/bin/bash ${path.module}/files/create_tfc_agent_token.sh"
+#  command_when_destroy = "/bin/bash ${path.module}/files/delete_tfc_agent_token.sh"
+
+  environment = {
+    TFC_ORG  = var.tfc_org
+    TOKEN    = var.tfc_token
   }
 }
 
 # ------------ ECS ------------ #
 resource "aws_ecs_cluster" "tfc_agent" {
+  depends_on = [module.tfc_agent_token]
+
   name = "${var.prefix}-cluster"
   tags = local.common_tags
 }
@@ -56,7 +62,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
       },
       {
         "name": "TFC_AGENT_TOKEN",
-        "value": "${data.external.get_tfc_agent_token.result["agent_token"]}"
+        "value": "${jsondecode(module.tfc_agent_token.stdout)["agent_token"]}"
       }
     ]
   }
@@ -143,8 +149,8 @@ module "vpc" {
 
   cidr = "10.0.0.0/16"
 
-  azs             = ["${var.region}a"]
-  public_subnets  = ["10.0.101.0/24"]
+  azs            = ["${var.region}a"]
+  public_subnets = ["10.0.101.0/24"]
 
   enable_nat_gateway = true
 }

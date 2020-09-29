@@ -5,12 +5,7 @@
 # Exit if any of the intermediate steps fail
 set -e
 
-# Extract "foo" and "baz" arguments from the input into
-# FOO and BAZ shell variables.
-# jq will ensure that the values are properly quoted
-# and escaped for consumption by the shell.
-eval "$(jq -r '@sh "TFC_ORG=\(.tfc_org) TOKEN=\(.tfc_token)"')"
-
+# this was to be used to create the initial agent pool, but may not be required at this time
 # cat << EOM > payload.json
 # {
 #     "data": {
@@ -51,9 +46,12 @@ AGENT_TOKEN=$(curl --silent \
   --header "Content-Type: application/vnd.api+json" \
   --request POST \
   --data @payload.json \
-  https://app.terraform.io/api/v2/agent-pools/$AGENT_POOL_ID/authentication-tokens | jq -r '.data.attributes.token')
+  https://app.terraform.io/api/v2/agent-pools/$AGENT_POOL_ID/authentication-tokens | jq -r '.data')
 
-# Safely produce a JSON object containing the result value.
+AGENT_TOKEN_VALUE="$(echo $AGENT_TOKEN | jq -r '.attributes.token')"
+AGENT_TOKEN_ID="$(echo $AGENT_TOKEN | jq -r '.id')"
+
+# Safely produce a JSON object containing the result values.
 # jq will ensure that the value is properly quoted
 # and escaped to produce a valid JSON string.
-jq -n --arg agent_token "$AGENT_TOKEN" '{"agent_token":$agent_token}'
+jq -n --arg agent_token "$AGENT_TOKEN_VALUE" --arg agent_token_id "$AGENT_TOKEN_ID" '{"agent_token":$agent_token, "agent_token_id":$agent_token_id}'

@@ -3,5 +3,5 @@ output "terraform_dev_role" {
 }
 
 # output "tfc_agent_token" {
-#   value = data.external.get_tfc_agent_token.result["agent_token"]
+#   value = jsondecode(module.tfc_agent_token.stdout)["agent_token"]
 # }
