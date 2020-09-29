@@ -8,12 +8,12 @@ module "tfc_agent_token" {
   source  = "matti/resource/shell"
   version = "1.0.7"
 
-  command              = "/bin/bash ${path.module}/files/create_tfc_agent_token.sh"
-#  command_when_destroy = "/bin/bash ${path.module}/files/delete_tfc_agent_token.sh"
+  command = "/bin/bash ${path.module}/files/create_tfc_agent_token.sh"
+  #  command_when_destroy = "/bin/bash ${path.module}/files/delete_tfc_agent_token.sh"
 
   environment = {
-    TFC_ORG  = var.tfc_org
-    TOKEN    = var.tfc_token
+    TFC_ORG = var.tfc_org
+    TOKEN   = var.tfc_token
   }
 }
 
