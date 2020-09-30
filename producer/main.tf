@@ -12,7 +12,7 @@ resource "aws_ecs_service" "tfc_agent" {
   cluster         = aws_ecs_cluster.tfc_agent.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.tfc_agent.arn
-  desired_count   = 1
+  desired_count   = 2
   network_configuration {
     security_groups  = [aws_security_group.tfc_agent.id]
     subnets          = [module.vpc.public_subnets[0]]
