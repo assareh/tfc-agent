@@ -50,7 +50,7 @@ resource "aws_ssm_parameter" "agent_token" {
 # task execution role for task init
 resource "aws_iam_role" "agent_task_exec" {
   name               = "${var.prefix}-ecs-tfc-agent-task-exec-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_definition.json
+  assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
   tags               = local.common_tags
 }
 
@@ -68,23 +68,24 @@ resource "aws_iam_role_policy_attachment" "agent_task_exec_policy" {
 data "aws_iam_policy_document" "agent_task_exec_config" {
   statement {
     effect = "Allow"
-    actions = [
-      "ssm:GetParameters",
-    ]
-    resources = [
-      aws_ssm_parameter.agent_token.arn
-    ]
+    actions = ["ssm:GetParameters"]
+    resources = [aws_ssm_parameter.agent_token.arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["logs:CreateLogGroup"]
+    resources = ["arn:aws:logs:*:*:*"]
   }
 }
 
 # task role for agent
 resource "aws_iam_role" "agent" {
   name               = "${var.prefix}-ecs-tfc-agent-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_definition.json
+  assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
   tags               = local.common_tags
 }
 
-data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
+data "aws_iam_policy_document" "agent_assume_role_policy_definition" {
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -99,10 +100,10 @@ resource "aws_iam_role_policy" "agent_policy" {
   name = "${var.prefix}-ecs-tfc-agent-policy"
   role = aws_iam_role.agent.id
 
-  policy = data.aws_iam_policy_document.ecs_policy_definition.json
+  policy = data.aws_iam_policy_document.agent_policy_definition.json
 }
 
-data "aws_iam_policy_document" "ecs_policy_definition" {
+data "aws_iam_policy_document" "agent_policy_definition" {
   statement {
     effect    = "Allow"
     actions   = ["sts:AssumeRole"]
