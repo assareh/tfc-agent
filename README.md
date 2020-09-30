@@ -11,8 +11,8 @@ The `consumer` workspace provides an example of assuming that role and provision
 * [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business)
 
 ## Steps
-1. Configure and provision the `producer` workspace.
-2. Configure and provision the `consumer` workspace, using the `terraform_dev_role` created in step 1.
+1. Configure and provision the `producer` workspace. See [README](./producer/README.md) for instructions.
+2. Configure and provision the `consumer` workspace, using the `terraform_dev_role` created in step 1. See [README](./consumer/README.md) for instructions.
 
 ## Notes
 * Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!

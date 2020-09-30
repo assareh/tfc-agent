@@ -2,33 +2,15 @@ provider "aws" {
   region = var.region
 }
 
-# create an agent token (tfe provider not yet implemented)
-# an external data source works but runs every operation, creating orphan tokens
-module "tfc_agent_token" {
-  source  = "matti/resource/shell"
-  version = "1.0.7"
-
-  command = "/bin/bash ${path.module}/files/create_tfc_agent_token.sh"
-  #  command_when_destroy = "/bin/bash ${path.module}/files/delete_tfc_agent_token.sh"
-
-  environment = {
-    TFC_ORG = var.tfc_org
-    TOKEN   = var.tfc_token
-  }
-}
-
-# ------------ ECS ------------ #
 resource "aws_ecs_cluster" "tfc_agent" {
-  depends_on = [module.tfc_agent_token]
-
   name = "${var.prefix}-cluster"
   tags = local.common_tags
 }
 
 resource "aws_ecs_service" "tfc_agent" {
   name            = "${var.prefix}-service"
-  launch_type     = "FARGATE"
   cluster         = aws_ecs_cluster.tfc_agent.id
+  launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.tfc_agent.arn
   desired_count   = 1
   network_configuration {
@@ -40,44 +22,66 @@ resource "aws_ecs_service" "tfc_agent" {
 
 resource "aws_ecs_task_definition" "tfc_agent" {
   family                   = "${var.prefix}-task"
-  execution_role_arn       = aws_iam_role.ecs_role.arn
-  task_role_arn            = aws_iam_role.ecs_role.arn
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
+  container_definitions    = data.template_file.agent.rendered
+  execution_role_arn       = aws_iam_role.agent_task_exec.arn
+  task_role_arn            = aws_iam_role.agent.arn
   cpu                      = 256
   memory                   = 512
   tags                     = local.common_tags
-  container_definitions    = <<DEFINITION
-[
-  {
-    "name": "tfc-agent",
-    "image": "hashicorp/tfc-agent:latest",
-    "essential": true,
-    "memory": 256,
-    "cpu": 128,
-    "environment": [
-      {
-        "name": "TFC_AGENT_NAME",
-        "value": "aws-ecs"
-      },
-      {
-        "name": "TFC_AGENT_TOKEN",
-        "value": "${jsondecode(module.tfc_agent_token.stdout)["agent_token"]}"
-      }
-    ]
-  }
-]
-DEFINITION
 }
 
-# ------------ IAM ------------ #
-resource "aws_iam_role" "ecs_role" {
-  name_prefix        = "${var.prefix}-ecs-role"
+data "template_file" "agent" {
+  template = file("${path.module}/files/task_definition.json")
+
+  vars = {
+    tfc_agent_token_parameter_arn = aws_ssm_parameter.agent_token.arn
+  }
+}
+
+resource "aws_ssm_parameter" "agent_token" {
+  name        = "${var.prefix}-tfc-agent-token"
+  description = "Terraform Cloud agent token"
+  type        = "SecureString"
+  value       = var.tfc_agent_token
+}
+
+# task execution role for task init
+resource "aws_iam_role" "agent_task_exec" {
+  name               = "${var.prefix}-ecs-tfc-agent-task-exec-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_definition.json
   tags               = local.common_tags
+}
 
-  # Allows the role to be deleted and recreated (when needed)
-  force_detach_policies = true
+resource "aws_iam_role_policy" "agent_task_exec_config" {
+  role   = aws_iam_role.agent_task_exec.name
+  name   = "AccessSSMParameterforAgentToken"
+  policy = data.aws_iam_policy_document.agent_task_exec_config.json
+}
+
+resource "aws_iam_role_policy_attachment" "agent_task_exec_policy" {
+  role       = aws_iam_role.agent_task_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+data "aws_iam_policy_document" "agent_task_exec_config" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameters",
+    ]
+    resources = [
+      aws_ssm_parameter.agent_token.arn
+    ]
+  }
+}
+
+# task role for agent
+resource "aws_iam_role" "agent" {
+  name               = "${var.prefix}-ecs-tfc-agent-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_definition.json
+  tags               = local.common_tags
 }
 
 data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
@@ -91,9 +95,9 @@ data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
   }
 }
 
-resource "aws_iam_role_policy" "ecs_policy" {
-  name = "${var.prefix}-ecs-policy"
-  role = aws_iam_role.ecs_role.id
+resource "aws_iam_role_policy" "agent_policy" {
+  name = "${var.prefix}-ecs-tfc-agent-policy"
+  role = aws_iam_role.agent.id
 
   policy = data.aws_iam_policy_document.ecs_policy_definition.json
 }
@@ -104,11 +108,6 @@ data "aws_iam_policy_document" "ecs_policy_definition" {
     actions   = ["sts:AssumeRole"]
     resources = [aws_iam_role.terraform_dev_role.arn]
   }
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_role_attach" {
-  role       = aws_iam_role.ecs_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 # a role for terraform consumer to assume into
@@ -129,7 +128,7 @@ data "aws_iam_policy_document" "dev_assume_role_policy_definition" {
       type        = "Service"
     }
     principals {
-      identifiers = [aws_iam_role.ecs_role.arn]
+      identifiers = [aws_iam_role.agent.arn]
       type        = "AWS"
     }
   }
@@ -140,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
 
-# ------------ VPC ------------ #
+# networking
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.55.0"

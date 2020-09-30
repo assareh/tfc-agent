@@ -1,0 +1,21 @@
+[
+  {
+    "name": "tfc-agent",
+    "image": "hashicorp/tfc-agent:latest",
+    "essential": true,
+    "memory": 256,
+    "cpu": 128,
+    "environment": [
+      {
+        "name": "TFC_AGENT_NAME",
+        "value": "aws-ecs"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "TFC_AGENT_TOKEN",
+        "valueFrom": "${tfc_agent_token_parameter_arn}"
+      }
+    ]
+  }
+]

@@ -11,12 +11,8 @@ variable "region" {
   default     = "us-west-2"
 }
 
-variable "tfc_org" {
-  description = "Terraform Cloud organization name"
-}
-
-variable "tfc_token" {
-  description = "Terraform Cloud token with access."
+variable "tfc_agent_token" {
+  description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
 }
 
 // Tags

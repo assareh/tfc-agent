@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # requires TFCB entitlement on the organization
+# 1. ensure TFC token is present as TOKEN env variable
+# 2. ensure TFC org is present as TFC_ORG env variable
 
 # Exit if any of the intermediate steps fail
 set -e
@@ -55,3 +57,6 @@ AGENT_TOKEN_ID="$(echo $AGENT_TOKEN | jq -r '.id')"
 # jq will ensure that the value is properly quoted
 # and escaped to produce a valid JSON string.
 jq -n --arg agent_token "$AGENT_TOKEN_VALUE" --arg agent_token_id "$AGENT_TOKEN_ID" '{"agent_token":$agent_token, "agent_token_id":$agent_token_id}'
+
+echo ""
+echo "Save agent_token_id for use in deletion script. Tokens can always be deleted from the Terraform Cloud organization Settings page."
