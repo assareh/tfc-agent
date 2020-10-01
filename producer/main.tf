@@ -111,6 +111,11 @@ data "aws_iam_policy_document" "agent_policy_definition" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "agent_task_policy" {
+  role       = aws_iam_role.agent.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
 # a role for terraform consumer to assume into
 # you'll need to customize IAM policies to access resources as desired
 resource "aws_iam_role" "terraform_dev_role" {
