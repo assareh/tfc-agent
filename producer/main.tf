@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   container_definitions    = data.template_file.agent.rendered
-  execution_role_arn       = aws_iam_role.agent_task_exec.arn
+  execution_role_arn       = aws_iam_role.agent_init.arn
   task_role_arn            = aws_iam_role.agent.arn
   cpu                      = 256
   memory                   = 512
@@ -47,28 +47,28 @@ resource "aws_ssm_parameter" "agent_token" {
   value       = var.tfc_agent_token
 }
 
-# task execution role for task init
-resource "aws_iam_role" "agent_task_exec" {
-  name               = "${var.prefix}-ecs-tfc-agent-task-exec-role"
+# task execution role for agent init
+resource "aws_iam_role" "agent_init" {
+  name               = "${var.prefix}-ecs-tfc-agent-task-init-role"
   assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
   tags               = local.common_tags
 }
 
-resource "aws_iam_role_policy" "agent_task_exec_config" {
-  role   = aws_iam_role.agent_task_exec.name
+resource "aws_iam_role_policy" "agent_init_policy" {
+  role   = aws_iam_role.agent_init.name
   name   = "AccessSSMParameterforAgentToken"
-  policy = data.aws_iam_policy_document.agent_task_exec_config.json
+  policy = data.aws_iam_policy_document.agent_init_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "agent_task_exec_policy" {
-  role       = aws_iam_role.agent_task_exec.name
+resource "aws_iam_role_policy_attachment" "agent_init_policy" {
+  role       = aws_iam_role.agent_init.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-data "aws_iam_policy_document" "agent_task_exec_config" {
+data "aws_iam_policy_document" "agent_init_policy" {
   statement {
-    effect = "Allow"
-    actions = ["ssm:GetParameters"]
+    effect    = "Allow"
+    actions   = ["ssm:GetParameters"]
     resources = [aws_ssm_parameter.agent_token.arn]
   }
   statement {
@@ -101,6 +101,11 @@ resource "aws_iam_role_policy" "agent_policy" {
   role = aws_iam_role.agent.id
 
   policy = data.aws_iam_policy_document.agent_policy_definition.json
+}
+
+resource "aws_iam_role_policy_attachment" "agent_task_exec_policy" {
+  role       = aws_iam_role.agent.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 data "aws_iam_policy_document" "agent_policy_definition" {
