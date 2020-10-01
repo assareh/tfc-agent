@@ -18,6 +18,10 @@ The `consumer` workspace provides an example of assuming that role and provision
 * Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!
 * Helper scripts are provided to create and delete agent tokens. This can also be done from the Terraform Cloud Organization Settings.
 
+## Additional Topics
+* Declaring Assume Role in the provider block is not necessarily required. IAM permissions given to the agent role directly will be available to Terraform runs without any customization. 
+* The agent image and environment can be customized. For example, abstracting the role ARNs from the Terraform consumers entirely is possible if you were to embed an AWS CLI config file into the agent image. In this scenario users can select an AWS role or profile with `profile = "dev"` in their provider block. 
+
 ## References
 * [Terraform Cloud Agents](https://www.terraform.io/docs/cloud/workspaces/agent.html)
 * [Agent Pools and Agents API](https://www.terraform.io/docs/cloud/api/agents.html)
