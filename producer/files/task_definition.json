@@ -9,7 +9,7 @@
       {
         "name": "TFC_AGENT_SINGLE",
         "value": "true"
-      }      
+      }
     ],
     "secrets": [
       {
