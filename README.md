@@ -3,7 +3,7 @@
 This repository provides an example of running [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) on AWS ECS, and shows how you can leverage tfc-agent to perform credential free provisioning using [Assume Role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#assume-role). Though this simple example shows usage within a single AWS account, this pattern is used to allow provisioning across accounts without requiring AWS credentials in Terraform workspaces.
 
 ## Setup
-The `producer` workspace contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioining infrastructure with Terraform.
+The `producer` workspace contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioning infrastructure with Terraform.
 
 The `consumer` workspace provides an example of assuming that role and provisioning an instance without placing credentials in the Terraform Cloud workspace.
 
