@@ -16,7 +16,7 @@ The `consumer` workspace provides an example of assuming that role and provision
 
 ## Notes
 * Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!
-* When you are done you will currently need to manually remove your agent tokens. This can be done by API call, or from the following URL: https://app.terraform.io/app/<YOUR_ORG_NAME>/settings/agents. Click on `Manage Tokens`.
+* Helper scripts are provided to create and delete an agent token. This can also be done from the Terraform Cloud Organization Settings.
 
 ## References
 * [Terraform Cloud Agents](https://www.terraform.io/docs/cloud/workspaces/agent.html)
