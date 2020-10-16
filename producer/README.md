@@ -50,8 +50,13 @@ To use it, you'll need to do two things:
 
 That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
 
-`./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide the workspace(s) you'd like to configure, as well as the webhook URL output from Terraform.
+`./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide: 
+1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
+2. the notification token you've configured (Terraform variable `notification_token`) as the environment variable `HMAC_SALT`.
+3. the workspace(s) to which you'd like to add the notification configuration.
+4. the webhook URL output from Terraform.
 
+Example usage:
 ```
 → ./files/add_notification_to_workspaces.sh hashidemos andys-lab https://h8alki27g6.execute-api.us-west-2.amazonaws.com/test
 ```
