@@ -1,5 +1,21 @@
-variable "account_id" {
-  description = "AWS producer account ID (where tfc-agent will live)"
+variable "app_version" {
+  description = "Version of lambda to deploy"
+  default     = "1.0.0"
+}
+
+variable "desired_count" {
+  description = "Desired count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2. Set to 0 or 1 as desired if using lamdba autoscaling."
+  default     = 4
+}
+
+variable "max_count" {
+  description = "Maximum count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2."
+  default     = 4
+}
+
+variable "notification_token" {
+  description = "Used to generate the HMAC on the notification request. Read more in the documentation."
+  default     = "SuperSecret!!"
 }
 
 variable "prefix" {
