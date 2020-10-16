@@ -46,9 +46,9 @@ I've included a Lambda function that, when combined with [Terraform Cloud notifi
 To use it, you'll need to do two things:
 1. Set the `desired_count` Terraform variable to `0`. This will set the baseline number of agents to zero. You could set it to `1` if you really wanted to ensure there was always at least one agent available.
 
-2. Configure a [generic notification](https://www.terraform.io/docs/cloud/workspaces/notifications.html#creating-a-notification-configuration) on your Terraform Cloud workspace. I've included a helper script that will create them for you, however you can always create and manage these in the Terraform Cloud workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
+2. Configure a [generic notification](https://www.terraform.io/docs/cloud/workspaces/notifications.html#creating-a-notification-configuration) on each Terraform Cloud workspace with execution mode `Agent`. I've included a helper script that will create them for you, however you can always create and manage these in the Terraform Cloud workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
 
-That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, and the function will increase the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, and the function will decrease the number of running agents.
+That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
 
 `./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide the workspace(s) you'd like to configure, as well as the webhook URL output from Terraform.
 
