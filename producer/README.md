@@ -43,6 +43,8 @@ An HTTP 404 indicates the Agent Token was not found.
 ## Autoscaling tfc-agent with a Lambda Function
 I've included a Lambda function that, when combined with [Terraform Cloud notifications](https://www.terraform.io/docs/cloud/workspaces/notifications.html), enables autoscaling the number of Terraform Cloud Agents running.
 
+![notification_config](./files/notification_config.png)
+
 To use it, you'll need to do two things:
 1. Set the `desired_count` Terraform variable to `0`. This will set the baseline number of agents to zero. You could set it to `1` if you really wanted to ensure there was always at least one agent available.
 
