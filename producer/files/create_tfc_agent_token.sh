@@ -1,9 +1,14 @@
 #!/bin/bash
 
-# requires TFCB entitlement on the organization
-# 1. ensure TFC token is present as TOKEN env variable
-# 2. ensure TFC org is present as TFC_ORG env variable
+# NOTE: requires TFCB entitlement on the organization
+# NOTE: ensure TFC token is present as TOKEN env variable
+# usage: ./create_tfc_agent_token.sh <YOUR TFC ORG>
+TFC_ORG=$1
 
+if [ $# -eq 0 ]
+  then
+    echo "Missing TFC organization."
+  else
 # Exit if any of the intermediate steps fail
 set -e
 
@@ -60,3 +65,4 @@ jq -n --arg agent_token "$AGENT_TOKEN_VALUE" --arg agent_token_id "$AGENT_TOKEN_
 
 echo ""
 echo "Save agent_token_id for use in deletion script. Tokens can always be deleted from the Terraform Cloud organization Settings page."
+fi
