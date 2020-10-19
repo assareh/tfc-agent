@@ -103,11 +103,6 @@ resource "aws_iam_role_policy" "agent_policy" {
   policy = data.aws_iam_policy_document.agent_policy_definition.json
 }
 
-resource "aws_iam_role_policy_attachment" "agent_task_exec_policy" {
-  role       = aws_iam_role.agent.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
 data "aws_iam_policy_document" "agent_policy_definition" {
   statement {
     effect    = "Allow"
