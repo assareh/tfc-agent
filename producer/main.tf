@@ -282,6 +282,19 @@ resource "aws_lambda_permission" "apigw" {
   source_arn = "${aws_api_gateway_rest_api.webhook.execution_arn}/*/*"
 }
 
+# dynamodb
+resource "aws_dynamodb_table" "base-dynamodb-table" {
+  name           = "${var.prefix}-webhook"
+  read_capacity  = 1
+  write_capacity = 1
+  hash_key       = "run_count"
+
+  attribute {
+    name = "run_count"
+    type = "N"
+  }
+}
+
 # api gateway
 resource "aws_api_gateway_rest_api" "webhook" {
   name        = "${var.prefix}-webhook"
