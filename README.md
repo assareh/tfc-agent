@@ -1,28 +1,15 @@
-# Credential free provisioning with Terraform Cloud Agent on AWS ECS
+# tfc-agent
 
-This repository provides an example of running [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) on AWS ECS, and shows how you can leverage tfc-agent to perform credential free provisioning using [Assume Role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#assume-role). Though this simple example shows usage within a single AWS account, this pattern is used to allow provisioning across accounts without requiring AWS credentials in Terraform workspaces.
+This repository contains usage examples of the [Terraform Cloud Agent](https://www.terraform.io/docs/cloud/workspaces/agent.html).
 
-## Setup
-The `producer` workspace contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioning infrastructure with Terraform.
+## Contents
+* `tfc-agent-ecs` provides an example of running tfc-agent on AWS ECS Fargate, and enabling credential free provisioning using AWS IAM.
+* `tfc-agent-vsphere` provides an example of using Packer to build a machine image with tfc-agent runners.
+* `tfc-agent-custom` provides an example of customizing the tfc-agent Docker container to fetch secrets and configure the provider.
 
-The `consumer` workspace provides an example of assuming that role and provisioning an instance without placing credentials in the Terraform Cloud workspace.
+## Summary
+The Terraform Cloud Agent is a remote runner for Terraform Cloud that gives the ability to provision resources in private networks that are not open to the internet. It does this by establishing an HTTPS connection to the Terraform Cloud control plane, and then polling for instructions.
 
-## Prerequisites
-* [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business)
+When a terraform plan or apply job is available for the agent, it receives a bundle from the control plane that includes the terraform configuration needing to be run. The agent then downloads the terraform binary, executes the plan or apply, and transmits the results back to the control plane.
 
-## Steps
-1. Configure and provision the `producer` workspace. See [README](./producer/README.md) for instructions.
-2. Configure and provision the `consumer` workspace, using the `terraform_dev_role` created in step 1. See [README](./consumer/README.md) for instructions.
-
-## Notes
-* Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!
-* Helper scripts are provided to create and delete agent tokens. This can also be done from the Terraform Cloud Organization Settings.
-
-## Additional Topics
-* Declaring Assume Role in the provider block is not necessarily required. IAM permissions given to the agent role directly will be available to Terraform runs without any configuration necessary.
-* The agent image and environment can be customized. For example, abstracting the role ARNs from the Terraform consumers entirely is possible if you were to embed an AWS CLI config file into the agent image. In this scenario users can select an AWS role or profile with `profile = "dev"` in their provider block.
-
-## References
-* [Terraform Cloud Agents](https://www.terraform.io/docs/cloud/workspaces/agent.html)
-* [Agent Pools and Agents API](https://www.terraform.io/docs/cloud/api/agents.html)
-* [Agent Tokens API](https://www.terraform.io/docs/cloud/api/agent-tokens.html)
+The agent can be run in any environment, and typically behind the firewall. This means your terraform code can reach any system in the network that is reachable from the host where the agent is running. Additionally, the agent itself can pass data to the terraform run environment through the use of environment variables.

@@ -1,0 +1,89 @@
+{
+    "variables": {
+        "vm_name": "assareh-tfc-agent-vm",
+        "tfc-agent_token": "{{env `TFC_AGENT_TOKEN`}}",
+        "vcenter_server": "10.100.0.3",
+        "vcenter_username": "administrator@vsphere.local",
+        "vcenter_password": "{{env `VCENTER_PASSWORD`}}"
+    },
+
+    "sensitive-variables": ["vcenter_password", "tfc-agent_token"],
+
+  "builders": [
+    {
+      "type": "vsphere-iso",
+
+      "notes": "Created by [YOUR_NAME]\nubuntu-16.04.4-server-amd64.iso\nUsername: hashicorp\nPassword: hashicorp",
+
+      "vcenter_server":      "{{user `vcenter_server`}}",
+      "username":            "{{user `vcenter_username`}}",
+      "password":            "{{user `vcenter_password`}}",
+      "insecure_connection": "true",
+
+      "vm_name": "{{user `vm_name`}}",
+
+      "datacenter": "PacketDatacenter",
+      "resource_pool": "",
+      "cluster": "MainCluster/MainCluster",
+      "datastore": "datastore1",
+
+      "guest_os_type": "ubuntu64Guest",
+
+      "ssh_username": "hashicorp",
+      "ssh_password": "hashicorp",
+
+      "CPUs":             1,
+      "RAM":              1024,
+      "RAM_reserve_all": true,
+
+      "disk_controller_type":  "pvscsi",
+      "disk_size":        16384,
+      "disk_thin_provisioned": true,
+
+      "network_adapters": [
+        {
+          "network": "VM Network",
+          "network_card": "vmxnet3"
+        }
+      ],
+
+      "iso_paths": [
+        "[datastore1] ISO/ubuntu-16.04.4-server-amd64.iso"
+      ],
+      "floppy_files": [
+        "{{template_dir}}/preseed.cfg"
+      ],
+      "boot_command": [
+        "<enter><wait><f6><wait><esc><wait>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz",
+        " initrd=/install/initrd.gz",
+        " priority=critical",
+        " locale=en_US",
+        " file=/media/preseed.cfg",
+        "<enter>"
+      ]
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "environment_vars": [
+        "TFC_AGENT_TOKEN={{user `tfc-agent_token`}}"
+      ],
+      "execute_command": "echo 'hashicorp' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+      "scripts": [
+        "setup.sh"
+      ]
+    }
+   ]
+}
