@@ -188,6 +188,7 @@ resource "aws_security_group_rule" "allow_egress" {
 # lambda
 resource "aws_lambda_function" "webhook" {
   function_name = "${var.prefix}-webhook"
+  description   = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
   role          = aws_iam_role.lambda_exec.arn
   handler       = "main.lambda_handler"
   runtime       = "python3.7"
@@ -198,13 +199,21 @@ resource "aws_lambda_function" "webhook" {
 
   environment {
     variables = {
-      CLUSTER    = aws_ecs_cluster.tfc_agent.name
-      MAX_AGENTS = var.max_count
-      REGION     = var.region
-      SALT_PATH  = aws_ssm_parameter.notification_token.name
-      SERVICE    = aws_ecs_service.tfc_agent.name
+      CLUSTER        = aws_ecs_cluster.tfc_agent.name
+      MAX_AGENTS     = var.max_count
+      REGION         = var.region
+      SALT_PATH      = aws_ssm_parameter.notification_token.name
+      SERVICE        = aws_ecs_service.tfc_agent.name
+      SSM_PARAM_NAME = aws_ssm_parameter.current_count.name
     }
   }
+}
+
+resource "aws_ssm_parameter" "current_count" {
+  name        = "${var.prefix}-tfc-agent-current-count"
+  description = "Terraform Cloud agent current count"
+  type        = "String"
+  value       = var.desired_count
 }
 
 resource "aws_ssm_parameter" "notification_token" {
@@ -257,7 +266,12 @@ data "aws_iam_policy_document" "lambda_policy_definition" {
   statement {
     effect    = "Allow"
     actions   = ["ssm:GetParameter"]
-    resources = [aws_ssm_parameter.notification_token.arn]
+    resources = [aws_ssm_parameter.notification_token.arn, aws_ssm_parameter.current_count.arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["ssm:PutParameter"]
+    resources = [aws_ssm_parameter.current_count.arn]
   }
   statement {
     effect    = "Allow"
@@ -280,19 +294,6 @@ resource "aws_lambda_permission" "apigw" {
   # The "/*/*" portion grants access from any method on any resource
   # within the API Gateway REST API.
   source_arn = "${aws_api_gateway_rest_api.webhook.execution_arn}/*/*"
-}
-
-# dynamodb
-resource "aws_dynamodb_table" "base-dynamodb-table" {
-  name           = "${var.prefix}-webhook"
-  read_capacity  = 1
-  write_capacity = 1
-  hash_key       = "run_count"
-
-  attribute {
-    name = "run_count"
-    type = "N"
-  }
 }
 
 # api gateway

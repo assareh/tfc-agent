@@ -4,7 +4,7 @@ variable "app_version" {
 }
 
 variable "desired_count" {
-  description = "Desired count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2. Set to 0 or 1 as desired if using lamdba autoscaling."
+  description = "Desired count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2. May want to set this lower as desired if using lamdba autoscaling."
   default     = 4
 }
 

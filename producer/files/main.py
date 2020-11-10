@@ -5,11 +5,11 @@ import json
 import os
 
 CLUSTER = os.getenv("CLUSTER", None)
-DYNAMO_TABLE = os.environ["DYNAMO_TABLE_NAME"]
 MAX_AGENTS = os.getenv("MAX_AGENTS", None)
 REGION = os.getenv("REGION", None)
 SALT_PATH = os.getenv("SALT_PATH", None)
 SERVICE = os.getenv("SERVICE", None)
+SSM_PARAM_NAME = os.getenv("SSM_PARAM_NAME", None)
 
 ADD_SERVICE_STATES = {'pending'}
 SUB_SERVICE_STATES = {
@@ -26,8 +26,6 @@ SUB_SERVICE_STATES = {
 session = boto3.Session(region_name=REGION)
 ssm = session.client('ssm')
 ecs = session.client('ecs')
-dyn = session.client('dynamodb')
-table = dyn.Table(DYNAMO_TABLE)
 
 
 def lambda_handler(event, context):
@@ -71,9 +69,11 @@ def post(event):
     if payload and 'run_status' in payload['notifications'][0]:
         body = payload['notifications'][0]
         if body['run_status'] in ADD_SERVICE_STATES:
-            post_response = update_service_count(ecs, int(service_count) + 1)
+            post_response = update_service_count(ecs, 'add')
+            print("Run status indicates add an agent.")
         elif body['run_status'] in SUB_SERVICE_STATES:
-            post_response = update_service_count(ecs, int(service_count) - 1)
+            post_response = update_service_count(ecs, 'sub')
+            print("Run status indicates subtract an agent.")
 
     return {
         "statusCode": 200,
@@ -81,19 +81,17 @@ def post(event):
     }
 
 
-def update_service_count(client, desired_count):
-    if desired_count < 0:
-        desired_count = 0
-    elif desired_count > int(MAX_AGENTS):
-        # write it in if empty
-        # increment by one if not empty
-        desired_count = int(MAX_AGENTS)
-    else:          
-        # either incrememnting 0 to 1, ignore DDB
-        # decrementing 1 to 0, ignore DDB
-        # or decrementing DDB but keeping desired at max 
-        # or clearing DDB 
-        
+def update_service_count(client, operation):
+    num_runs_queued = int(ssm.get_parameter(Name=SSM_PARAM_NAME)['Parameter']['Value'])
+    if operation is 'add':
+        num_runs_queued = num_runs_queued + 1
+    elif operation is 'sub':
+        num_runs_queued=num_runs_queued - 1 if num_runs_queued > 0 else 0
+    else:
+        return
+    response = ssm.put_parameter(Name=SSM_PARAM_NAME, Value=str(num_runs_queued), Type='String', Overwrite=True)
+
+    desired_count=int(MAX_AGENTS) if num_runs_queued > int(MAX_AGENTS) else num_runs_queued
     client.update_service(
         cluster=CLUSTER,
         service=SERVICE,
@@ -102,12 +100,3 @@ def update_service_count(client, desired_count):
 
     print("Updated service count:", desired_count)
     return("Updated service count:", desired_count)
-
-
-table.put_item(
-            Item={
-                'id' : str(uuid.uuid4()),
-                'timestamp': int(time.time()),
-                'payload' : json.dumps(payload)
-            }
-        )
