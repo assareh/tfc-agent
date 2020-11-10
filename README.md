@@ -2,7 +2,6 @@
 
 This repository contains usage examples of the [Terraform Cloud Agent](https://www.terraform.io/docs/cloud/workspaces/agent.html).
 
-## Contents
 * `tfc-agent-ecs` provides an example of running tfc-agent on AWS ECS Fargate, and enabling credential free provisioning using AWS IAM.
 * `tfc-agent-vsphere` provides an example of using Packer to build a machine image with tfc-agent runners.
 * `tfc-agent-custom` provides an example of customizing the tfc-agent Docker container to fetch secrets and configure the provider.
