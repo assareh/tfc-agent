@@ -1,12 +1,12 @@
 # Terraform Cloud Agent in Amazon ECS Producer Workspace
 
-Provide values for required variables. Please note that I have the resource utilization of the tfc-agent containers set to the bare minimum of 128 CPU units and 256MB of RAM. This can be increased in the [task definition](files/task_definition.json) for improved performance. 
+Provide values for required variables. Please note that I have the resource utilization of the tfc-agent containers set to the bare minimum of 128 CPU units and 256MB of RAM. This can be increased in the [task definition](files/task_definition.json) for improved performance.
 
 This workspace will require AWS credentials of some sort. A Terraform Cloud Agent token must also be provided as the terraform input variable `tfc_agent_token`.
 
 I've included helper scripts to create and delete an agent token, however you can always create and manage these in the Terraform Cloud organization Settings.
 
-`./files/create_tfc_agent_token.sh` will create an agent token and output the token value and token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide your Terraform Cloud organization name as an argument.
+`./files/create_tfc_agent_token.sh` will create an agent pool and token and output the token value and token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide your Terraform Cloud organization name as an argument.
 
 ```
 → ./files/create_tfc_agent_token.sh hashidemos
@@ -52,7 +52,7 @@ To use it, you'll need to:
 
 That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
 
-`./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide: 
+`./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide:
 1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
 2. the notification token you've configured (Terraform variable `notification_token`) as the environment variable `HMAC_SALT`.
 3. the workspace(s) to which you'd like to add the notification configuration.
