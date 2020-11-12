@@ -1,6 +1,6 @@
 {
     "variables": {
-        "vm_name": "assareh-tfc-agent-vm",
+        "vm_name": "tfc-agent-vm",
         "tfc-agent_token": "{{env `TFC_AGENT_TOKEN`}}",
         "vcenter_server": "10.100.0.3",
         "vcenter_username": "administrator@vsphere.local",
@@ -37,8 +37,12 @@
       "RAM_reserve_all": true,
 
       "disk_controller_type":  "pvscsi",
-      "disk_size":        16384,
-      "disk_thin_provisioned": true,
+      "storage": [
+        {
+          "disk_size": 16384,
+          "disk_thin_provisioned": true
+        }
+      ],
 
       "network_adapters": [
         {
