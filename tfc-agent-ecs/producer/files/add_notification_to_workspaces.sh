@@ -6,6 +6,11 @@
 TFC_ORG=$1
 WEBHOOK_URL=${@: -1}
 
+if [ -z "$TOKEN" ]
+then
+      echo "Missing required environment variable TOKEN, see usage."
+else
+
 if [ -z "$HMAC_SALT" ]
 then
       echo "Missing required environment variable HMAC_SALT, see usage."
@@ -61,5 +66,5 @@ curl --silent \
 }
 
 fi
-
+fi
 fi

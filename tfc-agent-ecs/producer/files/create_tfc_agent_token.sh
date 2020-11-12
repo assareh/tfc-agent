@@ -5,6 +5,11 @@
 # usage: ./create_tfc_agent_token.sh <YOUR TFC ORG>
 TFC_ORG=$1
 
+if [ -z "$TOKEN" ]
+then
+      echo "Missing required environment variable TOKEN, see usage."
+else
+
 if [ $# -eq 0 ]
   then
     echo "Missing TFC organization."
@@ -67,4 +72,5 @@ jq -n --arg agent_token "$AGENT_TOKEN_VALUE" --arg agent_token_id "$AGENT_TOKEN_
 
 echo ""
 echo "Save agent_token_id for use in deletion script. Tokens can always be deleted from the Terraform Cloud organization Settings page."
+fi
 fi

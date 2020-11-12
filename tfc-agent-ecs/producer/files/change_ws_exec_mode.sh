@@ -4,6 +4,11 @@
 # usage: ./change_ws_exec_mode.sh <YOUR TFC ORG> <YOUR TFC WORKSPACE> [Optionally additional workspaces]
 TFC_ORG=$1
 
+if [ -z "$TOKEN" ]
+then
+      echo "Missing required environment variable TOKEN, see usage."
+else
+
 if [ $# -lt 2 ]
   then
     echo "Missing required arguments, see usage."
@@ -46,4 +51,5 @@ curl --silent \
 
 done
 
+fi
 fi

@@ -6,6 +6,11 @@
 
 TOKEN_ID=$1
 
+if [ -z "$TOKEN" ]
+then
+      echo "Missing required environment variable TOKEN, see usage."
+else
+
 if [ $# -eq 0 ]
   then
     echo "Missing agent token ID."
@@ -23,4 +28,5 @@ curl -i \
 
 echo "An HTTP 204 indicates the Agent Token was successfully destroyed."
 echo "An HTTP 404 indicates the Agent Token was not found."
+fi
 fi
