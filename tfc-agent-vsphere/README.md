@@ -8,9 +8,9 @@ Tested with Packer 1.6.5.
 ```
 export VCENTER_PASSWORD=`pbpaste`
 ```
-3. Set your VM name on line 3 of the Packer template.
+3. Set or modify values or variables in the Packer template pe your configuration as needed.
 4. Run `packer build tfc-agent-vsphere.json`
 5. Once the image has been created, you'll need to power it on.
 
-## Futures
-* We can provide vSphere provider arguments like `vsphere_server`, `user`, and `password` to the tfc-agent directly, eliminating the need for consumers to set these values in their Terraform Cloud workspaces.
+## Notes
+* We are providing vSphere provider arguments like `vsphere_server`, `user`, and `password` to the tfc-agent directly, eliminating the need for consumers to set these values in their Terraform Cloud workspaces.
