@@ -19,6 +19,7 @@ The `consumer` workspace provides an example of assuming that role and provision
 * Helper scripts are provided to create and delete agent tokens. This can also be done from the Terraform Cloud Organization Settings.
 
 ## Additional Topics
+* A [Sentinel](https://www.terraform.io/docs/cloud/sentinel/index.html) policy like [this example](https://github.com/rberlind/aws-assume-role-policy-test/blob/master/restrict-assumed-role.sentinel) could be used to restrict which roles can be assumed by the AWS provider in a given workspace. 
 * Declaring Assume Role in the provider block is not necessarily required. IAM permissions given to the agent role directly will be available to Terraform runs without any configuration necessary.
 * The agent image and environment can be customized. For example, abstracting the role ARNs from the Terraform consumers entirely is possible if you were to embed an AWS CLI config file into the agent image. In this scenario users can select an AWS role or profile with `profile = "dev"` in their provider block.
 
