@@ -6,6 +6,16 @@
 TFC_ORG=$1
 WEBHOOK_URL=${@: -1}
 
+if [ -z "$TOKEN" ]
+then
+      echo "Missing required environment variable TOKEN, see usage."
+else
+
+if [ -z "$HMAC_SALT" ]
+then
+      echo "Missing required environment variable HMAC_SALT, see usage."
+else
+
 if [ $# -lt 3 ]
   then
     echo "Missing required arguments, see usage."
@@ -46,7 +56,7 @@ WORKSPACE_ID="$(curl --silent \
   https://app.terraform.io/api/v2/organizations/$TFC_ORG/workspaces/$TFC_WORKSPACE | jq -r '.data.id')"
 
 # 2. Create notification config
-curl \
+curl --silent \
   --header "Authorization: Bearer $TOKEN" \
   --header "Content-Type: application/vnd.api+json" \
   --request POST \
@@ -55,4 +65,6 @@ curl \
 
 }
 
+fi
+fi
 fi
