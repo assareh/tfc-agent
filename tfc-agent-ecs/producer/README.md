@@ -6,6 +6,8 @@ This workspace will require AWS credentials of some sort. A Terraform Cloud Agen
 
 I've included helper scripts to create and delete an agent token, however you can always create and manage these in the Terraform Cloud organization Settings.
 
+### Create Agent Token script
+
 `./files/create_tfc_agent_token.sh` will create an agent pool and token and output the token value and token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide your Terraform Cloud organization name as an argument.
 
 ```
@@ -17,6 +19,8 @@ I've included helper scripts to create and delete an agent token, however you ca
 
 Save agent_token_id for use in deletion script. Tokens can always be deleted from the Terraform Cloud Settings page.
 ```
+
+### Delete Agent Token script
 
 `./files/delete_tfc_agent_token.sh` will delete an agent token with the specified agent token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide the agent token id as an argument.
 
@@ -39,6 +43,8 @@ x-xss-protection: 1; mode=block
 An HTTP 204 indicates the Agent Token was successfully destroyed.
 An HTTP 404 indicates the Agent Token was not found.
 ```
+
+### Change Workspace Execution Mode script
 
 I've also added a helper script to bulk change the workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) to `Agent`. 
 
