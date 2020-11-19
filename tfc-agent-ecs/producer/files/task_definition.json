@@ -9,6 +9,10 @@
       {
         "name": "TFC_AGENT_SINGLE",
         "value": "true"
+      },
+      {
+        "name": "TFC_AGENT_NAME",
+        "value": "ECS Fargate"
       }
     ],
     "secrets": [
