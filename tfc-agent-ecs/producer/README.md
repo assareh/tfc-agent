@@ -52,6 +52,10 @@ To use it, you'll need to:
 
 That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
 
+Note: [Speculative Plans](https://www.terraform.io/docs/cloud/run/index.html#speculative-plans) do not trigger this autoscaling.
+
+### Add Notification to Workspaces script
+
 `./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide: 
 1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
 2. the notification token you've configured (Terraform variable `notification_token`) as the environment variable `HMAC_SALT`.
