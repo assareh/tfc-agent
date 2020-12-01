@@ -26,7 +26,7 @@ data "aws_ami" "ubuntu-vault-oss" {
 
 resource "aws_instance" "vault" {
   ami           = data.aws_ami.ubuntu-vault-oss.id
-  instance_type = "t3.micro"
+  instance_type = "t2.nano"
 
   tags = local.common_tags
 }
