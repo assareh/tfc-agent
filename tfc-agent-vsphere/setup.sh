@@ -1,9 +1,5 @@
 #!/bin/sh
 
-apt-get update
-apt-get upgrade
-apt-get install -qy docker.io
-
 export TFC_AGENT_SINGLE=true
 
 docker run -d \
