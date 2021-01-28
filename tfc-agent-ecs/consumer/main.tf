@@ -15,7 +15,7 @@ data "aws_ami" "ubuntu-vault-oss" {
 
   filter {
     name   = "name"
-    values = ["hashicorp/marketplace/vault-1.5.0-*"]
+    values = ["hashicorp/marketplace/vault-1.6.0-*"]
   }
 
   filter {
