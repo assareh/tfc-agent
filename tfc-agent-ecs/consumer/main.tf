@@ -25,6 +25,7 @@ data "aws_ami" "ubuntu-vault-oss" {
 }
 
 resource "aws_instance" "vault" {
+  count         = 2
   ami           = data.aws_ami.ubuntu-vault-oss.id
   instance_type = "t3.micro"
 
