@@ -5,3 +5,7 @@ output "caller" {
 output "instance_arn" {
   value = aws_instance.vault.arn
 }
+
+output "public_dns" {
+  value = aws_instance.vault.public_dns
+}
