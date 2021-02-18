@@ -14,7 +14,7 @@ In this model it is vital to enforce least privilege on Terraform Cloud workspac
 ## Steps
 Set `dev_role_arn` to the value of output `terraform_dev_role` from the Producer workspace. The provided tfvars file may be used. (Remove .example from the file name.)
 
-Provide values for required variables
+Provide values for required variables.
 
 ## References
 * [Permissions](https://www.terraform.io/docs/cloud/users-teams-organizations/permissions.html)

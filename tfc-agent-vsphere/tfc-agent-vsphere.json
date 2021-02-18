@@ -1,23 +1,14 @@
 {
     "variables": {
         "vm_name": "tfc-agent-vm",
-
         "tfc-agent_token": "{{env `TFC_AGENT_TOKEN`}}",
-
-        "ssh-username": "assareh",
-        "ssh-password": "assareh",
-        "authorized_keys": "{{ vault `/packer/data/ssh` `authorized_keys`}}",
-
         "iso-url": "https://cdimage.ubuntu.com/releases/18.04/release/ubuntu-18.04.5-server-amd64.iso",
         "iso-checksum": "8c5fc24894394035402f66f3824beb7234b757dd2b5531379cb310cedfdf0996",
-
         "network": "VM Network",
-
-        "datacenter": "PacketDatacenter",
-        "host": "10.100.0.2",
+        "datacenter": "Datacenter",
+        "host": "192.168.10.11",
         "datastore": "datastore1",
-
-        "vcenter_server": "10.100.0.3",
+        "vcenter_server": "192.168.10.7",
         "vcenter_username": "administrator@vsphere.local",
         "vcenter_password": "{{env `VCENTER_PASSWORD`}}"
     },
@@ -28,7 +19,7 @@
     {
       "type": "vsphere-iso",
 
-      "notes": "Created by Andy Assareh\nRunning TFC agents connected to my Terraform Cloud organization\nUsed for Terraform vSphere demo",
+      "notes": "Created by <name>\nRunning TFC agents connected to my Terraform Cloud organization\nUsed for Terraform vSphere demo",
 
       "vcenter_server":      "{{user `vcenter_server`}}",
       "username":            "{{user `vcenter_username`}}",
@@ -43,8 +34,8 @@
 
       "guest_os_type": "ubuntu64Guest",
 
-      "ssh_username": "{{user `ssh-username`}}",
-      "ssh_password": "{{user `ssh-password`}}",
+      "ssh_username": "ubuntu",
+      "ssh_password": "ubuntu",
 
       "CPUs":             1,
       "RAM":              1024,
@@ -96,25 +87,13 @@
   "provisioners": [
     {
       "type": "shell",
-      "inline": [
-        "sleep 10",
-        "mkdir -p /home/assareh/.ssh",
-        "echo '{{user `authorized_keys`}}' > /home/assareh/.ssh/authorized_keys",
-        "chmod 600 /home/assareh/.ssh/authorized_keys",
-        "chown -R assareh /home/assareh/.ssh",
-        "sudo sed -i -e 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config",
-        "sudo service ssh restart"
-      ]
-    },
-    {
-      "type": "shell",
       "environment_vars": [
         "TFC_AGENT_TOKEN={{user `tfc-agent_token`}}",
         "VSPHERE_SERVER={{user `vcenter_server`}}",
         "VSPHERE_USER={{user `vcenter_username`}}",
         "VSPHERE_PASSWORD=\"{{user `vcenter_password`}}\""
       ],
-      "execute_command": "echo 'assareh' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+      "execute_command": "echo 'ubuntu' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
       "scripts": [
         "setup.sh"
       ]
