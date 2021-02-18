@@ -38,15 +38,11 @@ variable "ttl" {
 }
 
 locals {
-  # Common tags to be assigned to all resources
   common_tags = {
-    Name    = "Andy Assareh"
-    Owner   = "assareh@hashicorp.com"
-    Region  = "NA-WEST-ENT"
-    Purpose = "Demo the tfc-agent"
-    TTL     = var.ttl #hours
-    # Optional
-    Terraform = "true" # true/false
-    TFE       = "true" # true/false
+    owner     = "assareh"
+    se-region = "AMER - West E2 - R2"
+    purpose   = "Demo Terraform and Vault"
+    ttl       = var.ttl # hours
+    terraform = "true"  # true/false
   }
 }

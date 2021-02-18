@@ -46,7 +46,7 @@ An HTTP 404 indicates the Agent Token was not found.
 
 ### Change Workspace Execution Mode script
 
-I've also added a helper script to bulk change the workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) to `Agent`. 
+I've also added a helper script to bulk change the workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) to `Agent`.
 
 `./files/change_ws_exec_mode.sh` will change the workspace execution mode of one or more workspaces in the organization specified. You must provide:
 1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
@@ -70,6 +70,10 @@ To use it, you'll need to:
 2. Configure a [generic notification](https://www.terraform.io/docs/cloud/workspaces/notifications.html#creating-a-notification-configuration) on each Terraform Cloud workspace that will be using an agent (workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) set to `Agent`). I've included a helper script that will create them for you, however you can always create and manage these in the Terraform Cloud workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
 
 That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
+
+Note: [Speculative Plans](https://www.terraform.io/docs/cloud/run/index.html#speculative-plans) do not trigger this autoscaling.
+
+### Add Notification to Workspaces script
 
 `./files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide:
 1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
