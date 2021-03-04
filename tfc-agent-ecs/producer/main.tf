@@ -24,20 +24,47 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   family                   = "${var.prefix}-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  container_definitions    = data.template_file.agent.rendered
   execution_role_arn       = aws_iam_role.agent_init.arn
   task_role_arn            = aws_iam_role.agent.arn
-  cpu                      = 256
-  memory                   = 512
+  cpu                      = var.task_cpu
+  memory                   = var.task_mem
   tags                     = local.common_tags
-}
-
-data "template_file" "agent" {
-  template = file("${path.module}/files/task_definition.json")
-
-  vars = {
-    tfc_agent_token_parameter_arn = aws_ssm_parameter.agent_token.arn
-  }
+  container_definitions = jsonencode(
+    [
+      {
+        name : "tfc-agent"
+        image : "hashicorp/tfc-agent:latest"
+        essential : true
+        cpu : var.task_def_cpu
+        memory : var.task_def_mem
+        logConfiguration : {
+          logDriver : "awslogs",
+          options : {
+            awslogs-create-group : "true",
+            awslogs-group : "awslogs-tfc-agent"
+            awslogs-region : var.region
+            awslogs-stream-prefix : "awslogs-tfc-agent"
+          }
+        }
+        environment = [
+          {
+            name  = "TFC_AGENT_SINGLE",
+            value = "true"
+          },
+          {
+            name  = "TFC_AGENT_NAME",
+            value = "ECS_Fargate"
+          }
+        ]
+        secrets = [
+          {
+            name      = "TFC_AGENT_TOKEN",
+            valueFrom = aws_ssm_parameter.agent_token.arn
+          }
+        ]
+      }
+    ]
+  )
 }
 
 resource "aws_ssm_parameter" "agent_token" {
@@ -181,12 +208,13 @@ resource "aws_security_group_rule" "allow_egress" {
 
 # lambda
 resource "aws_lambda_function" "webhook" {
-  function_name = "${var.prefix}-webhook"
-  description   = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
-  role          = aws_iam_role.lambda_exec.arn
-  handler       = "main.lambda_handler"
-  runtime       = "python3.7"
-  tags          = local.common_tags
+  function_name           = "${var.prefix}-webhook"
+  description             = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
+  code_signing_config_arn = aws_lambda_code_signing_config.this.arn
+  role                    = aws_iam_role.lambda_exec.arn
+  handler                 = "main.lambda_handler"
+  runtime                 = "python3.7"
+  tags                    = local.common_tags
 
   s3_bucket = aws_s3_bucket.webhook.bucket
   s3_key    = aws_s3_bucket_object.webhook.id
@@ -345,4 +373,20 @@ resource "aws_api_gateway_deployment" "webhook" {
 
   rest_api_id = aws_api_gateway_rest_api.webhook.id
   stage_name  = "test"
+}
+
+resource "aws_signer_signing_profile" "this" {
+  platform_id = "AWSLambda-SHA384-ECDSA"
+}
+
+resource "aws_lambda_code_signing_config" "this" {
+  allowed_publishers {
+    signing_profile_version_arns = [
+      aws_signer_signing_profile.this.arn,
+    ]
+  }
+
+  policies {
+    untrusted_artifact_on_deployment = "Warn"
+  }
 }

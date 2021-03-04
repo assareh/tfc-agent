@@ -27,6 +27,26 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "task_cpu" {
+  description = "The total number of cpu units used by the task."
+  default     = 4096
+}
+
+variable "task_mem" {
+  description = "The total amount (in MiB) of memory used by the task."
+  default     = 8192
+}
+
+variable "task_def_cpu" {
+  description = "The number of cpu units used by the task at the container definition level."
+  default     = 1024
+}
+
+variable "task_def_mem" {
+  description = "The amount (in MiB) of memory used by the task at the container definition level."
+  default     = 2048
+}
+
 variable "tfc_agent_token" {
   description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
 }
