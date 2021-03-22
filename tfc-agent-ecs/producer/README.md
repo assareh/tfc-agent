@@ -1,63 +1,25 @@
 # Terraform Cloud Agent in Amazon ECS Producer Workspace
 
-Provide values for required variables. 
+This workspace will require AWS access/credentials to provision.
 
-This workspace will require AWS credentials of some sort. A Terraform Cloud Agent token must also be provided as the terraform input variable `tfc_agent_token`.
+## Usage
+Please provide values for the following required variables:
+* `prefix`: a name prefix to add to the resources
+* `tfc_agent_token`: The Terraform Cloud agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in Terraform Cloud. (See the next section for how to create this.)
 
-I've included helper scripts to create and delete an agent token, however you can always create and manage these in the Terraform Cloud organization Settings.
+In addition, I recommend that you review all other variables and configure their values according to your specifications. You can adjust the resource allocations for the agent task with `task_cpu`, `task_mem`, `task_def_cpu`, and `task_def_mem`. (Refer to the [AWS docs](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size) for the supported sizes.) As of this writing, the terraform run environment built in to Terraform Cloud provides 2 cores and 2GB of RAM. However, I have used the agent with as little as 256MB of RAM. YMMV
 
-### Create Agent Token script
+`ttl` and `common_tags` are used only for tagging and are completely optional.
 
-`./files/create_tfc_agent_token.sh` will create an agent pool and token and output the token value and token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide your Terraform Cloud organization name as an argument.
+### Terraform Cloud Agent Token
+An agent token is a secret value that is used to uniquely identify your agents and allow them to register themselves with your Terraform Cloud organization. Please refer to the [documentation](https://www.terraform.io/docs/cloud/agents/index.html#managing-agent-pools) for an explanation of what an agent pool is and how to create an agent token in the Terraform Cloud Settings console.
 
-```
-→ ./files/create_tfc_agent_token.sh hashidemos
-{
-  "agent_token": "bpcqFQzBtu42qQ.atlasv1.3l7au3dmF8FQw8VNhJl2puzn0jlIF1zWn9zJPPs0s9q04KnzlKjWyUCvhpm3ALKUzf8",
-  "agent_token_id": "at-VkQxdEWdPDeGEXd3"
-}
+Additionally, these may now be created and managed with Terraform due to the addition of the following resources and data sources in version 0.24.0 of the [tfe provider](https://registry.terraform.io/providers/hashicorp/tfe/latest):
+* [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_pool) resource
+* [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/agent_pool) data source
+* [`tfe_agent_token`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_token) resource
 
-Save agent_token_id for use in deletion script. Tokens can always be deleted from the Terraform Cloud Settings page.
-```
-
-### Delete Agent Token script
-
-`./files/delete_tfc_agent_token.sh` will delete an agent token with the specified agent token id. You must provide a Terraform Cloud organization or admin user token as the environment variable `TOKEN`. You must also provide the agent token id as an argument.
-
-```
-→ ./files/delete_tfc_agent_token.sh at-VkQxdEWdPDeGEXd3
-HTTP/2 204
-date: Wed, 30 Sep 2020 19:15:17 GMT
-cache-control: no-cache
-tfp-api-version: 2.3
-vary: Accept-Encoding
-vary: Origin
-x-content-type-options: nosniff
-x-frame-options: SAMEORIGIN
-x-ratelimit-limit: 30
-x-ratelimit-remaining: 29
-x-ratelimit-reset: 0.0
-x-request-id: d86dabf8-abc7-4953-efa0-65891a05b65b
-x-xss-protection: 1; mode=block
-
-An HTTP 204 indicates the Agent Token was successfully destroyed.
-An HTTP 404 indicates the Agent Token was not found.
-```
-
-### Change Workspace Execution Mode script
-
-I've also added a helper script to bulk change the workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) to `Agent`.
-
-`./files/change_ws_exec_mode.sh` will change the workspace execution mode of one or more workspaces in the organization specified. You must provide:
-1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
-2. your Terraform Cloud organization name.
-3. the name of your Agent Pool.
-4. the workspace(s) you'd like to change.
-
-Example usage:
-```
-→ ./files/change_ws_exec_mode.sh hashidemos my-first-aws-agent-pool my-workspace-1 my-workspace-2
-```
+Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the Terraform Cloud API. Those scripts remain available [here](files/README.md).
 
 ## Autoscaling tfc-agent with a Lambda Function
 I've included a Lambda function that, when combined with [Terraform Cloud notifications](https://www.terraform.io/docs/cloud/workspaces/notifications.html), enables autoscaling the number of Terraform Cloud Agents running.

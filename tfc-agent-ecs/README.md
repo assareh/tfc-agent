@@ -16,7 +16,6 @@ The `consumer` workspace provides an example of assuming that role and provision
 
 ## Notes
 * Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!
-* Helper scripts are provided to create and delete agent tokens. This can also be done from the Terraform Cloud Organization Settings.
 
 ## Additional Topics
 * A [Sentinel](https://www.terraform.io/docs/cloud/sentinel/index.html) policy like [this example](https://github.com/hashicorp/terraform-guides/blob/master/governance/third-generation/aws/restrict-assumed-roles-by-workspace.sentinel) can be used to restrict which roles would be allowed in a given workspace.

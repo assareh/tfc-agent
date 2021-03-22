@@ -3,6 +3,7 @@
 # NOTE: requires TFCB entitlement on the organization
 # NOTE: ensure TFC token is present as TOKEN env variable
 # usage: ./create_tfc_agent_token.sh <YOUR TFC ORG>
+
 TFC_ORG=$1
 
 if [ -z "$TOKEN" ]
