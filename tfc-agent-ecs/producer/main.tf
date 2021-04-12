@@ -146,7 +146,7 @@ resource "aws_iam_role_policy_attachment" "agent_task_policy" {
 # a role for terraform consumer to assume into
 # you'll need to customize IAM policies to access resources as desired
 resource "aws_iam_role" "terraform_dev_role" {
-  name = "terraform_dev_role"
+  name = "${var.prefix}-terraform_dev_role"
   tags = local.common_tags
 
   assume_role_policy = data.aws_iam_policy_document.dev_assume_role_policy_definition.json
