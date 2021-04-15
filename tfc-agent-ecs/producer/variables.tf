@@ -59,8 +59,8 @@ variable "ttl" {
 
 locals {
   common_tags = {
-    owner              = "assareh"
-    se-region          = "AMER - West E2 - R2"
+    owner              = "your-name-here"
+    se-region          = "your-region-here"
     purpose            = "Default state is dormant with no active resources. Runs a Terraform Cloud Agent when a run is queued."
     ttl                = var.ttl # hours
     terraform          = "true"  # true/false

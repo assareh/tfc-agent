@@ -15,10 +15,11 @@ variable "ttl" {
 
 locals {
   common_tags = {
-    owner     = "assareh"
-    se-region = "AMER - West E2 - R2"
-    purpose   = "Demo Terraform and Vault"
-    ttl       = var.ttl # hours
-    terraform = "true"  # true/false
+    owner              = "your-name-here"
+    se-region          = "your-region-here"
+    purpose            = "A demo instance."
+    ttl                = var.ttl # hours
+    terraform          = "true"  # true/false
+    hc-internet-facing = "false" # true/false
   }
 }
