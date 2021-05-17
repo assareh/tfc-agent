@@ -17,5 +17,6 @@ The agent can be run in any environment, and typically behind the firewall. This
 ## Other Resources
 * [Terraform Cloud Agent Docs](https://www.terraform.io/docs/cloud/workspaces/agent.html)
 * [hashicorp/tfc-agent on DockerHub](https://hub.docker.com/r/hashicorp/tfc-agent)
-* [tfc-cloud-agent on K8s module by Cloud Posse](https://registry.terraform.io/modules/cloudposse/tfc-cloud-agent/kubernetes/latest)
+* [terraform-cloud-agent on Kubernetes module by Phil Sautter](https://registry.terraform.io/modules/redeux/terraform-cloud-agent/kubernetes/latest)
+* [tfc-cloud-agent on Kubernetes module by Cloud Posse](https://registry.terraform.io/modules/cloudposse/tfc-cloud-agent/kubernetes/latest)
 * [tfc_agent Chef cookbook](https://supermarket.chef.io/cookbooks/tfc_agent)
