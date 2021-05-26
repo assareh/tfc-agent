@@ -21,11 +21,10 @@ Additionally, as of version 0.24.0 of the [tfe provider](https://registry.terraf
 Prior to the addition of these attributes to the tfe provider, I had written a helper script to configure workspace execution mode on workspaces using the Terraform Cloud API. That script remains available [here](files/README.md).
 
 ### Variables
-Please provide values for the following required variables:
-* `prefix`: a name prefix to add to the resources
+Please provide a value for the following required [variable](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables):
 * `dev_role_arn`: The Amazon Resource Name of the dev role to be assumed. This is the value of output `terraform_dev_role` from the Producer workspace.
 
-In addition, I recommend that you review all other variables and configure their values according to your specifications. The provided tfvars file may be used. (Remove .example from the file name.)
+In addition, I recommend that you review all other variables and configure their values according to your specifications.
 
 `ttl` and `common_tags` are used only for tagging and are completely optional.
 
