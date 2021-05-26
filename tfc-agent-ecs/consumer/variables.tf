@@ -7,17 +7,18 @@ variable "region" {
   default     = "us-west-2"
 }
 
-// Tags
+// OPTIONAL Tags
 variable "ttl" {
-  description = "optional value of ttl tag on cloud resources"
+  description = "OPTIONAL for Cloud Custodian; value of ttl tag on cloud resources"
   default     = "1"
 }
 
+// OPTIONAL Tags
 locals {
   common_tags = {
     owner              = "your-name-here"
     se-region          = "your-region-here"
-    purpose            = "A demo instance."
+    purpose            = "Default state is dormant with no active resources. Runs a Terraform Cloud Agent when a run is queued."
     ttl                = var.ttl # hours
     terraform          = "true"  # true/false
     hc-internet-facing = "false" # true/false

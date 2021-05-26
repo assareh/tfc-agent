@@ -3,7 +3,9 @@
 This workspace will require AWS access/credentials to provision.
 
 ## Usage
-Please provide values for the following required variables:
+
+### Variables
+Please provide values for the following required [variables](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables):
 * `prefix`: a name prefix to add to the resources
 * `tfc_agent_token`: The Terraform Cloud agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in Terraform Cloud. (See the next section for how to create this.)
 

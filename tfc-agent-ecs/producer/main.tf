@@ -1,10 +1,13 @@
 provider "aws" {
   region = var.region
+
+  default_tags {
+    tags = local.common_tags
+  }
 }
 
 resource "aws_ecs_cluster" "tfc_agent" {
   name = "${var.prefix}-cluster"
-  tags = local.common_tags
 }
 
 resource "aws_ecs_service" "tfc_agent" {
@@ -28,7 +31,6 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   task_role_arn            = aws_iam_role.agent.arn
   cpu                      = var.task_cpu
   memory                   = var.task_mem
-  tags                     = local.common_tags
   container_definitions = jsonencode(
     [
       {
@@ -78,7 +80,6 @@ resource "aws_ssm_parameter" "agent_token" {
 resource "aws_iam_role" "agent_init" {
   name               = "${var.prefix}-ecs-tfc-agent-task-init-role"
   assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
-  tags               = local.common_tags
 }
 
 resource "aws_iam_role_policy" "agent_init_policy" {
@@ -109,7 +110,6 @@ data "aws_iam_policy_document" "agent_init_policy" {
 resource "aws_iam_role" "agent" {
   name               = "${var.prefix}-ecs-tfc-agent-role"
   assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
-  tags               = local.common_tags
 }
 
 data "aws_iam_policy_document" "agent_assume_role_policy_definition" {
@@ -147,7 +147,6 @@ resource "aws_iam_role_policy_attachment" "agent_task_policy" {
 # you'll need to customize IAM policies to access resources as desired
 resource "aws_iam_role" "terraform_dev_role" {
   name = "${var.prefix}-terraform_dev_role"
-  tags = local.common_tags
 
   assume_role_policy = data.aws_iam_policy_document.dev_assume_role_policy_definition.json
 }
@@ -177,7 +176,6 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.55.0"
   name    = "${var.prefix}-vpc"
-  tags    = local.common_tags
 
   cidr = "10.0.0.0/16"
 
@@ -191,7 +189,6 @@ resource "aws_security_group" "tfc_agent" {
   name_prefix = "${var.prefix}-sg"
   description = "Security group for tfc-agent-vpc"
   vpc_id      = module.vpc.vpc_id
-  tags        = local.common_tags
   lifecycle {
     create_before_destroy = true
   }
@@ -214,7 +211,6 @@ resource "aws_lambda_function" "webhook" {
   role                    = aws_iam_role.lambda_exec.arn
   handler                 = "main.lambda_handler"
   runtime                 = "python3.7"
-  tags                    = local.common_tags
 
   s3_bucket = aws_s3_bucket.webhook.bucket
   s3_key    = aws_s3_bucket_object.webhook.id
@@ -248,8 +244,6 @@ resource "aws_ssm_parameter" "notification_token" {
 resource "aws_s3_bucket" "webhook" {
   bucket = var.prefix
   acl    = "private"
-
-  tags = local.common_tags
 }
 
 resource "aws_s3_bucket_object" "webhook" {
@@ -262,7 +256,6 @@ resource "aws_s3_bucket_object" "webhook" {
 
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.prefix}-webhook-lambda"
-  tags = local.common_tags
 
   assume_role_policy = data.aws_iam_policy_document.webhook_assume_role_policy_definition.json
 }
@@ -322,7 +315,6 @@ resource "aws_lambda_permission" "apigw" {
 resource "aws_api_gateway_rest_api" "webhook" {
   name        = "${var.prefix}-webhook"
   description = "TFC webhook receiver for autoscaling tfc-agent"
-  tags        = local.common_tags
 }
 
 resource "aws_api_gateway_resource" "proxy" {

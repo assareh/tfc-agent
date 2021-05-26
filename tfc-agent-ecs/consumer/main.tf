@@ -1,8 +1,13 @@
 provider "aws" {
-  region = "us-west-2"
+  region = var.region
+
   assume_role {
     role_arn     = var.dev_role_arn
     session_name = "terraform"
+  }
+
+  default_tags {
+    tags = local.common_tags
   }
 }
 
@@ -27,6 +32,4 @@ data "aws_ami" "ubuntu-vault-oss" {
 resource "aws_instance" "vault" {
   ami           = data.aws_ami.ubuntu-vault-oss.id
   instance_type = "t3.micro"
-
-  tags = local.common_tags
 }

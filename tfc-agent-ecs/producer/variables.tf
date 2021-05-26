@@ -51,12 +51,13 @@ variable "tfc_agent_token" {
   description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
 }
 
-// Tags
+// OPTIONAL Tags
 variable "ttl" {
-  description = "optional value of ttl tag on cloud resources"
+  description = "OPTIONAL for Cloud Custodian; value of ttl tag on cloud resources"
   default     = "1"
 }
 
+// OPTIONAL Tags
 locals {
   common_tags = {
     owner              = "your-name-here"
