@@ -1,6 +1,6 @@
 # Credential free provisioning with Terraform Cloud Agent on Google Cloud Platform
 
-This repository provides an example of running [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) on Google Compute Engine, and shows how you can leverage tfc-agent to perform credential free provisioning using [service account impersonation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#running-terraform-on-google-cloud). Though this simple example shows usage within a single project, this pattern is used to allow provisioning across projects without requiring GCP credentials in Terraform workspaces.
+This repository provides an example of running [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) on Google Compute Engine, and shows how you can leverage tfc-agent to perform credential free provisioning using [service account impersonation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#impersonating-service-accounts). Though this simple example shows usage within a single project, this pattern is used to allow provisioning across projects without requiring GCP credentials in Terraform workspaces.
 
 ## Setup
 The `producer` workspace contains an example of registering and running the tfc-agent on a compute instance, along with necessary IAM role attachments.
