@@ -22,7 +22,8 @@ The `consumer` workspace provides an example of provisioning an instance without
 * A [Sentinel](https://www.terraform.io/docs/cloud/sentinel/index.html) policy like [this example](https://github.com/hashicorp/terraform-guides/blob/master/governance/third-generation/aws/restrict-assumed-roles-by-workspace.sentinel) can be translated to GCP to restrict which roles would be allowed to be impersonated in a given workspace.
 * The tfc-agent is a good fit for GKE.
 
-## Other Approaches:
+## Other approaches to running tfc-agent on GCP that I attempted
+Serverless sounds quite appealing, however there were challenges.
 * **Cloud Run**: FAILED. First I found there are [reports of issues](https://stackoverflow.com/questions/61744540/unable-to-deploy-ubuntu-20-04-docker-container-on-google-cloud-run) running Ubuntu 20.04 on Cloud Run, and the official container from HashiCorp is based on Ubuntu 20.04. I built my own container on 18.04. Next is per the [Cloud Run Container runtime contract](https://cloud.google.com/run/docs/reference/container-contract#port), the container must have a listener. Well obviously since the tfc-agent makes outbound connections only, it does not have a listener. So I solved that by adding a dummy NGINX proxy as a listener. With these I was able to make it run, but it would fail to register itself with Terraform Cloud and die. That ultimately led me to [this](https://stackoverflow.com/questions/57257903/google-cloud-run-and-golang-goroutines) post by AhmetB at Google explaining that applications starting goroutines in the background are not suitable for Cloud Run because when there are no inbound requests they are throttled to zero CPU.
 * **App Engine**: FAILED. Similar reasons as above.
 
