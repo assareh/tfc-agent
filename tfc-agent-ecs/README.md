@@ -26,3 +26,4 @@ The `consumer` workspace provides an example of assuming that role and provision
 * [Terraform Cloud Agent Docs](https://www.terraform.io/docs/cloud/workspaces/agent.html)
 * [Agent Pools and Agents API](https://www.terraform.io/docs/cloud/api/agents.html)
 * [Agent Tokens API](https://www.terraform.io/docs/cloud/api/agent-tokens.html)
+* [AWS Provider Authentication Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#codebuild-ecs-and-eks-roles)
