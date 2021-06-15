@@ -10,6 +10,6 @@ output "terraform-dev-role" {
   value = google_service_account.terraform-dev-role.email
 }
 
-output "tfc-agent-sa-name" {
-  value = google_service_account.tfc-agent.name
+output "tfc-agent-sa" {
+  value = google_service_account.tfc-agent.email
 }
