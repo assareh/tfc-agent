@@ -1,6 +1,6 @@
 # Terraform Cloud Agent in Google Compute Engine Producer Workspace
 
-This workspace will require GCP access/credentials to provision.
+This workspace will require GCP access/credentials to provision. ([Steps](#google-credentials-for-terraform))
 
 ## Usage
 
