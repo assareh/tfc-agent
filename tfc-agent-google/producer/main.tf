@@ -62,10 +62,7 @@ resource "google_compute_instance" "tfc-agent" {
   }
 
   service_account {
-    email = google_service_account.tfc-agent.email
-    scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-      "https://www.googleapis.com/auth/userinfo.email",
-    ]
+    email  = google_service_account.tfc-agent.email
+    scopes = ["cloud-platform", "userinfo-email"]
   }
 }
