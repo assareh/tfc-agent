@@ -44,7 +44,7 @@ resource "azurerm_container_group" "tfc-agent" {
 
     # this field seems to be mandatory (error happens if not there). See https://github.com/terraform-providers/terraform-provider-azurerm/issues/1697#issuecomment-608669422
     ports {
-      port     = 80
+      port     = 81
       protocol = "TCP"
     }
 
