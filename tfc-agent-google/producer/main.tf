@@ -3,8 +3,7 @@ provider "google" {
   region  = var.gcp_region
 }
 
-data "google_project" "project" {
-}
+data "google_project" "project" {}
 
 resource "google_service_account" "tfc-agent" {
   project      = var.gcp_project
@@ -12,6 +11,8 @@ resource "google_service_account" "tfc-agent" {
   account_id   = "tfc-agent"
 }
 
+# a role for terraform consumer to impersonate
+# you'll need to customize IAM bindings to access resources as desired
 resource "google_service_account" "terraform-dev-role" {
   project      = var.gcp_project
   display_name = "terraform-dev-role Service Account"
