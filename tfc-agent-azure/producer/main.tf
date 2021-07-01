@@ -16,7 +16,27 @@ resource "azurerm_container_group" "tfc-agent" {
   os_type             = "Linux"
 
   container {
-    count  = 2
+    name   = "tfc-agent"
+    image  = "hashicorp/tfc-agent:latest"
+    cpu    = "1.0"
+    memory = "2.0"
+
+    # this field seems to be mandatory (error happens if not there). See https://github.com/terraform-providers/terraform-provider-azurerm/issues/1697#issuecomment-608669422
+    ports {
+      port     = 80
+      protocol = "TCP"
+    }
+
+    environment_variables = {
+      TFC_AGENT_SINGLE = "True"
+    }
+
+    secure_environment_variables = {
+      TFC_AGENT_TOKEN = var.tfc_agent_token
+    }
+  }
+
+    container {
     name   = "tfc-agent"
     image  = "hashicorp/tfc-agent:latest"
     cpu    = "1.0"
