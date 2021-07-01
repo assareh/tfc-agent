@@ -16,7 +16,7 @@ resource "azurerm_container_group" "tfc-agent" {
   os_type             = "Linux"
 
   container {
-    name   = "tfc-agent"
+    name   = "tfc-agent-1"
     image  = "hashicorp/tfc-agent:latest"
     cpu    = "1.0"
     memory = "2.0"
@@ -37,7 +37,7 @@ resource "azurerm_container_group" "tfc-agent" {
   }
 
     container {
-    name   = "tfc-agent"
+    name   = "tfc-agent-2"
     image  = "hashicorp/tfc-agent:latest"
     cpu    = "1.0"
     memory = "2.0"
