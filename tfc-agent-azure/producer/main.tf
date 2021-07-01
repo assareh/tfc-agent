@@ -16,6 +16,7 @@ resource "azurerm_container_group" "tfc-agent" {
   os_type             = "Linux"
 
   container {
+    count  = 2
     name   = "tfc-agent"
     image  = "hashicorp/tfc-agent:latest"
     cpu    = "1.0"
