@@ -12,7 +12,7 @@ The `consumer` workspace provides an example of provisioning an instance without
 
 ## Steps
 1. Configure and provision the `producer` workspace. See [README](./producer/README.md) for instructions.
-2. Configure and provision the `consumer` workspace. See [README](./consumer/README.md) for instructions.
+2. Configure and provision the `consumer` workspace, using the `terraform-dev-role` created in step 1. See [README](./consumer/README.md) for instructions.
 
 ## Notes
 * Please ensure the consumer workspace [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) is set to Agent!
