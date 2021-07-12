@@ -171,18 +171,15 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
 
-# networking
+# networking for agents to reach internet
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "2.55.0"
-  name    = "${var.prefix}-vpc"
+  source = "terraform-aws-modules/vpc/aws"
 
+  name = "${var.prefix}-vpc"
   cidr = "10.0.0.0/16"
 
   azs            = ["${var.region}a"]
   public_subnets = ["10.0.101.0/24"]
-
-  enable_nat_gateway = true
 }
 
 resource "aws_security_group" "tfc_agent" {
