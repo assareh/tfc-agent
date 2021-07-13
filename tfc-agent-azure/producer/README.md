@@ -1,3 +1,7 @@
+## TODO
+* need to add tags to resources
+
+# README
 The credentials you use to provision this workspace will require `roleAssignments/write` permission. For reference, please see this [answer](https://docs.microsoft.com/en-us/answers/questions/287573/authorization-failed-when-when-writing-a-roleassig.html). I created a custom role based on the built-in `Contributor` role with the following steps:
 
 1. Get the role definition:
