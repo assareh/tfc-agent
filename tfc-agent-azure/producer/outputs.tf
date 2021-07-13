@@ -1,5 +1,5 @@
 # this is not matching
-output "ip_address" {
+output "agent_ip" {
   value = azurerm_container_group.tfc-agent.ip_address
 }
 
