@@ -1,6 +1,6 @@
 # Terraform Cloud Agent in Azure Container Instances Producer Workspace
 
-This workspace will require Azure access/credentials to provision. See Azure Permissions section below for an important note.
+This workspace will require Azure access/credentials to provision. See [Azure Permissions](README.md#azure-permissions) section below for an important note.
 
 ## Usage
 
