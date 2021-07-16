@@ -10,8 +10,8 @@ resource "azurerm_container_group" "tfc-agent" {
   name                = "tfc-agent"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  ip_address_type     = "public"
   os_type             = "Linux"
+  restart_policy      = "Always"
 
   container {
     name   = "tfc-agent"
@@ -41,8 +41,6 @@ resource "azurerm_container_group" "tfc-agent" {
 
 data "azurerm_subscription" "primary" {}
 
-data "azurerm_client_config" "current" {}
-
 # you'll need to customize IAM policies to access resources as desired
 resource "azurerm_role_assignment" "tfc-agent-role" {
   scope                = data.azurerm_subscription.primary.id
@@ -52,7 +50,7 @@ resource "azurerm_role_assignment" "tfc-agent-role" {
 
 # from here to EOF is optional, for azure function autoscaler
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "${replace(var.resource_group_name, "-", "")}sa"
+  name                     = "tfcagentwebhooksa"
   resource_group_name      = data.azurerm_resource_group.rg.name
   location                 = data.azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -60,7 +58,7 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 resource "azurerm_storage_container" "storage_container" {
-  name                  = "${var.resource_group_name}-storage-container-functions"
+  name                  = "tfc-agent-webhook-storage-container-functions"
   storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
 }
@@ -83,7 +81,7 @@ data "azurerm_storage_account_blob_container_sas" "storage_account_blob_containe
 }
 
 resource "azurerm_app_service_plan" "app_service_plan" {
-  name                = "${var.resource_group_name}-app-service-plan"
+  name                = "tfc-agent-webhook-app-service-plan"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   kind                = "FunctionApp"
@@ -94,40 +92,68 @@ resource "azurerm_app_service_plan" "app_service_plan" {
   }
 }
 
+data "local_file" "file_function_app" {
+  filename = "${path.module}/function-app.zip"
+}
+
 resource "azurerm_storage_blob" "storage_blob" {
-  name                   = "${filesha256(data.archive_file.file_function_app.output_path)}.zip"
+  name                   = filesha256(data.local_file.file_function_app.filename)
   storage_account_name   = azurerm_storage_account.storage_account.name
   storage_container_name = azurerm_storage_container.storage_container.name
   type                   = "Block"
-  source                 = data.archive_file.file_function_app.output_path
+  source                 = data.local_file.file_function_app.filename
+}
+
+data "tfe_ip_ranges" "addresses" {}
+
+resource "random_id" "function_name_suffix" {
+  byte_length = 4
 }
 
 resource "azurerm_function_app" "function_app" {
-  name                = "${var.resource_group_name}-function-app"
+  name                = "tfc-agent-webhook-function-app-${random_id.function_name_suffix.hex}"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE"    = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.storage_container.name}/${azurerm_storage_blob.storage_blob.name}${data.azurerm_storage_account_blob_container_sas.storage_account_blob_container_sas.sas}",
-    "FUNCTIONS_WORKER_RUNTIME"    = "node",
-    "AzureWebJobsDisableHomepage" = "true",
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.appinsights.instrumentation_key,
+    "AZURE_SUBSCRIPTION_ID"          = data.azurerm_subscription.primary.subscription_id,
+    "AzureWebJobsDisableHomepage"    = "true",
+    "CONTAINER_GROUP"                = azurerm_container_group.tfc-agent.name
+    "FUNCTIONS_WORKER_RUNTIME"       = "python",
+    "RESOURCE_GROUP"                 = data.azurerm_resource_group.rg.name
+    "SALT"                           = var.notification_token,
+    "WEBSITE_RUN_FROM_PACKAGE"       = "https://${azurerm_storage_account.storage_account.name}.blob.core.windows.net/${azurerm_storage_container.storage_container.name}/${azurerm_storage_blob.storage_blob.name}${data.azurerm_storage_account_blob_container_sas.storage_account_blob_container_sas.sas}",
+  }
+  identity {
+    type = "SystemAssigned"
   }
   os_type = "linux"
   site_config {
-    linux_fx_version          = "node|14"
+    linux_fx_version          = "python|3.9"
     use_32_bit_worker_process = false
+    dynamic "ip_restriction" {
+      for_each = data.tfe_ip_ranges.addresses.notifications
+      content {
+        ip_address  = ip_restriction.value
+      }
+    }
   }
   storage_account_name       = azurerm_storage_account.storage_account.name
   storage_account_access_key = azurerm_storage_account.storage_account.primary_access_key
   version                    = "~3"
 }
 
-output "function_app_default_hostname" {
-  value = azurerm_function_app.function_app.default_hostname
+resource "azurerm_application_insights" "appinsights" {
+  name                = "tfc-agent-webhook-app-insights"
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  application_type    = "other"
 }
 
-data "archive_file" "file_function_app" {
-  type        = "zip"
-  source_dir  = "./function-app"
-  output_path = "function-app.zip"
+# give function permission to modify container group
+resource "azurerm_role_assignment" "function-role" {
+  scope                = azurerm_container_group.tfc-agent.id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_function_app.function_app.identity[0].principal_id
 }

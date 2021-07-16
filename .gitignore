@@ -31,3 +31,4 @@ override.tf.json
 remote_backend.tf
 
 .DS_Store
+.vscode
