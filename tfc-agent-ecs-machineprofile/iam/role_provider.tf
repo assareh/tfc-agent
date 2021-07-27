@@ -17,11 +17,11 @@ resource "aws_iam_role_policy_attachment" "agent_init_policy" {
 }
 
 data "aws_iam_policy_document" "agent_init_policy" {
-  statement {
-    effect    = "Allow"
-    actions   = ["ssm:GetParameters"]
-    resources = [aws_ssm_parameter.agent_token.arn]
-  }
+  #statement {
+  #  effect    = "Allow"
+  #  actions   = ["ssm:GetParameters"]
+  #  resources = [aws_ssm_parameter.agent_token.arn]
+  #}
   statement {
     effect    = "Allow"
     actions   = ["logs:CreateLogGroup"]
