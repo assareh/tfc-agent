@@ -14,15 +14,3 @@ data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
     }
   }
 }
-
-# Standard IAM Role Tags
-locals {
-  common_tags = {
-    owner              = "presto"
-    se-region          = "norcal"
-    purpose            = "Manage multiple IAM roles"
-    ttl                = 0 # hours
-    terraform          = "true"  # true/false
-    hc-internet-facing = "false" # true/false
-  }
-}

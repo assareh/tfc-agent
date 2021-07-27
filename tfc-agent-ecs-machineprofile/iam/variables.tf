@@ -13,12 +13,13 @@ variable "ttl" {
   default     = "1"
 }
 
+# Standard IAM Role Tags
 locals {
   common_tags = {
-    owner              = "your-name-here"
-    se-region          = "your-region-here"
-    purpose            = "Default state is dormant with no active resources. Runs a Terraform Cloud Agent when a run is queued."
-    ttl                = var.ttl # hours
+    owner              = "presto"
+    se-region          = "norcal"
+    purpose            = "Manage multiple IAM roles"
+    ttl                = 0 # hours
     terraform          = "true"  # true/false
     hc-internet-facing = "false" # true/false
   }
