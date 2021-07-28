@@ -79,13 +79,8 @@ resource "aws_ssm_parameter" "agent_token" {
 resource "aws_iam_role" "agent_init_update" {
   name               = "${var.prefix}-ecs-tfc-agent-task-init-role-update"
   managed_policy_arns = [var.agent_init_arn]
+  assume_role_policy = data.aws_iam_policy_document.agent_init_add.json
   tags               = local.common_tags
-}
-
-resource "aws_iam_role_policy" "agent_init_update" {
-  role   = aws_iam_role.agent_init_update.name
-  name   = "AccessSSMParameterforAgentToken"
-  policy = data.aws_iam_policy_document.agent_init_add.json
 }
 
 data "aws_iam_policy_document" "agent_init_add" {
@@ -94,11 +89,6 @@ data "aws_iam_policy_document" "agent_init_add" {
     actions   = ["ssm:GetParameters"]
     resources = [aws_ssm_parameter.agent_token.arn]
   }
-}
-
-resource "aws_iam_role_policy_attachment" "agent_init_update" {
-  role       = aws_iam_role.agent_init_update.name
-  policy = aws_iam_role_policy.agent_init_update.arn
 }
 
 
