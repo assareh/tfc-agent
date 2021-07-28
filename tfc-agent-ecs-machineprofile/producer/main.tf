@@ -102,7 +102,6 @@ data "aws_iam_policy_document" "agent_init_add" {
   }
 }
 
-
 # networking
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
