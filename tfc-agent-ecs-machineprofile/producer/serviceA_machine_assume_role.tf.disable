@@ -63,7 +63,7 @@ resource "aws_ssm_parameter" "agent_mprofile_token" {
   name        = "${var.prefix}-agent_mprofile_token"
   description = "Terraform Cloud agent token"
   type        = "SecureString"
-  value       = var.ecs_agent_pool_serviceA_token 
+  value       = var.ecs_agent_pool_serviceA_token
 }
 
 # task execution role for agent init
