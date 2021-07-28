@@ -5,11 +5,11 @@ resource "aws_iam_role" "agent_init" {
   tags               = local.common_tags
 }
 
-resource "aws_iam_role_policy" "agent_init_policy" {
-  role   = aws_iam_role.agent_init.name
-  name   = "AccessSSMParameterforAgentToken"
-  policy = data.aws_iam_policy_document.agent_init_policy.json
-}
+#resource "aws_iam_role_policy" "agent_init_policy" {
+#  role   = aws_iam_role.agent_init.name
+#  name   = "AccessSSMParameterforAgentToken"
+#  policy = data.aws_iam_policy_document.agent_init_policy.json
+#}
 
 resource "aws_iam_role_policy_attachment" "agent_init_policy" {
   role       = aws_iam_role.agent_init.name
