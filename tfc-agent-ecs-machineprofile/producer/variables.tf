@@ -62,7 +62,9 @@ variable "ecs_agent_pool_serviceA_token" {
 variable "agent_init_arn" {
   description = ""
 }
-
+variable "agent_init_id" {
+  description = ""
+}
 variable "aws_iam_role_agent_arn" {
   description = ""
 }
