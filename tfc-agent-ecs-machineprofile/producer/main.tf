@@ -86,8 +86,13 @@ resource "aws_iam_role" "agent_init_update" {
 data "aws_iam_policy_document" "agent_init_add" {
   statement {
     effect    = "Allow"
-    actions   = ["ssm:GetParameters",]
+    actions   = ["ssm:GetParameters"]
     resources = [aws_ssm_parameter.agent_token.arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["logs:CreateLogGroup"]
+    resources = ["arn:aws:logs:*:*:*"]
   }
 }
 
