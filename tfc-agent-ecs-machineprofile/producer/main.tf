@@ -86,7 +86,7 @@ resource "aws_iam_role" "agent_init_update" {
 resource "aws_iam_role_policy" "agent_init_policy" {
   role   = aws_iam_role.agent_init_update.name
   name   = "AccessSSMParameterforAgentToken"
-  policy = data.aws_iam_policy_document.agent_init_policy.json
+  policy = data.aws_iam_policy_document.agent_init_add.json
 }
 
 data "aws_iam_policy_document" "agent_init_add" {
