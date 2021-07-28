@@ -100,7 +100,12 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
 output "agent_init_arn" {
   value = aws_iam_role.agent_init.arn
 }
-
 output "agent_arn" {
   value = aws_iam_role.agent.arn
+}
+output "agent_init_id" {
+  value = aws_iam_role.agent_init.id
+}
+output "agent_id" {
+  value = aws_iam_role.agent.id
 }
