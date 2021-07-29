@@ -70,12 +70,12 @@ resource "aws_ecs_task_definition" "tfc_agent" {
 }
 
 # Add TFC agent token to SSM to securely pass to ECS task
-resource "aws_ssm_parameter" "agent_token" {
-  name        = "${var.prefix}-tfc-agent-token"
-  description = "Terraform Cloud agent token"
-  type        = "SecureString"
-  value       = var.ecs_agent_pool_serviceB_token
-}
+#resource "aws_ssm_parameter" "agent_token" {
+#  name        = "${var.prefix}-tfc-agent-token"
+#  description = "Terraform Cloud agent token"
+#  type        = "SecureString"
+#  value       = var.ecs_agent_pool_serviceB_token
+#}
 
 # Add ECS SSM Access policy to the existing role
 resource "aws_iam_role_policy" "agent_init_policy" {
