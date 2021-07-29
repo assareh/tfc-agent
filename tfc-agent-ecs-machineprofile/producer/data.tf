@@ -6,4 +6,6 @@ data "terraform_remote_state" "presto_projects_ws_aws_iam" {
     name    = "presto-projects/ws_aws_iam"
   }
 }
-# data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.name
+# data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
+# data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_arn
+# data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_id

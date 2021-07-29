@@ -24,10 +24,10 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   family                   = "${var.prefix}-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  execution_role_arn       = var.agent_init_arn
-  task_role_arn            = var.aws_iam_role_agent_arn
-  #task_role_arn            = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
-  #task_role_arn            = aws_iam_role.agent.arn
+  #execution_role_arn       = var.agent_init_arn
+  execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_arn
+  #task_role_arn            = var.aws_iam_role_agent_arn
+  task_role_arn            = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
   cpu                      = var.task_cpu
   memory                   = var.task_mem
   tags                     = local.common_tags
@@ -69,6 +69,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   )
 }
 
+# Add TFC agent token to SSM to securely pass to ECS task
 resource "aws_ssm_parameter" "agent_token" {
   name        = "${var.prefix}-tfc-agent-token"
   description = "Terraform Cloud agent token"
@@ -76,16 +77,9 @@ resource "aws_ssm_parameter" "agent_token" {
   value       = var.ecs_agent_pool_serviceB_token
 }
 
-# update role to include ssm
-#resource "aws_iam_role" "agent_init_update" {
-#  name               = "${var.prefix}-ecs-tfc-agent-task-init-role-update"
-#  managed_policy_arns = [var.agent_init_arn]
-#  assume_role_policy = data.aws_iam_policy_document.agent_init_add.json
-#  tags               = local.common_tags
-#}
-
+# Add ECS SSM Access policy to the existing role
 resource "aws_iam_role_policy" "agent_init_policy" {
-  role   = var.agent_init_id
+  role   = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_id
   name   = "AccessSSMParameterforAgentToken"
   policy = data.aws_iam_policy_document.agent_init_add.json
 }

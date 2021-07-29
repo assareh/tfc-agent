@@ -60,14 +60,18 @@ variable "ecs_agent_pool_serviceA_token" {
 }
 
 variable "agent_init_arn" {
-  description = ""
+  default = ""
 }
 variable "agent_init_id" {
-  description = ""
+  default = ""
 }
 variable "aws_iam_role_agent_arn" {
-  description = ""
+  default = ""
 }
+variable "aws_iam_role_agent_id" {
+  default = ""
+}
+
 // Tags
 variable "ttl" {
   description = "optional value of ttl tag on cloud resources"
