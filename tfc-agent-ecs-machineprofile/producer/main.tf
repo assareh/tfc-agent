@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "agent_init_add" {
   statement {
     effect    = "Allow"
     actions   = ["ssm:GetParameters"]
-    resources = [aws_ssm_parameter.agent_token.arn]
+    resources = [data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceB_tfc_arn]
   }
   statement {
     effect    = "Allow"
