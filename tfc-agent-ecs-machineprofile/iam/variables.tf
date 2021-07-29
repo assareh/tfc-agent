@@ -21,6 +21,10 @@ variable "ecs_agent_pool_serviceB_token" {
   default     = ""
 }
 
+variable "role_trusted_entities" {
+  default     = "arn:aws:iam::711129375688:role/*"
+}
+
 # Standard IAM Role Tags
 locals {
   common_tags = {
