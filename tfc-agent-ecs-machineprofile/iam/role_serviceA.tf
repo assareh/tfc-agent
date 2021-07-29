@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "ecs_init_serviceA_policy" {
   statement {
     effect    = "Allow"
     actions   = ["ssm:GetParameters"]
-    resources = [aws_ssm_parameter.agent_token.arn]
+    resources = [aws_ssm_parameter.serviceA_agent_token.arn]
   }
   statement {
     effect    = "Allow"
