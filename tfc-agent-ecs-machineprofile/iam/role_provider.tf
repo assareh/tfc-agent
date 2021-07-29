@@ -9,7 +9,7 @@ resource "aws_ssm_parameter" "agent_token" {
 # task execution role for agent init
 resource "aws_iam_role" "ecs_init_serviceB" {
   name               = "${var.prefix}-ecs-tfc-agent-task-init-role"
-  assume_role_policy = data.aws_iam_policy_document.agent_assume_role_policy_definition.json
+  assume_role_policy = data.aws_iam_policy_document.tfc_agent_task_assume_role_policy_definition.json
   tags               = local.common_tags
 }
 
