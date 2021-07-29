@@ -59,12 +59,12 @@ variable "ecs_agent_pool_serviceA_token" {
   description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
 }
 
-variable "agent_init_arn" {
+variable "ecs_init_serviceB_arn" {
   default = ""
 }
-variable "agent_init_id" {
-  default = ""
-}
+#variable "ecs_init_serviceB_id" {
+#  default = ""
+#}
 variable "aws_iam_role_agent_arn" {
   default = ""
 }

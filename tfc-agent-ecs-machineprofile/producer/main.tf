@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   #execution_role_arn       = var.agent_init_arn
-  execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_arn
+  execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.ecs_init_serviceB_arn
   #task_role_arn            = var.aws_iam_role_agent_arn
   task_role_arn            = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
   cpu                      = var.task_cpu

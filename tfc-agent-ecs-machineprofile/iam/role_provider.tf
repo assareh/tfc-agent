@@ -76,13 +76,13 @@ resource "aws_iam_role_policy_attachment" "tfc_agent_task_task_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-output "agent_init_arn" {
+output "ecs_init_serviceB_arn" {
   value = aws_iam_role.ecs_init_serviceB.arn
 }
 output "agent_arn" {
   value = aws_iam_role.tfc_agent_task.arn
 }
-output "agent_init_id" {
+output "ecs_init_serviceB_id" {
   value = aws_iam_role.ecs_init_serviceB.id
 }
 output "agent_id" {

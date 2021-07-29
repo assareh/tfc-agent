@@ -8,7 +8,6 @@ data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
       type        = "Service"
     }
     principals {
-      #identifiers = ["arn:aws:iam::711129375688:role/presto-ecs-tfc-agent-role"]
       identifiers = [aws_iam_role.tfc_agent_task.arn]
       type        = "AWS"
     }
