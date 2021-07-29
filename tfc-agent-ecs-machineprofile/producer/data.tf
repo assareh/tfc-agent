@@ -9,3 +9,4 @@ data "terraform_remote_state" "presto_projects_ws_aws_iam" {
 # data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
 # data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_arn
 # data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_id
+# data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceB_tfc_arn

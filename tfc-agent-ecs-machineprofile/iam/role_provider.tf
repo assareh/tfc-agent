@@ -8,7 +8,7 @@ resource "aws_ssm_parameter" "agent_token" {
 
 # task execution role for agent init
 resource "aws_iam_role" "ecs_init_serviceB" {
-  name               = "${var.prefix}-ecs-tfc-agent-task-init-role"
+  name               = "${var.prefix}-ecs_init_serviceB-role"
   assume_role_policy = data.aws_iam_policy_document.tfc_agent_task_assume_role_policy_definition.json
   tags               = local.common_tags
 }
@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "ecs_init_serviceB_policy" {
 
 # task role for tfc agent
 resource "aws_iam_role" "tfc_agent_task" {
-  name               = "${var.prefix}-ecs-tfc-tfc_agent_task-role"
+  name               = "${var.prefix}-ecs-tfc_agent_task-role"
   assume_role_policy = data.aws_iam_policy_document.tfc_agent_task_assume_role_policy_definition.json
   tags               = local.common_tags
 }
@@ -87,4 +87,7 @@ output "agent_init_id" {
 }
 output "agent_id" {
   value = aws_iam_role.tfc_agent_task.id
+}
+output "aws_ssm_param_serviceB_tfc_arn" {
+  value = aws_ssm_parameter.agent_token.arn
 }

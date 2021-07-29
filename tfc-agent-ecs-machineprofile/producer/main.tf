@@ -61,7 +61,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
         secrets = [
           {
             name      = "TFC_AGENT_TOKEN",
-            valueFrom = aws_ssm_parameter.agent_token.arn
+            valueFrom = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceB_tfc_arn
           }
         ]
       }
