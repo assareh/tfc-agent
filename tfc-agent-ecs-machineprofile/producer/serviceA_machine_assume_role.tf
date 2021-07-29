@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "serviceA_tfc_agent_task" {
             awslogs-create-group : "true",
             awslogs-group : "awslogs-tfc-agent"
             awslogs-region : var.region
-            awslogs-stream-prefix : "awslogs-tfc-agent-mprofile"
+            awslogs-stream-prefix : "serviceA"
           }
         }
         environment = [
