@@ -1,4 +1,4 @@
-# ECS Agent Policy all Service Roles should assume
+# ECS Task Policy that will assume a specific Service Role
 data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
   statement {
     effect  = "Allow"

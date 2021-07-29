@@ -1,6 +1,6 @@
 # Add TFC agent token to SSM so ECS can access serviceB's TFC agent_pool
 resource "aws_ssm_parameter" "agent_token" {
-  name        = "${var.prefix}-tfc-agent-token"
+  name        = "${var.prefix}-serviceB-tfc-agent-token"
   description = "Terraform Cloud agent token"
   type        = "SecureString"
   value       = var.ecs_agent_pool_serviceB_token
@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "ecs_init_serviceB_policy" {
 }
 
 #
-# create role for serviceB with EC2 Full Access.
+# Create role for serviceB with EC2 Full Access.
 # This role will be assumed by the TFC agent running as an ECS task
 #
 resource "aws_iam_role" "serviceB" {
