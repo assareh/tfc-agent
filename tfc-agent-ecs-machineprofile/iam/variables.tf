@@ -13,6 +13,14 @@ variable "ttl" {
   default     = "1"
 }
 
+variable "ecs_agent_pool_serviceA_token" {
+  default     = ""
+}
+
+variable "ecs_agent_pool_serviceB_token" {
+  default     = ""
+}
+
 # Standard IAM Role Tags
 locals {
   common_tags = {
