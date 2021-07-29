@@ -36,19 +36,3 @@ resource "aws_iam_role_policy_attachment" "tfc_agent_task_task_policy" {
   role       = aws_iam_role.tfc_agent_task.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-
-output "ecs_init_serviceB_arn" {
-  value = aws_iam_role.ecs_init_serviceB.arn
-}
-output "agent_arn" {
-  value = aws_iam_role.tfc_agent_task.arn
-}
-output "ecs_init_serviceB_id" {
-  value = aws_iam_role.ecs_init_serviceB.id
-}
-output "agent_id" {
-  value = aws_iam_role.tfc_agent_task.id
-}
-output "aws_ssm_param_serviceB_tfc_arn" {
-  value = aws_ssm_parameter.agent_token.arn
-}

@@ -62,6 +62,9 @@ variable "ecs_agent_pool_serviceA_token" {
 variable "ecs_init_serviceB_arn" {
   default = ""
 }
+variable "ecs_init_serviceA_arn" {
+  default = ""
+}
 #variable "ecs_init_serviceB_id" {
 #  default = ""
 #}
