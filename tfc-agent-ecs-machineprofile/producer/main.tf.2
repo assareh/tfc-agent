@@ -69,6 +69,34 @@ resource "aws_ecs_task_definition" "tfc_agent" {
   )
 }
 
+# Add TFC agent token to SSM to securely pass to ECS task
+#resource "aws_ssm_parameter" "agent_token" {
+#  name        = "${var.prefix}-tfc-agent-token"
+#  description = "Terraform Cloud agent token"
+#  type        = "SecureString"
+#  value       = var.ecs_agent_pool_serviceB_token
+#}
+
+# Add ECS SSM Access policy to the existing role
+resource "aws_iam_role_policy" "agent_init_policy" {
+  role   = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_init_id
+  name   = "AccessSSMParameterforAgentToken"
+  policy = data.aws_iam_policy_document.agent_init_add.json
+}
+
+data "aws_iam_policy_document" "agent_init_add" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ssm:GetParameters"]
+    resources = [data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceB_tfc_arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["logs:CreateLogGroup"]
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+
 # networking
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -160,6 +188,7 @@ resource "aws_s3_bucket_object" "webhook" {
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.prefix}-webhook-lambda"
   tags = local.common_tags
+
   assume_role_policy = data.aws_iam_policy_document.webhook_assume_role_policy_definition.json
 }
 
