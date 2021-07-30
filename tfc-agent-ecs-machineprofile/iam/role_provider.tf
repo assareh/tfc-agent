@@ -28,7 +28,8 @@ data "aws_iam_policy_document" "tfc_agent_task_policy_definition" {
   statement {
     effect    = "Allow"
     actions   = ["sts:AssumeRole"]
-    resources = var.trusted_entity_list
+    #resources = var.trusted_entity_list
+    resources = ["arn:aws:iam::711129375688:role/*"]
   }
 }
 
