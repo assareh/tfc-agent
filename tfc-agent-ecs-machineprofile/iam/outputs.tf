@@ -16,7 +16,7 @@ output "ecs_init_serviceA_arn" {
 }
 
 output "aws_ssm_param_serviceB_tfc_arn" {
-  value = aws_ssm_parameter.agent_token.arn
+  value = aws_ssm_parameter.serviceB_agent_token.arn
 }
 output "aws_ssm_param_serviceA_tfc_arn" {
   value = aws_ssm_parameter.serviceA_agent_token.arn
