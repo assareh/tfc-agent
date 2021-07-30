@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "ecs_assume_role_policy_definition" {
     }
     principals {
       #identifiers = [aws_iam_role.tfc_agent_task.arn]
-      identifiers = ["arn:aws:iam::711129375688:role/*"]
+      identifiers = [aws_iam_role.tfc_agent_task.arn]
       type        = "AWS"
     }
   }
