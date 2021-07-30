@@ -1,5 +1,5 @@
 # Add TFC agent token to SSM so ECS can access serviceB's TFC agent_pool
-resource "aws_ssm_parameter" "agent_token" {
+resource "aws_ssm_parameter" "serviceB_agent_token" {
   name        = "${var.prefix}-serviceB-tfc-agent-token"
   description = "Terraform Cloud agent token"
   type        = "SecureString"
@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "ecs_init_serviceB_policy" {
   statement {
     effect    = "Allow"
     actions   = ["ssm:GetParameters"]
-    resources = [aws_ssm_parameter.agent_token.arn]
+    resources = [aws_ssm_parameter.serviceB_agent_token.arn]
   }
   statement {
     effect    = "Allow"
