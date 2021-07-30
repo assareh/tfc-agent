@@ -10,7 +10,6 @@ data "aws_iam_policy_document" "tfc_agent_task_A_assume_role_policy_definition" 
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::711129375688:role/*"]
     principals {
       identifiers = ["ecs-tasks.amazonaws.com"]
       type        = "Service"
@@ -18,21 +17,21 @@ data "aws_iam_policy_document" "tfc_agent_task_A_assume_role_policy_definition" 
   }
 }
 
-#resource "aws_iam_role_policy" "tfc_agent_task_A_policy" {
-##  name = "${var.prefix}-ecs-tfc-tfc_agent_task_A-policy"
-#  role = aws_iam_role.tfc_agent_task_A.id
+resource "aws_iam_role_policy" "tfc_agent_task_A_policy" {
+  name = "${var.prefix}-ecs-tfc-tfc_agent_task_A-policy"
+  role = aws_iam_role.tfc_agent_task_A.id
 
-#  policy = data.aws_iam_policy_document.tfc_agent_task_A_policy_definition.json
-#}
+  policy = data.aws_iam_policy_document.tfc_agent_task_A_policy_definition.json
+}
 
-#data "aws_iam_policy_document" "tfc_agent_task_A_policy_definition" {
-#  statement {
-#    effect    = "Allow"
-#    actions   = ["sts:AssumeRole"]
-#    #resources = var.trusted_entity_list
-#    resources = ["arn:aws:iam::711129375688:role/*"]
-#  }
-#}
+data "aws_iam_policy_document" "tfc_agent_task_A_policy_definition" {
+  statement {
+    effect    = "Allow"
+    actions   = ["sts:AssumeRole"]
+    #resources = var.trusted_entity_list
+    resources = ["arn:aws:iam::711129375688:role/*"]
+  }
+}
 
 resource "aws_iam_role_policy_attachment" "tfc_agent_task_A_task_policy" {
   role       = aws_iam_role.tfc_agent_task_A.name
