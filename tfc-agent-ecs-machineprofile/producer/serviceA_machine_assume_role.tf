@@ -25,7 +25,7 @@ resource "aws_ecs_task_definition" "serviceA_tfc_agent_task" {
     [
       {
         name : "tfc-agent-mprofile"
-        image : "ppresto/tfc-agent"
+        image : "ppresto/tfc-agent:0.2"
         essential : true
         cpu : var.task_def_cpu
         memory : var.task_def_mem
