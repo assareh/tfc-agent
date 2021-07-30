@@ -55,4 +55,3 @@ resource "aws_iam_role_policy_attachment" "serviceA_attach" {
 output "iam_role_serviceA" {
   value = aws_iam_role.serviceA.arn
 }
-}
