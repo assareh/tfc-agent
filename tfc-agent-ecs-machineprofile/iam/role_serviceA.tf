@@ -47,21 +47,6 @@ resource "aws_iam_role" "serviceA" {
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_serviceA.json
 }
 
-# ECS Task Policy that will assume a specific Service Role
-data "aws_iam_policy_document" "ecs_assume_role_policy_serviceA" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      identifiers = ["ecs-tasks.amazonaws.com"]
-      type        = "Service"
-    }
-    principals {
-      identifiers = [aws_iam_role.tfc_agent_task_A.arn]
-      type        = "AWS"
-    }
-  }
-}
 resource "aws_iam_role_policy_attachment" "serviceA_attach" {
   role       = aws_iam_role.serviceA.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
