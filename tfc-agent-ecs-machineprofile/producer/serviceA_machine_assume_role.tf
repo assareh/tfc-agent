@@ -16,8 +16,7 @@ resource "aws_ecs_task_definition" "serviceA_tfc_agent_task" {
   family                   = "${var.prefix}-serviceA_tfc_agent_task_task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  #execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.ecs_init_serviceA_arn
-  execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.ecs_init_serviceB_arn
+  execution_role_arn       = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.ecs_init_serviceA_arn
   task_role_arn            = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
   cpu                      = var.task_cpu
   memory                   = var.task_mem
@@ -52,7 +51,7 @@ resource "aws_ecs_task_definition" "serviceA_tfc_agent_task" {
         secrets = [
           {
             name      = "TFC_AGENT_TOKEN",
-            valueFrom = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceB_tfc_arn
+            valueFrom = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.aws_ssm_param_serviceA_tfc_arn
           }
         ]
       }
