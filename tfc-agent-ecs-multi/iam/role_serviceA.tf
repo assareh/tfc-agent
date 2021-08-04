@@ -44,7 +44,8 @@ data "aws_iam_policy_document" "ecs_init_serviceA_policy" {
 resource "aws_iam_role" "serviceA" {
   name = "iam-role-serviceA"
   tags = local.common_tags
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_serviceA.json
+  #assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_serviceA.json
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_role_policy_definition.json
 }
 
 # ECS Task Policy that will assume a specific Service Role
