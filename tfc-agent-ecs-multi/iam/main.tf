@@ -1,3 +1,7 @@
+provider "aws" {
+  region = var.region
+}
+
 # TFCB Workspace administration
 # For each service workspace Add agent_pool and token.
 # The ECS service task running tfc-agent will use these to connect.
