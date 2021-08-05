@@ -3,7 +3,7 @@ resource "aws_ssm_parameter" "serviceA_agent_token" {
   name        = "${var.prefix}-serviceA-tfc-agent-token"
   description = "Terraform Cloud agent token"
   type        = "SecureString"
-  value       = var.ecs_agent_pool_serviceA_token
+  value       = tfe_agent_token.ecs-agent-serviceA-token.token
 }
 
 # ECS init role with access to SSM param container agent_pool token (execution_role_arn)
