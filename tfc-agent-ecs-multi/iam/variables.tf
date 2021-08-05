@@ -1,4 +1,9 @@
 
+variable "organization" {
+  description = "TFC organization name"
+  default = "presto-projects"
+}
+
 variable "prefix" {
   description = "Name prefix to add to the resources"
 }
