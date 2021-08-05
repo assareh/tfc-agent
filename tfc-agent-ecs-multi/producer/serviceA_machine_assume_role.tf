@@ -3,8 +3,7 @@ resource "aws_ecs_service" "serviceA_tfc_agent" {
   name            = "${var.prefix}-serviceA_svc"
   cluster         = aws_ecs_cluster.tfc_agent.id
   launch_type     = "FARGATE"
-  #task_definition = aws_ecs_task_definition.serviceA_tfc_agent_task.arn
-  task_definition = data.terraform_remote_state.presto_projects_ws_aws_iam.outputs.agent_arn
+  task_definition = aws_ecs_task_definition.serviceA_tfc_agent_task.arn
   desired_count   = var.desired_count
   network_configuration {
     security_groups  = [aws_security_group.tfc_agent.id]
