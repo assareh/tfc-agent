@@ -5,6 +5,10 @@ provider "aws" {
 # TFCB Workspace administration
 # For each service workspace Add agent_pool and token.
 # The ECS service task running tfc-agent will use these to connect.
+data "tfe_organization_membership" "presto-projects" {
+  organization  = "presto-projects"
+  email = "ppresto@hashicorp.com"
+}
 
 # monthly timestamp
 locals {
@@ -15,7 +19,8 @@ locals {
 # ServiceA Agent Pool
 resource "tfe_agent_pool" "ecs-agent-pool-serviceA" {
   name         = "ecs-agent-pool-serviceA"
-  organization = var.organization
+  #organization = var.organization
+  organization = data.tfe_organization_membership.presto-projects.id
 }
 resource "tfe_agent_token" "ecs-agent-serviceA-token" {
   agent_pool_id = tfe_agent_pool.ecs-agent-pool-serviceA.id
