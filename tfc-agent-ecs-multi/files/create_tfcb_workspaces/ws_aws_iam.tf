@@ -1,5 +1,5 @@
 module "ws_aws_iam" {
-    source  = "app.terraform.io/presto-projects/tfe-workspace/mod"
+    source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
