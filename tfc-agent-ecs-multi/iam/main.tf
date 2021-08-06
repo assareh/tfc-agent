@@ -23,8 +23,7 @@ locals {
 # ServiceA Agent Pool
 resource "tfe_agent_pool" "ecs-agent-pool-serviceA" {
   name         = "ecs-agent-pool-serviceA"
-  #organization = var.organization
-  organization = data.tfe_organization_membership.presto-projects.id
+  organization = var.organization
 }
 resource "tfe_agent_token" "ecs-agent-serviceA-token" {
   agent_pool_id = tfe_agent_pool.ecs-agent-pool-serviceA.id
