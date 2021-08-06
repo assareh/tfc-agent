@@ -1,3 +1,17 @@
+# TFCB Workspace administration
+# For each service workspace Add agent_pool and token.
+# The ECS service task running tfc-agent will use these to connect.
+
+# ServiceB Agent Pool
+resource "tfe_agent_pool" "ecs-agent-pool-serviceB" {
+  name         = "ecs-agent-pool-serviceB"
+  organization = var.organization
+}
+resource "tfe_agent_token" "ecs-agent-serviceB-token" {
+  agent_pool_id = tfe_agent_pool.ecs-agent-pool-serviceB.id
+  description   = "ecs-agent-serviceB-token-${local.time}"
+}
+
 # Add TFC agent token to SSM so ECS can access serviceB's TFC agent_pool
 resource "aws_ssm_parameter" "serviceB_agent_token" {
   name        = "${var.prefix}-serviceB-tfc-agent-token"
