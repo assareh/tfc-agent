@@ -1,8 +1,3 @@
-provider "tfe" {
-  #version = "<= 0.7.0"
-  token = var.tfe_token
-}
-
 // Workspace Data
 data "terraform_remote_state" "presto_projects_ws_aws_iam" {
   backend = "atlas"
