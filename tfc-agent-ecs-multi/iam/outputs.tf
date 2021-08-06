@@ -21,3 +21,9 @@ output "aws_ssm_param_serviceB_tfc_arn" {
 output "aws_ssm_param_serviceA_tfc_arn" {
   value = aws_ssm_parameter.serviceA_agent_token.arn
 }
+output "serviceA_agentpool_id" {
+  value = tfe_agent_pool.ecs-agent-pool-serviceA.id
+}
+output "serviceB_agentpool_id" {
+  value = tfe_agent_pool.ecs-agent-pool-serviceB.id
+}
