@@ -7,10 +7,9 @@ provider "tfe" {
 }
 
 # monthly timestamp used when creating serviceX tfc-agent token.
-# If IAM workspace is ran after 30 days the token will be rotated
+# If IAM workspace is ran the token will be rotated and available
 locals {
-    #time = "${formatdate("DDMMYYYY-hhmm",timestamp())}"
-    time = "${formatdate("MM-YYYY",timestamp())}"
+    time = "${formatdate("DDMMYYYY-hhmm",timestamp())}"
 }
 
 # Default ECS Task Policy that will assume a specific Service Role.

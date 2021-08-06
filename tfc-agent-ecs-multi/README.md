@@ -3,15 +3,15 @@
 This repository provides an example of running multiple [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) pools on a single AWS ECS cluster.  It uses the same credential free provisioning with [Assume Role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#assume-role) as the original example.  Additionally, it includes an example `/iam` folder that the IAM team could create per service's workspace to allow a service read access to only its IAM credentials.  These credentials can be automatically pulled from TFC using remote state (TBD).
 
 ## TFCB Workspaces
-1. Admin-TFE-Workspace: Creates standard workspaces with sensitive and non sensitive vars pre populated.  
+1. Admin-TFE-Workspace: Creates standard workspaces with sensitive and non sensitive vars pre populated.  We will use this workspace to manage all our other workspaces.
 2. First create `ws_aws_iam` to manage IAM access. This workspace will manage service roles so ECS can assume the serviceX role and run tasks with the right serviceX permissions.  Additionally serviceX will get an agent pool, token, and AWS SSM param with the token built fully isolating its TFCB runs from other services.
    1. To onboard a new service update this workspace first.
    2. Configure your service or use exammples for serviceA and serviceB.
 3. Next create `ws_aws_ecs_tfcagents`.  This is the ECS cluster that will isolate every service's TFCB runs by creating an ECS service per service.  This requires IAM roles so should be ran after ws_aws_iam.  This workspace contains the ECS task definitions for each service it supports and will need to be updated when onboarding new services.
-4. To onboard new services...
-   1. Add it to `ws_aws_iam` so you have the service role, and tfcagent pool and token.
-   2. Add it to `ws_aws_ecs_tfcagents` so you have your specific service task defined
-   3. Create a new workspace that will assume the service role and provision its stack.
+4. Onboard new services...
+   1. Add the service to `ws_aws_iam` so you have the service role, and tfcagent pool and token.
+   2. Add the service to `ws_aws_ecs_tfcagents` so you have your specific service task defined
+   3. Create a new workspace for the service.  This will contain only the tf the service wants to provision.  The tf HCL will use assume role to provision resources without requiring any credentials.
 
 ## Prerequisites
 * [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business)
