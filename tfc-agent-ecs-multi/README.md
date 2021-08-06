@@ -1,9 +1,9 @@
 # Credential free provisioning with Terraform Cloud Agent on AWS ECS
 
-This repository provides an example of running multiple [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) pools on a single AWS ECS cluster.  It uses the same credential free provisioning with [Assume Role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#assume-role) as the original example.  Additionally, it includes an example `/iam` folder that the IAM team could create per service's workspace to allow a service read access to only its IAM credentials.  These credentials can be automatically pulled from TFC using remote state (TBD).
+This repository provides an example of running multiple [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) pools each tied to their own ECS fargate service within the same ECS cluster.  This is helpful for any environment using TFCB that needs to issolate service team provisioning tasks and permissions from eachother, support multiple AWS accounts, and do it in a scalable way.   It uses the same credential free provisioning in the original [tfc-agent-ecs](https://github.com/assareh/tfc-agent/tree/master/tfc-agent-ecs) example.  To support multiple teams or AWS accounts better we will use multiple workspaces to break out the various roles and responsibilities.  For efficient administration of these TFCB workspaces we will leverage the TFE provider to build and manage our workspaces with IaC too.  
 
-## TFCB Workspaces
-1. Admin-TFE-Workspace: Creates standard workspaces with sensitive and non sensitive vars pre populated.  We will use this workspace to manage all our other workspaces.
+## TFCB Workspaces Overview
+1. [Optional] Admin-TFE-Workspace: This can be used as a centralized admin workspaces that contains all sensitive or standard inputs and should only be accessible by owners.  You can use this to initially populate newly created child workspaces with already encrypted variables.  This may not meet all production security requirements so check with the secops team.
 2. First create `ws_aws_iam` to manage IAM access. This workspace will manage service roles so ECS can assume the serviceX role and run tasks with the right serviceX permissions.  Additionally serviceX will get an agent pool, token, and AWS SSM param with the token built fully isolating its TFCB runs from other services.
    1. To onboard a new service update this workspace first.
    2. Configure your service or use exammples for serviceA and serviceB.
@@ -16,7 +16,14 @@ This repository provides an example of running multiple [tfc-agent](https://hub.
 ## Prerequisites
 * [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business)
 * Create 2 agent pools and save the tokens for variables in the producer workspace.
-  
+
+## TFCB Setup
+First fork or clone this repo in your github.com account.
+```
+cd tfc-agent-ecs-multi/files/create_tfcb_workspaces
+```
+Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.
+
 ## Setup
 Create the `producer` workspace and point to `/producer` directory. It contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioning infrastructure with Terraform.  We are creating an additional `iam_role_ecs_agent` role that will be used by our consumer using a machine_profile instead.  This workspace requires a token for each tfc_agent_pool it will manage.  These agent pools should be setup as a pre-req and you can do this with IaC using the TFE provider.
 
