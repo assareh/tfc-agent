@@ -1,12 +1,10 @@
+# ECS task agent role.  Will be used to assume serviceX role.
 output "agent_arn" {
   value = aws_iam_role.tfc_agent_task.arn
 }
-output "ecs_init_serviceB_id" {
-  value = aws_iam_role.ecs_init_serviceB.id
-}
-output "agent_id" {
-  value = aws_iam_role.tfc_agent_task.id
-}
+#output "agent_id" {
+#  value = aws_iam_role.tfc_agent_task.id
+#}
 
 output "ecs_init_serviceB_arn" {
   value = aws_iam_role.ecs_init_serviceB.arn

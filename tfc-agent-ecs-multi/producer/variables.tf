@@ -71,9 +71,9 @@ variable "ecs_init_serviceA_arn" {
 variable "aws_iam_role_agent_arn" {
   default = ""
 }
-variable "aws_iam_role_agent_id" {
-  default = ""
-}
+#variable "aws_iam_role_agent_id" {
+#  default = ""
+#}
 
 // Tags
 variable "ttl" {
