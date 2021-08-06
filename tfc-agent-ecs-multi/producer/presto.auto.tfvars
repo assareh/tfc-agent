@@ -8,8 +8,9 @@ max_count     = 4
 #   Use the remote_state datasource.
 # Optionally, you can manually enter the information here.
 #   FYI: You will need to uncomment lines in main.tf to reference these vars
-ecs_agent_pool_serviceA_token = var.ecs_agent_pool_serviceA_token
-ecs_agent_pool_serviceB_token = var.ecs_agent_pool_serviceB_token
+tfc_agent_token = "test"
+ecs_agent_pool_serviceA_token = "test"
+ecs_agent_pool_serviceB_token = "test"
 ecs_init_serviceB_arn = "arn:aws:iam::711129375688:role/presto-ecs-tfc-agent-task-init-role"
 ecs_init_serviceA_arn = "arn:aws:iam::711129375688:role/presto-ecs-tfc-agent-task-init-role"
 #agent_init_id = "presto-ecs-tfc-agent-task-init-role"
