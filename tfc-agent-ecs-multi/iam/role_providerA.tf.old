@@ -37,3 +37,8 @@ resource "aws_iam_role_policy_attachment" "tfc_agent_task_A_task_policy" {
   role       = aws_iam_role.tfc_agent_task_A.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+# Test
+output "tfc_agent_task_A_arn" {
+  value = aws_iam_role.tfc_agent_task_A.arn
+}
