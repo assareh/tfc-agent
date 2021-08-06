@@ -1,6 +1,10 @@
 provider "aws" {
   region = var.region
 }
+provider "tfe" {
+  #version = "<= 0.7.0"
+  token = var.tfe_token
+}
 
 # TFCB Workspace administration
 # For each service workspace Add agent_pool and token.

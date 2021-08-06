@@ -1,6 +1,6 @@
 
 variable "organization" { default = "presto-projects" }
-
+variable "tfe_token" {}
 variable "prefix" {
   description = "Name prefix to add to the resources"
 }
