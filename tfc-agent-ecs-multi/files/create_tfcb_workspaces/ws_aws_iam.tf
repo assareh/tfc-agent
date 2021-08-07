@@ -11,6 +11,8 @@ module "ws_aws_iam" {
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
     aws_default_region = "${var.aws_default_region}"
+    aws_secret_access_key = "${var.aws_secret_access_key}"
+    aws_access_key_id = "${var.aws_access_key_id}"
     tf_variables = {
         "project_name" = "AWS_IAM_PROFILE_ADMIN"
         "prefix" = "presto"

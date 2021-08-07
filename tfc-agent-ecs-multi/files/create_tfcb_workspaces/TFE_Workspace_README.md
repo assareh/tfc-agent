@@ -12,6 +12,9 @@ Required
 OAUTH_TOKEN_ID <setup github oauth and use ID here>
 ATLAS_TOKEN <Enterprise TF Token>
 organization <your github org name>
+AWS_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION
 ```
 
 Optional
@@ -24,9 +27,6 @@ GOOGLE_CREDENTIAL
 GOOGLE_PROJECT
 GOOGLE_REGION
 GOOGLE_ZONE
-AWS_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION
 ```
 
 You will see a couple `template.json` files in this directory.  The script will update these templates and using curl will call the TFCB API to create your workspace and any defined variables.
@@ -39,7 +39,7 @@ You will see a couple `template.json` files in this directory.  The script will 
 4. Make sure [python](https://www.python.org/downloads/) is installed on your machine and in your path since the script uses python to parse JSON documents returned by the Terraform Enterprise REST API.  You can updated the script to use jq if you want.
 5. Build your first workspace using the API script in this repo.
 
-To use the TFCB API script you need to update it for your environment.  Update the following variables in `./addAdmin_workspace.sh`:
+To use the TFCB API script you need to update it for your environment.  Customize the following variables in `./addAdmin_workspace.sh`:
 ```
 # The default is using the TFCB address. Update if using TFE onprem.
 address="app.terraform.io"
@@ -47,15 +47,23 @@ address="app.terraform.io"
 # Update the organization with your TFCB organization name
 organization="presto-projects"
 
-# This is the default ADMIN workspace name and can be changed.
-workspace="ADMIN-TFCB-WS"
-
 # Set this github URL to your forked version of this repo
 git_url="https://github.com/ppresto/tfc-agent.git"
+
+# Admin Workspace Name
+workspace="ADMIN-TFCB-WS"
+
+# Github repo path to use for managing your workspaces with IaC
+WORKSPACE_DIR="tfc-agent-ecs-multi/files/create_tfcb_workspaces"
+BRANCH="main"
+
+# Select Terraform Version
+TF_VERSION="0.12.24"
+
 ```
 
 6. Pre-Check
-Verify you have the 3 Required environment variables set (OAUTH_TOKEN_ID, ATLAS_TOKEN, organization) 
+Verify you have the 3 Required environment variables set (OAUTH_TOKEN_ID, ATLAS_TOKEN, organization)
 ```
 env
 ```
@@ -65,13 +73,10 @@ and also look for any Optional Cloud credentials you want to have securely copie
 ```
 ./addAdmin_workspace.sh
 ```
+You should now have your ADMIN workspace created in TFCB and be ready to provision child workspaces with standard configurations and securely add encrypted sensitive variables.
 
-## Using with Private Terraform Enterprise Server using private CA
+### Note: Using with Private Terraform Enterprise Server using private CA
 If you use this script with a Private Terraform Enterprise (PTFE) server that uses a private CA instead of a public CA, you will need to ensure that the curl commands run by the script will trust the private CA.  There are several ways to do this.  The first is easiest for enabling the automation script to run, but it only affects curl. The second and third are useful for using the Terraform and TFE CLIs against your PTFE server. The third is a permanent solution.
 1. `export  CURL_CA_BUNDLE=<path_to_ca_bundle>`
 1. Export the Golang SSL_CERT_FILE and/or SSL_CERT_DIR environment variables. For instance, you could set the first of these to the same CA bundle used in option 1.
 1. Copy your certificate bundle to /etc/pki/ca-trust/source/anchors and then run `update-ca-trust extract`.
-
-## Usage (addAdminWorkspace.sh) will add a workspace you should link to this repo and use to manage additional workspaces.
-./addAdmin_workspace.sh
-./addAdmin_workspace.sh <gitURL> <workspace_name>

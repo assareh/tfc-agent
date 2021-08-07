@@ -34,8 +34,9 @@ git_url="https://github.com/ppresto/tfc-agent.git"
 workspace="ADMIN-TFCB-WS"
 # This is the repo dir TFCB will use to run terraform and manage your workspaces with IaC
 WORKSPACE_DIR="tfc-agent-ecs-multi/files/create_tfcb_workspaces"
-TF_VERSION="0.12.24"
 BRANCH="ecs-mach-profile"
+TF_VERSION="0.12.24"
+
 # set sensitive environment variables/tokens
 source $HOME/tfeSetEnv.sh "${organization}"
 
