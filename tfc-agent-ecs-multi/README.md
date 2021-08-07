@@ -18,11 +18,27 @@ This repository provides an example of running multiple [tfc-agent](https://hub.
 * Create 2 agent pools and save the tokens for variables in the producer workspace.
 
 ## TFCB Setup
-First fork or clone this repo in your github.com account.
+1. First fork or clone this repo in your github.com account.
 ```
 cd tfc-agent-ecs-multi/files/create_tfcb_workspaces
 ```
-Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.
+2. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.
+3. Once your admin workspace is created it should be linked to this repo and have a working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` set that points to sample IaC that will manage all your workspaces. Use the UI to manually trigger a terraform plan and apply in your new admin workspace. Go to `Workspace -> Actions -> Start plan now`.  You should see new workspaces `ws_aws_iam, ws_aws_agent_ecs` created.  Hopefully you locally sourced your AWS credentials when building your admin workspace so these child workspaces should have access to these encrypted credentials.
+4. First run an apply in `ws_aws_iam` to create all your IAM roles and policies
+5. Next go to Settings -> General -> Share state with `ws_aws_agent_ecs` or globally.  This attribute can be configured with IaC by adding it to the module in `./modules/workspace/main.tf`. 
+
+* We put all service IAM roles into one workspace in this example.  In large environments this workspace could be broken into smaller workspaces for each AWS account, or service.  Alternatively, you can keep all IAM configs in 1 workspace and create child workspaces for each service/team to manage specific outputs only that the service team should consume.
+
+6. Next run an apply in `ws_aws_agent_ecs` to create your ECS cluster which requires  access to the ws_aws_iam state file for its IAM policies.
+7. Now that we have our IAM and ECS services ready lets start building workspaces for our individual service teams to use.  Each team will have access to their own workspace and the IAM role that was created for them by the IAM team.
+```
+cd ./tfc-agent-ecs-multi/files/create-tfcb-workspaces
+cp ./add_service_workspaces/* .
+git add .
+git commit -m "Adding serviceA, serviceB workspaces"
+git push
+```
+Your admin workspace should pick up this change and automatically create your service workspaces.
 
 ## Setup
 Create the `producer` workspace and point to `/producer` directory. It contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioning infrastructure with Terraform.  We are creating an additional `iam_role_ecs_agent` role that will be used by our consumer using a machine_profile instead.  This workspace requires a token for each tfc_agent_pool it will manage.  These agent pools should be setup as a pre-req and you can do this with IaC using the TFE provider.
