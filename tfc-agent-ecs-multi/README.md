@@ -14,18 +14,18 @@ This repository provides an example of running multiple [tfc-agent](https://hub.
    3. Create a new workspace for the service.  This will contain only the tf the service wants to provision.  The tf HCL will use assume role to provision resources without requiring any credentials.
 
 ## Prerequisites
-* [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business)
-* Create 2 agent pools and save the tokens for variables in the producer workspace.
+* [Terraform Cloud Business Tier](https://www.hashicorp.com/blog/announcing-hashicorp-terraform-cloud-business) to run Agents
+* AWS Credentials to provision infrastructure (assume_role, EC2)
 
 ## TFCB Setup
 1. First fork or clone this repo in your github.com account.
 ```
 cd tfc-agent-ecs-multi/files/create_tfcb_workspaces
 ```
-2. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.
+2. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.  When creating your admin workspace be sure to include your AWS Credentials so you can build the necessary IAM and ECS components.
 3. Once your admin workspace is created it should be linked to this repo and have a working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` set that points to sample IaC that will manage all your workspaces. Use the UI to manually trigger a terraform plan and apply in your new admin workspace. Go to `Workspace -> Actions -> Start plan now`.  You should see new workspaces `ws_aws_iam, ws_aws_agent_ecs` created.  Hopefully you locally sourced your AWS credentials when building your admin workspace so these child workspaces should have access to these encrypted credentials.
-4. First run an apply in `ws_aws_iam` to create all your IAM roles and policies
-5. Next go to Settings -> General -> Share state with `ws_aws_agent_ecs` or globally.  This attribute can be configured with IaC by adding it to the module in `./modules/workspace/main.tf`. 
+4. First run an apply in `ws_aws_iam` to create all your service teams IAM roles and policies.  This workspace is also responsible for creating tfc_agent pools, and tokens per service. It will push each token into an SSM param store owned by the service. The ECS task will be able to securely pull the right service token at runtime ensuring services are each using their agent_pool and have complete isolation.
+5. Next go to Settings -> General -> Share state globally or with `ws_aws_agent_ecs` and your ADMIN workspace.  This attribute can be configured with IaC by adding it to the module in `./modules/workspace/main.tf`. 
 
 * We put all service IAM roles into one workspace in this example.  In large environments this workspace could be broken into smaller workspaces for each AWS account, or service.  Alternatively, you can keep all IAM configs in 1 workspace and create child workspaces for each service/team to manage specific outputs only that the service team should consume.
 
@@ -38,7 +38,9 @@ git add .
 git commit -m "Adding serviceA, serviceB workspaces"
 git push
 ```
-Your admin workspace should pick up this change and automatically create your service workspaces.
+Your admin workspace should pick up this change and automatically create your service workspaces `ws_aws_serviceA, ws_aws_serviceB`.  Two service workspaces have been created for you.  Look at the variables in these workspaces and you should see they were created with no credentials.  You are leveraging the IAM roles previously built and using assume_role.
+
+8. Test each service workstation roles are working by running a job.  They are pre-configured with IaC to build an EC2 instance.
 
 ## Setup
 Create the `producer` workspace and point to `/producer` directory. It contains an example of registering and running the tfc-agent on ECS Fargate, along with necessary IAM policies and roles. It creates a `terraform_dev_role` to be using by the consumer who is provisioning infrastructure with Terraform.  We are creating an additional `iam_role_ecs_agent` role that will be used by our consumer using a machine_profile instead.  This workspace requires a token for each tfc_agent_pool it will manage.  These agent pools should be setup as a pre-req and you can do this with IaC using the TFE provider.
