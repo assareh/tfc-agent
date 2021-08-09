@@ -90,16 +90,6 @@ resource "tfe_variable" "aws_access_key_id" {
   depends_on   = [tfe_workspace.ws-template,tfe_workspace.ws-novcs]
 }
 
-resource "tfe_variable" "aws_session_token" {
-  count        = var.aws_session_token != "" ? 1 : 0
-  key          = "AWS_SESSION_TOKEN"
-  value        = var.aws_session_token
-  category     = "env"
-  sensitive    = true
-  workspace_id = var.identifier != "" ? tfe_workspace.ws-template[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [tfe_workspace.ws-template,tfe_workspace.ws-novcs]
-}
-
 resource "tfe_variable" "aws_default_region" {
   count        = var.aws_default_region != "" ? 1 : 0
   key          = "AWS_DEFAULT_REGION"

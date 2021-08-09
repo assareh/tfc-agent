@@ -13,7 +13,6 @@ module "ws_aws_iam" {
     aws_default_region = "${var.aws_default_region}"
     aws_secret_access_key = "${var.aws_secret_access_key}"
     aws_access_key_id = "${var.aws_access_key_id}"
-    aws_session_token = var.aws_session_token
     tf_variables = {
         "project_name" = "AWS_IAM_PROFILE_ADMIN"
         "prefix" = "presto"
