@@ -15,6 +15,7 @@ resource "tfe_workspace" "ws-template" {
   queue_all_runs    = var.queue_all_runs
   auto_apply        = var.auto_apply
   working_directory = var.workingdir
+  global_remote_state = var.global_remote_state != ""  ? true : false
 
   vcs_repo {
     identifier     = var.identifier

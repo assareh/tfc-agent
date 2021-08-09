@@ -16,6 +16,8 @@ variable "tfversion" {default = "0.11.14"}
 
 variable "workingdir" {default = ""}
 
+variable "global_remote_state" {default = ""}
+
 variable "agent_pool_id" {default = ""}
 
 variable "gcp_region" {default = ""}

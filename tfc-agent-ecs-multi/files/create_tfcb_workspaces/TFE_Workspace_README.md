@@ -12,12 +12,16 @@ Required
 OAUTH_TOKEN_ID <setup github oauth and use ID here>
 ATLAS_TOKEN <Enterprise TF Token>
 organization <your github org name>
+```
+
+Recommended for this AWS excersize.
+```
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION
 ```
 
-Optional
+Other
 ```
 ARM_CLIENT_ID
 ARM_SUBSCRIPTION_ID
@@ -58,7 +62,7 @@ WORKSPACE_DIR="tfc-agent-ecs-multi/files/create_tfcb_workspaces"
 BRANCH="main"
 
 # Select Terraform Version
-TF_VERSION="0.12.24"
+TF_VERSION="0.13.6"
 
 ```
 
@@ -67,13 +71,13 @@ Verify you have the 3 Required environment variables set (OAUTH_TOKEN_ID, ATLAS_
 ```
 env
 ```
-and also look for any Optional Cloud credentials you want to have securely copied over HTTPS into your admin workspace.
+There are many different ways to manage credentials in your TFC workspace. One option can be to use this Admin workspace.  Source your Cloud credentials into your shell env to securely copy them over HTTPS into your admin workspace.  When building child workspaces you can now reference these variables from the admin workspace and have them populated into the child workspace as write only variables.  This design allows only the Admin to see the secrets while all child workspaces inherit them for provisioning access.
 
-7. Run the script
+1. Run the script
 ```
 ./addAdmin_workspace.sh
 ```
-You should now have your ADMIN workspace created in TFCB and be ready to provision child workspaces with standard configurations and securely add encrypted sensitive variables.
+You should now have your ADMIN workspace created in TFCB and be ready to provision child workspaces with standard configurations and securely add encrypted sensitive variables too.
 
 ### Note: Using with Private Terraform Enterprise Server using private CA
 If you use this script with a Private Terraform Enterprise (PTFE) server that uses a private CA instead of a public CA, you will need to ensure that the curl commands run by the script will trust the private CA.  There are several ways to do this.  The first is easiest for enabling the automation script to run, but it only affects curl. The second and third are useful for using the Terraform and TFE CLIs against your PTFE server. The third is a permanent solution.
