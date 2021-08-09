@@ -267,6 +267,11 @@ if [[ ! -z ${AWS_ACCESS_KEY} && ! -z ${AWS_SECRET_ACCESS_KEY} ]]; then
   echo "Adding AWS_SECRET_ACCESS_KEY"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
+  # AWS_SESSION_TOKEN
+  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/aws_session_token/" -e "s/my-value/${AWS_SESSION_TOKEN//\//\\/}/g" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
+  echo "Adding AWS_SESSION_TOKEN"
+  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
+
 fi
 
 # Set Default AWS Region if Available
