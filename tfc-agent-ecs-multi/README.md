@@ -22,10 +22,17 @@ This repository provides an example of running multiple [tfc-agent](https://hub.
 ```
 cd tfc-agent-ecs-multi/files/create_tfcb_workspaces
 ```
-2. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.  When creating your admin workspace be sure to include your AWS Credentials so you can build the necessary IAM and ECS components.
-3. Once your admin workspace is created it should be linked to this repo and have a working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` set that points to sample IaC that will manage all your workspaces. Use the UI to manually trigger a terraform plan and apply in your new admin workspace. Go to `Workspace -> Actions -> Start plan now`.  You should see new workspaces `ws_aws_iam, ws_aws_agent_ecs` created.  Hopefully you locally sourced your AWS credentials when building your admin workspace so these child workspaces should have access to these encrypted credentials.
-4. First run an apply in `ws_aws_iam` to create all your service teams IAM roles and policies.  This workspace is also responsible for creating tfc_agent pools, and tokens per service. It will push each token into an SSM param store owned by the service. The ECS task will be able to securely pull the right service token at runtime ensuring services are each using their agent_pool and have complete isolation.
-5. Next go to Settings -> General -> Share state globally or with `ws_aws_agent_ecs` and your ADMIN workspace.  This attribute can be configured with IaC by adding it to the module in `./modules/workspace/main.tf`. 
+1. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.  When creating your admin workspace source your AWS Credentials into your shell env to have them added to your admin workspace.  The child workspaces we are about to create for IAM and ECS components can easily pull these as encrypted values at setup time to save you the trouble of inputing them manually.
+2. Once your admin workspace is created it should be linked to this repo and have a working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` set that points to sample IaC that will manage all your workspaces. Use the UI to review this config and then manually trigger a terraform plan and apply in your new admin workspace. Go to `Workspace -> Actions -> Start plan now`.  You should see new workspaces `ws_aws_iam, ws_aws_agent_ecs` created.
+   * If you want your child workspaces to inherit AWS creds from the admin workspace uncomment the following lines in both files (`ws_aws_ecs_tfcagents.tf, ws_aws_iam.tf`)
+   ```
+   #aws_secret_access_key = "${var.aws_secret_access_key}"
+   #aws_access_key_id = "${var.aws_access_key_id}"
+   ```
+   If you already ran the admin workspace thats fine.  Just run it again to pick up these changes to your IaC.
+
+3. Now run an apply in `ws_aws_iam` to create all your service teams IAM roles and policies.  This workspace is also responsible for creating tfc_agent pools, and tokens per service. It will push each token into an SSM param store owned by the service. The ECS task will be able to securely pull the right service token at runtime ensuring services are each using their agent_pool and have complete isolation.
+4. Next go to Settings -> General -> Share state globally or with `ws_aws_agent_ecs` and your ADMIN workspace.  This attribute can be configured with IaC by adding it to the module in `./modules/workspace/main.tf`. 
 
 * We put all service IAM roles into one workspace in this example.  In large environments this workspace could be broken into smaller workspaces for each AWS account, or service.  Alternatively, you can keep all IAM configs in 1 workspace and create child workspaces for each service/team to manage specific outputs only that the service team should consume.
 
