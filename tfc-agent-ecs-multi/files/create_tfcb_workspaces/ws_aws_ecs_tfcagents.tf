@@ -11,8 +11,8 @@ module "ws_aws_ecs_tfcagents" {
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
     aws_default_region = "${var.aws_default_region}"
-    aws_secret_access_key = "${var.aws_secret_access_key}"
-    aws_access_key_id = "${var.aws_access_key_id}"
+    #aws_secret_access_key = "${var.aws_secret_access_key}"
+    #aws_access_key_id = "${var.aws_access_key_id}"
     tf_variables = {
         "prefix" = "presto"
         "desired_count" = 2

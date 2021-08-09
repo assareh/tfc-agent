@@ -12,7 +12,7 @@ Required
 OAUTH_TOKEN_ID <setup github oauth and use ID here>
 ATLAS_TOKEN <Enterprise TF Token>
 organization <your github org name>
-AWS_ACCESS_KEY
+AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION
 ```
