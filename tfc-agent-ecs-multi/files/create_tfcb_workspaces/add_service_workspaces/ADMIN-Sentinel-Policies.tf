@@ -3,7 +3,7 @@ module "ADMIN-Sentinel-Policies" {
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "ADMIN-Sentinel-Policies"
+    workspacename = "ADMIN-Sentinel-Policies-NEW"
     workingdir = "tfc-agent-ecs-multi/files/create_tfcb_workspaces/sentinel_ws"
     tfversion = "0.13.6"
     repobranch = "ecs-mach-profile"
