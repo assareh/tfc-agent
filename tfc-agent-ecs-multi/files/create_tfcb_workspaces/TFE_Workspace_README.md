@@ -1,5 +1,5 @@
 # TFE Automation Script
-`addAdmin_workspace.sh` creates a workspace that is integrated with a GitHub repo.  This script can create your initial ADMIN Workspace which can hold sensitive terraform/env variables and should be locked down to owners only.  This workspace can then be used to securely create child workspaces configured with your sensitive credentials already encrypted.
+`./scripts/addAdmin_workspace.sh` creates a workspace that is integrated with a GitHub repo.  This script can create your initial ADMIN Workspace which can hold sensitive terraform/env variables and should be locked down to owners only.  This workspace can then be used to securely create child workspaces configured with your sensitive credentials already encrypted.
 
 ## Introduction
 This script uses curl to interact with Terraform Enterprise via the Terraform Enterprise REST API. The same APIs could be used from Jenkins or other solutions to incorporate Terraform Enterprise into your CI/CD pipeline.
@@ -33,7 +33,7 @@ GOOGLE_REGION
 GOOGLE_ZONE
 ```
 
-You will see a couple `template.json` files in this directory.  The script will update these templates and using curl will call the TFCB API to create your workspace and any defined variables.
+You will see a couple `template.json` files in this ./scripts directory.  The script will update these templates and using curl will call the TFCB API to create your workspace and any defined variables.
 * You can uncomment the DEBUG variable at the bottom of the script if you want to review the files that get created and used in the API calls for troubleshooting.
 
 ## Setup
@@ -43,7 +43,12 @@ You will see a couple `template.json` files in this directory.  The script will 
 4. Make sure [python](https://www.python.org/downloads/) is installed on your machine and in your path since the script uses python to parse JSON documents returned by the Terraform Enterprise REST API.  You can updated the script to use jq if you want.
 5. Build your first workspace using the API script in this repo.
 
-To use the TFCB API script you need to update it for your environment.  Customize the following variables in `./addAdmin_workspace.sh`:
+To use the TFCB API script you need to update it for your environment.  
+```
+cd ./scripts
+```
+
+Customize the following variables in `./addAdmin_workspace.sh`:
 ```
 # The default is using the TFCB address. Update if using TFE onprem.
 address="app.terraform.io"
