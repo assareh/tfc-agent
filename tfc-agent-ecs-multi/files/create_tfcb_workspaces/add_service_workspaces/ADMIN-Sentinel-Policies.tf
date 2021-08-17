@@ -4,7 +4,7 @@ module "ADMIN-Sentinel-Policies" {
     queue_all_runs = false
     auto_apply = true
     workspacename = "ADMIN-Sentinel-Policies-NEW"
-    workingdir = "tfc-agent-ecs-multi/files/create_tfcb_workspaces/sentinel_ws"
+    workingdir = "tfc-agent-ecs-multi/files/create_tfcb_workspaces/sentinel_policy_set"
     tfversion = "0.13.6"
     repobranch = "ecs-mach-profile"
     identifier = "${var.repo_org}/tfc-agent"
