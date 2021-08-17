@@ -4,7 +4,7 @@ terraform {
     organization = "presto-projects"
 
     workspaces {
-      name = "ws_aws_agent_ecs"
+      name = "aws_agent_ecs"
     }
   }
 }
