@@ -1,4 +1,4 @@
-module "aws_iam" {
+module "ADMIN-Sentinel-Policies" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
