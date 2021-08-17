@@ -18,9 +18,13 @@ module "ADMIN-Sentinel-Policies" {
     tf_variables = {
         "project_name" = "Sentinel_Policy_as_Code"
         "prefix" = "presto"
-        "organization" = var.organization
+        "tfe_organization" = var.organization
+        "repo_org" = var.repo_org
+        "tfe_hostname" = "app.terraform.io"
+
     }
     tf_variables_sec = {
         "tfe_token"      = var.tfe_token
+        "oauth_token_id" = var.oauth_token_id
     }
 }
