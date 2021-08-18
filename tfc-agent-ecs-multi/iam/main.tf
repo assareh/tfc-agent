@@ -67,3 +67,8 @@ resource "aws_iam_role_policy_attachment" "tfc_agent_task_task_policy" {
   role       = aws_iam_role.tfc_agent_task.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+resource "aws_iam_role_policy_attachment" "serviceA_use_machine_profile" {
+  role       = aws_iam_role.tfc_agent_task.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
