@@ -4,10 +4,10 @@ module "ADMIN-Sentinel-Policies" {
     queue_all_runs = false
     auto_apply = true
     workspacename = "ADMIN-Sentinel-Policies-NEW"
-    workingdir = "tfc-agent-ecs-multi/files/create_tfcb_workspaces/sentinel_policy_set"
+    workingdir = "governance/third-generation/aws/"
     tfversion = "0.13.6"
     repobranch = "ecs-mach-profile"
-    identifier = "${var.repo_org}/tfc-agent"
+    identifier = "${var.repo_org}/terraform-guides"
     oauth_token_id = "${var.oauth_token_id}"
     #aws_default_region = "${var.aws_default_region}"
     #aws_secret_access_key = "${var.aws_secret_access_key}"

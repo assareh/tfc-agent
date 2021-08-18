@@ -14,9 +14,13 @@ This repository provides an example of using TFCB to manage multiple [tfc-agent]
 * AWS Credentials to provision infrastructure (assume_role, EC2)
 
 ## TFCB Setup
-1. First fork or clone this repo in your github.com account.
+1. First fork this repo in your github.com account and clone it locally.
 ```
-cd tfc-agent-ecs-multi/files/create_tfcb_workspaces/scripts
+cd <your_working_project_dir>  # this is your project base dir. It can by any dir you want.
+git clone <your_git_URL>
+cd tfc-agents
+cd ./tfc-agent-ecs-multi/files/create_tfcb_workspaces
+cd ./tfc-agent-ecs-multi/files/create_tfcb_workspaces/scripts
 ```
 1. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.  When creating your admin workspace source your AWS Credentials into your shell env to have them added to your admin workspace.  The child workspaces we are about to create for IAM and ECS components can easily pull these as encrypted values at setup time to save you the trouble of inputing them manually.
 
@@ -35,9 +39,9 @@ Use the UI to review the current config and then manually trigger a terraform pl
 
 1. Now run an apply in `ws_aws_iam` to create all your service teams IAM roles and policies.  This workspace is also responsible for creating tfc_agent pools, and tokens per service. It will push each token into an SSM param store owned by the service. The ECS task will be able to securely pull the right service token at runtime ensuring services are each using their agent_pool and have complete isolation.
 
-2. Next go to Settings -> General -> and review the Share state globally that we enabled.  This will allow `ws_aws_agent_ecs` and your ADMIN workspace to have access to the IAM workspace managing all the security outputs.
+2. Next go to Settings -> General -> and review the Share state globally that we enabled.  This will allow `ws_aws_agent_ecs` and your ADMIN workspace to have access to the IAM workspace outputs they need to properly setup and run tasks with the proper roles.
    * For better security you should update this to only allow specific workspaces versus sharing state globally.
-   * We put all service IAM roles into one workspace in this example.  In large environments this workspace could be broken into smaller workspaces for each AWS account, or service.  Alternatively, you can keep all IAM configs in 1 workspace and create child workspaces to manage outputs that each service/team can access.
+   * We put all service IAM roles into one workspace in this example.  In large environments this workspace could be broken into smaller workspaces for each AWS account, or service for more granular security.  Alternatively, you can keep all IAM configs in 1 workspace and create child workspaces to manage outputs that each service/team can access.
 
 3. Next run an apply in `ws_aws_agent_ecs` to create your ECS cluster which requires  access to the ws_aws_iam state file for its IAM policies.
 
@@ -55,15 +59,43 @@ Use the UI to review the current config and then manually trigger a terraform pl
 
 5. Test each service workstation roles are working by running a job.  They are pre-configured with IaC to build an EC2 instance.  While they are running a plan check out the agent pools in the UI.  Go to [ Settings -> Agents ] and you should see two pools configured for your 2 services.  Each pool has 2 agents configured and one should be busy running your job.
 
-6. Now that you have everything working lets use Sentinel to enforce governance.  We want to ensure each service is only able to use their IAM role.
-   Copy the service workspace creation code into the working directory and commit it.
-   ```
-   cd ./tfc-agent-ecs-multi/files/create-tfcb-workspaces
-   cp ./add_service_workspaces/* .
-   git add .
-   git commit -m "Adding serviceA, serviceB workspaces"
-   git push
-   ```
+## Optional - Enforce Sentinel Policies
+Now that you have everything working lets use Sentinel to enforce governance.  For this use case you want to ensure each service is only able to use their own IAM role.  ServiceA should not be able to use ServiceB's role.  
+1.  To add Sentinel policies as code to our workflow we will want to [fork the existing terraform-guides public repo](https://github.com/hashicorp/terraform-guides) under our own personal repo. terraform-guides includes 100's of working sentinel examples.  Click on `Fork`, and chose your organization/repo.
+2.  Now that you have terraform-guides forked into your repo lets clone it so we can pull the code locally to customize a couple AWS sentinel policies.  Click on `Code` and then the copy icon to get your full <git URL>.
+```
+cd <your_working_project_dir>
+git clone <git URL>
+cp tfc-agent/tfc-agent-ecs-multi/files/sentinel_policy_set/* terraform-guides/governance/third-generation/aws/
+git add .
+git commit -m "adding my aws assume role policies"
+git push
+```
+Review `./tfc-agent/tfc-agent-ecs-multi/files/sentinel_policy_set` to see the policies.  One assumed roles policy is verifying the workspace to role names with a regex to ensure 1/1 mapping.
+
+1. You should have a policy repo now with your defined policies.  Next, build the TFCB Sentinel workspace that will link to this repo and automatically apply the policies after changes.  Review your ADMIN workspace variables so you know what is available to your child workspaces and verify the tf_variables or correct in this file:
+
+`./add_sentinel_workspace/ws_ADMIN_Sentinel_Policies.tf`
+```
+cd ./tfc-agent/tfc-agent-ecs-multi/files/create_tfcb_workspaces/
+cp -rf ./add_sentinel_workspace/* ../
+git add .
+git commit -m "add sentinel ws and policy_set"
+git push
+```
+This commit should trigger a run on your ADMIN workspace.  The new files you added will create a policy_set and a new workspace that will push out the latest policy updates anytime there are changes to the policies in the terraform-guides repo you forked.  Now you should have a Sentinel policy set defined in TFCB and mapped to service_A and service_B workspaces.
+
+4. To test your policies are working, go into service_A workspace , click on variables, and edit `dev_role_arn`.  The existing value should look something like...
+```
+arn:aws:iam::112233445566:role/iam-role-serviceA
+```
+
+Update this to use the service_B role instead
+```
+arn:aws:iam::112233445566:role/iam-role-serviceB
+```
+Save the variable update and run a new plan/apply from the UI.  You should see that policy checks have been added to your workflow and it will have a soft failure because the role name being assumed does not match the workspace name regex we are using.
+
 ## Notes
 
 ## Additional Topics
