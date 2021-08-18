@@ -1,8 +1,10 @@
 # Credential free provisioning with Terraform Cloud Agent on AWS ECS
 
-This repository provides an example of using TFCB to manage multiple [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) pools each tied to their own ECS fargate service within the same ECS cluster.  This is intended for larger environments that need to issolate provisioning tasks and permissions across teams in a scalable way.   To best understand using TFCB and agents for credential free provisioning please refer to the original [tfc-agent-ecs guide](https://github.com/assareh/tfc-agent/tree/master/tfc-agent-ecs).  In this guide you will use workspaces to isolate the roles and responsibilities for each team (IAM, Ops, and Services).  For efficient administration of these TFCB workspaces you will leverage the Terraform TFE provider to build and manage these workspaces using IaC.
+This demo uses TFCB through multiple [tfc-agent](https://hub.docker.com/r/hashicorp/tfc-agent) pools each tied to their own AWS ECS fargate service.  This is intended for larger environments that need to issolate provisioning tasks across various teams or AWS accounts in a scalable way.   To best understand using TFCB and agents for credential free provisioning please refer to the original [tfc-agent-ecs guide](https://github.com/assareh/tfc-agent/tree/master/tfc-agent-ecs).  In this demo you will use workspaces to isolate the roles and responsibilities for each team (IAM, Ops, and Service teams).  For efficient administration of these TFCB workspaces you will leverage the Terraform TFE provider to build and manage these workspaces using IaC.  Optionally, you can use Sentinel policy as code to further enforce IAM policies to workspaces.
 
 ## TFCB Workspaces Overview
+Lets take a quick look at how we are breaking up our workspaces or IaC.
+
 1. `Admin-TFE-Workspace`: This workspace (ws) will be used as a centralized admin ws that contains all sensitive or standard inputs and should only be accessible by TFCB owners.  You can use this to initially provision child ws with encrypted variables and other standard configs.
 2. `aws_iam`: This ws will manage sensitive data like IAM permissions, roles, and TFCB tokens. This ws can be owned by your IAM or security team. You will provision your service roles here and enable ECS to assume the correct service role and only run tasks with that service's permissions.  To do this the ws will create an agent pool per service.  Each service will have its own agent_pool, token, and AWS SSM param containing the token allowing you to fully isolate runs from other services. This is the first ws to update when onboarding a new service.
 3. `aws_ecs_tfcagents`:  This is the ECS cluster that will isolate every service's TFCB runs by creating an ECS service per service team that runs with the team's IAM role.  This ws may be owned by the Shared Services or Platform team. It requires access to the aws_iam ws outputs to read the service teams IAM role needed to configure ECS.
@@ -18,16 +20,46 @@ This repository provides an example of using TFCB to manage multiple [tfc-agent]
 ```
 cd <your_working_project_dir>  # this is your project base dir. It can by any dir you want.
 git clone <your_git_URL>
-cd tfc-agents
-cd ./tfc-agent-ecs-multi/files/create_tfcb_workspaces
-cd ./tfc-agent-ecs-multi/files/create_tfcb_workspaces/scripts
+cd tfc-agents/tfc-agent-ecs-multi/files/create_tfcb_workspaces/scripts
 ```
 1. Read `TFE_Workspace_README.md` and follow the setup steps to create your admin workspace.  When creating your admin workspace source your AWS Credentials into your shell env to have them added to your admin workspace.  The child workspaces we are about to create for IAM and ECS components can easily pull these as encrypted values at setup time to save you the trouble of inputing them manually.
-
-2. Once your admin workspace is created it should be linked to this repo and have a working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` set that points to sample IaC that will manage all your workspaces. Copy the latest workspace IaC into this base directory to get started.
 ```
-cd tfc-agent-ecs-multi/files/create_tfcb_workspaces
+$  ./addAdmin_workspace.sh
+Using Github repo: https://github.com/ppresto/tfc-agent.git
+Using workspace name:  admin_ws_agentdemo
+Checking to see if workspace exists
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'data'
+Workspace ID:
+Workspace did not already exist; will create it.
+Checking Workspace Result: {"data":{"id":"ws-LtXVexbrUyDP6bBj","type":"workspaces"
+...
+
+Workspace ID:  ws-LtXVexbrUyDP6bBj
+Adding CONFIRM_DESTROY
+Adding OAUTH_TOKEN_ID
+Adding ATLAS_TOKEN
+Adding organization
+Adding Github org ppresto
+Adding AWS_ACCESS_KEY_ID
+Adding AWS_SECRET_ACCESS_KEY
+Adding AWS_DEFAULT_REGION
+Number of Sentinel policies:  0
+Finished
+```
+Login to TFCB and you should see the new workspace you just created (default: `admin_ws_agentdemo`)
+
+1. Once your admin workspace is created it should be linked to your forked repo and configured with this working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` pointing to sample IaC that will manage all your workspaces. Copy the latest workspace IaC into this base directory to get started.
+```
+cd ..
 cp -rf core_workspaces/* .
+git status
+# if you see changes then add, commit, and push.  otherwise skip these steps.
+git add .
+git commit -m "getting started with core services for IAM and ECS"
+git push
+
 ```
 Use the UI to review the current config and then manually trigger a terraform plan and apply in the new admin workspace you created. Go to the workspace `Actions -> Start plan now`.  You should see new workspaces created `aws_iam, aws_agent_ecs`.
    * If you want your child workspaces to inherit AWS creds from the admin workspace uncomment the following lines in both files (`ws_aws_ecs_tfcagents.tf, ws_aws_iam.tf`)
