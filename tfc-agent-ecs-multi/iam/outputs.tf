@@ -7,6 +7,7 @@ output "agent_arn" {
 output "ecs_init_serviceA_arn" {
   value = aws_iam_role.ecs_init_serviceA.arn
 }
+
 output "aws_ssm_param_serviceA_tfc_arn" {
   value = aws_ssm_parameter.serviceA_agent_token.arn
 }
