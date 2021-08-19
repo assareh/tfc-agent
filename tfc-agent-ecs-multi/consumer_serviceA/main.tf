@@ -1,10 +1,6 @@
 # Removed assume-role.  Relying on machine/container based assume-role in this use case.
 provider "aws" {
   region = "us-west-2"
-  #assume_role {
-  #  role_arn     = var.dev_role_arn
-  #  session_name = "terraform"
-  #}
 }
 
 data "aws_caller_identity" "current" {
