@@ -1,3 +1,4 @@
+variable "tfe_hostname" {default     = "app.terraform.io"}
 variable "organization" { default = "presto-projects" }
 variable "tfe_token" {}
 variable "oauth_token_id" {}

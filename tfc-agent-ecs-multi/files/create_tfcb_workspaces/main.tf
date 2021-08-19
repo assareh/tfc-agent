@@ -1,4 +1,4 @@
 provider "tfe" {
-  #version = "<= 0.7.0"
+  hostname = var.tfe_hostname
   token = var.tfe_token
 }
