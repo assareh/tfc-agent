@@ -1,6 +1,6 @@
-#provider "aws" {
-#  region = var.region
-#}
+provider "aws" {
+  region = var.region
+}
 
 resource "aws_ecs_cluster" "tfc_agent" {
   name = "${var.prefix}-cluster"
