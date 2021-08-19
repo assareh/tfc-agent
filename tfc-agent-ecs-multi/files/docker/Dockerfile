@@ -7,8 +7,5 @@ RUN apt-get update && \
 
 ADD entrypoint.sh /
 
-# /bin/tfc-agent is the entrypoint from the hashicorp image,
-#ENTRYPOINT ["/entrypoint.sh"]
 ENTRYPOINT ["/bin/bash", "-c", "source ./entrypoint.sh"]
-#ENTRYPOINT ["/bin/tfc-agent"]
-#CMD ["-single"]
+

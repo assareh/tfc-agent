@@ -1,6 +1,6 @@
 # TFC Agent Service using Machine IAM Profile assume_role instead of AWS TF Provider assume_role.
 resource "aws_ecs_service" "serviceA_tfc_agent" {
-  name            = "${var.prefix}-serviceA_svc"
+  name            = "${var.prefix}-serviceA"
   cluster         = aws_ecs_cluster.tfc_agent.id
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.serviceA_tfc_agent_task.arn
