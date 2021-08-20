@@ -117,7 +117,7 @@ provider "aws" {
 ```
 
 
-## Optional - Enforce Sentinel Policies
+## Enforce Sentinel Policies
 Now that you have everything working lets use Sentinel to enforce governance.  For this use case you want to ensure each service is only able to use their own IAM role.  ServiceA should not be able to use ServiceB's role.  
 1.  To add Sentinel policies as code to our workflow we will want to [fork the existing terraform-guides public repo](https://github.com/hashicorp/terraform-guides) under our own personal repo. terraform-guides includes 100's of working sentinel examples.  Click on `Fork`, and chose your organization/repo.
 2.  Now that you have terraform-guides forked into your repo lets clone it so we can pull the code locally to customize a couple AWS sentinel policies.  Click on `Code` and then the copy icon to get your full <git URL>.
@@ -130,19 +130,21 @@ git add .
 git commit -m "adding my aws assume role policies"
 git push
 ```
-Review `./tfc-agent/tfc-agent-ecs-multi/files/sentinel_policy_set` to see the policies.  One assumed roles policy is verifying the workspace to role names with a regex to ensure 1/1 mapping.
+Review `./tfc-agent/tfc-agent-ecs-multi/files/sentinel_policy_set/*.sentinel` to read the policies.  The assumed_role policy is verifying the workspace name matches the role name using a regex to ensure 1/1 mapping and other service teams are trying to assume the wrong roles.
 
-1. You should have a policy repo now with your defined policies.  Next, build the TFCB Sentinel workspace that will link to this repo and automatically apply the policies after changes.  Review your ADMIN workspace variables so you know what is available to your child workspaces and verify the tf_variables or correct in this file:
+1. You should have a policy repo now with your defined policies.  In some cases a different team will want to manage security policy so build the `admin_sentinel_policies` workspace for this purpose. It that will be responsible for creating the policyset above and managing which workspaces get the policies through the tf file: `./tfc-agent/tfc-agent-ecs-multi/files/sentinel_policy_set/sentinel_policy_set.tf`.
+
+Review `admin_ws_agentdemo` workspace variables so you know what is available to your sentinel workspaces and that the tf_variables are correct in this file:
 
 `./add_sentinel_workspace/ws_ADMIN_Sentinel_Policies.tf`
 ```
 cd ../tfc-agent/tfc-agent-ecs-multi/files/create_tfcb_workspaces/
-cp -rf ./add_sentinel_workspace/* ../
+cp -rf ./add_sentinel_workspace/* .
 git add .
 git commit -m "add sentinel ws and policy_set"
 git push
 ```
-This commit should trigger a run on your ADMIN workspace.  The new files you added will create a policy_set and a new workspace that will push out the latest policy updates anytime there are changes to the policies in the terraform-guides repo you forked.  Now you should have a Sentinel policy set defined in TFCB and mapped to service_A and service_B workspaces.
+This commit should trigger `admin_ws_agentdemo` to run a plan that will create `admin_ws_sentinel`.  The new files you added will create a policy_set and a new workspace that will push out the latest policy updates anytime there are changes to the policies in the terraform-guides repo you forked.  Now you should have a Sentinel policy set defined in TFCB and mapped to service_A and service_B workspaces.
 
 4. To test your policies are working, go into service_A workspace , click on variables, and edit `dev_role_arn`.  The existing value should look something like...
 ```
