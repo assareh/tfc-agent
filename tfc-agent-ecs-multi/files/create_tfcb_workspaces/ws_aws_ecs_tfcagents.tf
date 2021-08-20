@@ -6,7 +6,7 @@ module "aws_ecs_tfcagents" {
     workspacename = "aws_agent_ecs"
     workingdir = "tfc-agent-ecs-multi/producer"
     tfversion = "0.13.6"
-    repobranch = "ecs-mach-profile"
+    repobranch = "master"
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"

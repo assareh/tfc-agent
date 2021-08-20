@@ -54,12 +54,11 @@ Finished
 ```
 Login to TFCB and you should see the admin workspace you just created (default: `admin_ws_agentdemo`)
 
-3. Once your admin workspace is created it should be linked to your forked repo and configured with this working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` pointing to sample IaC that will manage all your workspaces. Copy the latest workspace IaC into this base directory to get started.  Review the *.tf files and optionally update the 'prefix' value to something unique to help idenitfy your demo resources.  We are leveraging this same repo with a working directory to make the setup easier, but ideally in a real env this would live in its own repo.
+3. Once your admin workspace is created it should be linked to your forked repo and configured with this working directory `tfc-agent-ecs-multi/files/create_tfcb_workspaces` pointing to sample IaC that will manage all your workspaces. The core workspace IaC is in the base directory to get you started.  Review the *.tf files and optionally update the 'prefix' value to something unique to help idenitfy your demo resources.  We are leveraging this same repo with a working directory to make the setup easier, but ideally in a real env this would live in its own repo.
 ```
 cd ..
-cp -rf core_workspaces/*.tf .
 git status
-# if you see changes then add, commit, and push.  otherwise skip these steps.
+# if you made changes then add, commit, and push.  otherwise skip these steps.
 git add .
 git commit -m "getting started with core services for IAM and ECS"
 git push
@@ -97,7 +96,7 @@ Now that you have the core IAM roles and ECS services built you are ready to giv
 2. Test `ws_aws_serviceB` workstation roles are working by running a plan now.  They are pre-configured with IaC to build an EC2 instance.  While they are running a plan check out the agent pools in the UI.  Go to [ Settings -> Agents ] and you should see two pools configured for your 2 services.  Each pool has 2 agents configured and one should be busy running the current plan.
 
 #### ServiceA
-AWS access is obtained through the tfc-agent. Unlike ServiceB, The AWS ECS task is defined with the IAM role and using a custom tfc-agent container that is sourcing the roles AWS credentials into the runtime environment for terraform to use.  A Terraform user does not need to provide any aws credentials or use assume_role in their terraform code.
+AWS access is obtained through the tfc-agent. In this use case the AWS ECS task is defined with the IAM role and using a custom tfc-agent container that is sourcing the roles AWS credentials into the runtime environment for terraform to use.  A Terraform user does not need to provide any aws credentials or use assume_role in their terraform code.  In fact, they never need to see the IAM role being used here.
 ```
 provider "aws" {
   region = "us-west-2"
@@ -106,7 +105,7 @@ provider "aws" {
 The AWS provider now supports making the AWS role credentials available to ECS tasks by default but its a good base example to work from so I kept it. Customizing the tfc-agents container image can be helpful for customization auth, secrets mgmt, and other runtime environment requirements for 3rd party integrations.  You can review it here `./tfc-agent-ecs-multi/files/docker`
 
 #### ServiceB
-AWS access is obtained through the tfc-agent using the same design as the original tfc-agent-ecs demo. The AWS ECS running the tfc-agent is granted IAM permissions to assume roles for all the different service teams. When the agent runs the terraform code is configured by the service team with the role to assume.  This is invoked in the aws provider as follows:
+AWS access is obtained through the tfc-agent using assume_role. The AWS ECS task running the tfc-agent is granted IAM permissions to assume roles for all the different service teams. When the agent runs the terraform code is configured by the service team with the role to assume.  This is invoked in the aws provider as follows:
 ```
 provider "aws" {
   assume_role {
@@ -115,9 +114,10 @@ provider "aws" {
   }
 ...
 ```
+This model gives the service team more visibility into the IAM role and requires them to provide this in their IaC.  This can be very helpful for the backend shared service to support multi-tenant workloads without complex configuration.  To ensure service teams are using the proper roles in this model we can leverage Seninel policies.
 
 
-## Enforce Sentinel Policies
+## Enforce Sentinel Policies on assume_role
 Now that you have everything working lets use Sentinel to enforce governance.  For this use case you want to ensure each service is only able to use their own IAM role.  ServiceA should not be able to use ServiceB's role.  
 1.  To add Sentinel policies as code to our workflow we will want to [fork the existing terraform-guides public repo](https://github.com/hashicorp/terraform-guides) under our own personal repo. terraform-guides includes 100's of working sentinel examples.  Click on `Fork`, and chose your organization/repo.
 2.  Now that you have terraform-guides forked into your repo lets clone it so we can pull the code locally to customize a couple AWS sentinel policies.  Click on `Code` and then the copy icon to get your full <git URL>.

@@ -8,14 +8,13 @@ module "aws_serviceA" {
     workspacename = "aws_serviceA"
     workingdir = "tfc-agent-ecs-multi/consumer_serviceA"
     tfversion = "0.13.6"
-    repobranch = "ecs-mach-profile"
+    repobranch = "master"
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
     aws_default_region = "${var.aws_default_region}"
     tf_variables = {
         "prefix" = "aws_serviceA"
-        "dev_role_arn" = "arn:aws:iam::711129375688:role/iam-role-serviceA"
     }
 }
 
@@ -29,7 +28,7 @@ module "aws_serviceB" {
     workspacename = "aws_serviceB"
     workingdir = "tfc-agent-ecs-multi/consumer_serviceB"
     tfversion = "0.13.6"
-    repobranch = "ecs-mach-profile"
+    repobranch = "master"
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"

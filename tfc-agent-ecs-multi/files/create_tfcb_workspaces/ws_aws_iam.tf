@@ -6,7 +6,7 @@ module "aws_iam" {
     workspacename = "aws_iam"
     workingdir = "tfc-agent-ecs-multi/iam"
     tfversion = "0.13.6"
-    repobranch = "ecs-mach-profile"
+    repobranch = "master"
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
     aws_default_region = "${var.aws_default_region}"
