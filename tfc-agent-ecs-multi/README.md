@@ -144,18 +144,18 @@ git add .
 git commit -m "add sentinel ws and policy_set"
 git push
 ```
-This commit should trigger `admin_ws_agentdemo` to run a plan that will create `admin_ws_sentinel`.  The new files you added will create a policy_set and a new workspace that will push out the latest policy updates anytime there are changes to the policies in the terraform-guides repo you forked.  Now you should have a Sentinel policy set defined in TFCB and mapped to service_A and service_B workspaces.
+This commit should trigger `admin_ws_agentdemo` to run a plan that will create `admin_ws_sentinel`.  This workspace will create a custom policy_set from the repo you forked and apply any future changes.  Run a plan in this workspace and you should have a Sentinel policy set defined in TFCB and mapped to workspaces `ws_aws_serviceA, ws_aws_serviceB`.
 
-4. To test your policies are working, go into service_A workspace , click on variables, and edit `dev_role_arn`.  The existing value should look something like...
-```
-arn:aws:iam::112233445566:role/iam-role-serviceA
-```
-
-Update this to use the service_B role instead
+1. To test your policies are working, go into service_B workspace , click on variables, and edit `dev_role_arn`.  The existing value should look something like...
 ```
 arn:aws:iam::112233445566:role/iam-role-serviceB
 ```
-Save the variable update and run a new plan/apply from the UI.  You should see that policy checks have been added to your workflow and it will have a soft failure because the role name being assumed does not match the workspace name regex we are using.
+
+Update this to use the service_A role instead
+```
+arn:aws:iam::112233445566:role/iam-role-serviceA
+```
+Save the variable update and run a new plan/apply from the UI.  You should see that policy checks have been added to your workflow and it will have a soft failure because the role name being assumed `serviceA` does not match the workspace name `serviceB`.
 
 ## Notes
 

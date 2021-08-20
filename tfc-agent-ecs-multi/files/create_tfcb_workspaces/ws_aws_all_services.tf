@@ -15,7 +15,7 @@ module "aws_serviceA" {
     aws_default_region = "${var.aws_default_region}"
     tf_variables = {
         "prefix" = "aws_serviceA"
-        "dev_role_arn" = "arn:aws:iam::711129375688:role/iam-role-serviceA"
+        #"dev_role_arn" = "arn:aws:iam::711129375688:role/iam-role-serviceA"
     }
 }
 
