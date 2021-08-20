@@ -1,12 +1,12 @@
-module "ADMIN-Sentinel-Policies" {
+module "admin_ws_sentinel" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "ADMIN-Sentinel-Policies-NEW"
+    workspacename = "admin_ws_sentinel"
     workingdir = "governance/third-generation/aws/"
     tfversion = "0.13.6"
-    repobranch = "ecs-mach-profile"
+    repobranch = "master"
     identifier = "${var.repo_org}/terraform-guides"
     oauth_token_id = "${var.oauth_token_id}"
     #aws_default_region = "${var.aws_default_region}"
