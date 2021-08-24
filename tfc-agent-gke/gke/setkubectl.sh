@@ -4,8 +4,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # Source GCP Credentials into your shell environment
 if [[ ! -d /tmp ]]; then
   mkdir -p /tmp
-  echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
 fi
+
+echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
+
 # Using zone for the region in tf makes smaller GKS footprint
 client_email=$(jq -r '.client_email' < /tmp/credential_key.json) || echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
 gcp_region=$(terraform output region)
@@ -33,11 +35,11 @@ fi
 #fi
 
 # Set Kubernetes context for current GKE cluster
-if [[ ! $(kubectl config get-contexts -o=name | grep -w ${gcp_cluster_name}) ]]; then
-  # Rename context to $gcp_cluster_name for simplicity
-  kubectl config rename-context ${gcp_gke_context} ${gcp_cluster_name}
-fi
-kubectl config use-context ${gcp_cluster_name}
+#if [[ ! $(kubectl config get-contexts -o=name | grep -w ${gcp_cluster_name}) ]]; then
+##  # Rename context to $gcp_cluster_name for simplicity
+#  kubectl config rename-context ${gcp_gke_context} ${gcp_cluster_name}
+#fi
+kubectl config use-context ${gcp_gke_context}
 
 # kubectl config current-context
 # kubectl config view -minify
