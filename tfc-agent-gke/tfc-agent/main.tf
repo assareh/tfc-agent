@@ -9,6 +9,7 @@ data "terraform_remote_state" "gke" {
 
 provider "kubernetes" {
   #version = "~> 1.12"
+  load_config_file = false
   host = "https://${data.terraform_remote_state.gke.outputs.k8s_endpoint}"
   config_context = data.terraform_remote_state.gke.outputs.context
   client_certificate     = data.terraform_remote_state.gke.outputs.k8s_master_auth_client_certificate
