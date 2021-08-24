@@ -14,7 +14,7 @@ module "gke_cluster" {
     gcp_region      = "${var.gcp_region}"
     gcp_project     = "${var.gcp_project}"
     gcp_zone        = "${var.gcp_zone}"
-    
+
     # Insecure - In prod add only the workspaces who should have access.
     global_remote_state = true
 
