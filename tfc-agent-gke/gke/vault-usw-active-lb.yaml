@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-usw-active-lb
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 8200
+    protocol: TCP
+    targetPort: 8200
+  - name: https-internal
+    port: 8201
+    protocol: TCP
+    targetPort: 8201
+  - name: replication
+    port: 8202
+    protocol: TCP
+    targetPort: 8202
+  selector:
+    vault-active: "true"
+    app.kubernetes.io/instance: vault-usw
+  type: LoadBalancer
