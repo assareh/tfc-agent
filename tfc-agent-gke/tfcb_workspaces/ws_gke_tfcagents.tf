@@ -1,10 +1,10 @@
-module "gcp_gke_tfcagents" {
+module "gke_tfcagents" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "gcp_gke_tfcagents"
-    workingdir = "tfc-agent-gke/gke"
+    workspacename = "gke_tfcagents"
+    workingdir = "tfc-agent-gke/tfc-agent"
     tfversion = "0.13.6"
     repobranch = "gke3"
     #Add /Repo_Name after org
@@ -19,11 +19,22 @@ module "gcp_gke_tfcagents" {
         "gcp_project" = var.gcp_project
         "gcp_region" = "us-west1"
         "gcp_zone" = "us-west1-c"
-        "gke_num_nodes" = 3
-        "ip_cidr_range" = "10.10.0.0/24"
-        "k8sloadconfig" = true
+        "namespace" = "serviceA"
+        "stage" = "deploy"
+        "name" = "serviceA"
+        "environment" = "dev"
     }
        tf_variables_sec = {
-        "tfe_token"      = var.tfe_token
+        "tfc_agent_token" = tfe_agent_token.serviceA-token.token
     }
+}
+
+# ServiceA Agent Pool
+resource "tfe_agent_pool" "serviceA" {
+  name         = "tfc-agent-pool-serviceA"
+  organization = var.organization
+}
+resource "tfe_agent_token" "serviceA-token" {
+  agent_pool_id = tfe_agent_pool.serviceA.id
+  description   = "tfc-agent-serviceA-token"
 }
