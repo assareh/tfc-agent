@@ -3,7 +3,7 @@ data "terraform_remote_state" "gke" {
   backend = "atlas"
   config = {
     address = "https://app.terraform.io"
-    name    = "presto-projects/gke_cluster"
+    name    = "presto-projects/gke"
   }
 }
 data "google_client_config" "default" {}
