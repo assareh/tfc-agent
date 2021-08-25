@@ -1,9 +1,9 @@
-module "gke_cluster" {
+module "gke" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "gke_cluster"
+    workspacename = "gke"
     workingdir = "tfc-agent-gke/gke"
     tfversion = "0.13.6"
     repobranch = "gke3"
