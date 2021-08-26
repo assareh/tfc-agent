@@ -1,6 +1,7 @@
 # GKE cluster
 resource "google_container_cluster" "primary" {
   name     = var.prefix
+  project  = var.gcp_project
   #location = var.gcp_region
   location   = var.gcp_zone
   min_master_version = var.cluster_version
@@ -12,11 +13,11 @@ resource "google_container_cluster" "primary" {
       min_master_version,
     ]
   }
-  
+
   remove_default_node_pool = true
   initial_node_count       = 1
   workload_identity_config {
-    identity_namespace = "${var.project}.svc.id.goog"
+    identity_namespace = "${var.var.gcp_project}.svc.id.goog"
   }
   
   network    = google_compute_network.vpc.name
@@ -45,7 +46,7 @@ resource "google_service_account" "cluster-serviceaccount" {
 # Separately Managed Node Pool
 resource "google_container_node_pool" "primary_nodes" {
   name       = "${google_container_cluster.primary.name}-npool"
-  #location = var.gcp_region
+  project = var.gcp_project
   location   = var.gcp_zone
   cluster    = google_container_cluster.primary.name
   version = var.cluster_version
