@@ -28,7 +28,7 @@ read -r -d '' NOTIFICATION_CONFIGURATION_PAYLOAD << EOM
     "attributes": {
       "destination-type": "generic",
       "enabled": true,
-      "name": "AWS Lambda tfc-agent autoscaler",
+      "name": "tfc-agent autosleeper",
       "url": "$WEBHOOK_URL",
       "token": "$HMAC_SALT",
       "triggers": [

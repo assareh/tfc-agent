@@ -4,12 +4,14 @@ import hmac
 import json
 import os
 
+
 CLUSTER = os.getenv("CLUSTER", None)
 MAX_AGENTS = os.getenv("MAX_AGENTS", None)
 REGION = os.getenv("REGION", None)
 SALT_PATH = os.getenv("SALT_PATH", None)
 SERVICE = os.getenv("SERVICE", None)
 SSM_PARAM_NAME = os.getenv("SSM_PARAM_NAME", None)
+
 
 ADD_SERVICE_STATES = {'pending'}
 SUB_SERVICE_STATES = {
