@@ -32,4 +32,7 @@ module "tfc_agent" {
 
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-agent"
+  service_account_annotations = {
+    iam.gke.io/gcp-service-account = workload-identity-tutorial@${var.project}.iam.gserviceaccount.com
+  }
 }
