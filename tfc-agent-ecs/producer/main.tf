@@ -200,7 +200,7 @@ resource "aws_security_group_rule" "allow_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
-# lambda
+# from here to EOF is optional, for lambda autoscaling
 resource "aws_lambda_function" "webhook" {
   function_name           = "${var.prefix}-webhook"
   description             = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
