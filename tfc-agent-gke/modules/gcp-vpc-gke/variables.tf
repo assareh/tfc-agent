@@ -14,6 +14,9 @@ variable "gcp_zone" {
   description = "GCP zone will deploy a single master.  Use region instead for multi-master deployment (HA)"
   default     = "us-east1-c"
 }
+variable "cluster_version" {
+  default = "1.20"
+}
 
 variable "ip_cidr_range" {
   default = "10.10.0.0/24"
