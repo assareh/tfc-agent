@@ -22,6 +22,7 @@ variable "prefix" {
   default     = "tfc-agent"
 }
 
-variable "tfc_agent_token" {
-  description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
+variable "organization" { default = "presto-projects" }
+variable "tfe_token" {
+  description = "Terraform Cloud admin token to create agent_pools, agent_tokens. (mark as sensitive)"
 }

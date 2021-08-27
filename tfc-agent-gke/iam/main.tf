@@ -3,7 +3,44 @@ provider "google" {
   region  = var.gcp_region
 }
 
+provider "tfe" {
+  #version = "<= 0.7.0"
+  token = var.tfe_token
+}
+
 data "google_project" "project" {}
+
+# ServiceA Agent Pool
+resource "tfe_agent_pool" "pool-serviceA" {
+  name         = "serviceA_pool"
+  organization = var.organization
+}
+resource "tfe_agent_token" "serviceA-agent-token" {
+  agent_pool_id = tfe_agent_pool.pool-serviceA.id
+  description   = "serviceA-agent-token"
+}
+
+# Create a secret for local-admin-password
+resource "google_secret_manager_secret" "serviceA-agent-token" {
+  #provider = google-beta
+  
+  secret_id = "serviceA-agent-token"
+  replication {
+    automatic = true
+  }
+}
+# Add the secret data for local-admin-password secret
+resource "google_secret_manager_secret_version" "serviceA-agent-token" {
+  secret = google_secret_manager_secret.serviceA-agent-token.id
+  secret_data = tfe_agent_token.serviceA-agent-token.token
+}
+
+data "google_secret_manager_secret_version" "serviceA-agent-token" {
+  secret   = google_secret_manager_secret.serviceA-agent-token.id
+}
+output "serviceA-agent-token" {
+  value = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
+}
 
 #k8s cluster account
 resource "google_service_account" "cluster-serviceaccount" {
