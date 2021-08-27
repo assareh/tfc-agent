@@ -6,7 +6,7 @@ data "terraform_remote_state" "gke" {
     name    = "presto-projects/gke"
   }
 }
-data "terraform_remote_state" "gke" {
+data "terraform_remote_state" "iam" {
   backend = "atlas"
   config = {
     address = "https://app.terraform.io"
