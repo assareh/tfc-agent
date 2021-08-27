@@ -14,6 +14,13 @@ data "google_container_cluster" "my_cluster" {
   location = var.gcp_zone
 }
 
+data "google_secret_manager_secret_version" "serviceA-agent-token" {
+  secret   = "serviceA-agent-token"
+}
+output "serviceA-agent-token" {
+  value = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
+}
+
 provider "kubernetes" {
   #version = "~> 1.12"
   load_config_file = false
@@ -29,7 +36,7 @@ module "tfc_agent" {
   source = "git::https://github.com/cloudposse/terraform-kubernetes-tfc-cloud-agent.git?ref=tags/0.3.0"
   context = module.this.context
   replicas = 2
-  tfc_agent_token = var.tfc_agent_token
+  tfc_agent_token = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
 
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-agent"

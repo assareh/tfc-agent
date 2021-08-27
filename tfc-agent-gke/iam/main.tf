@@ -22,8 +22,6 @@ resource "tfe_agent_token" "serviceA-agent-token" {
 
 # Create a secret for local-admin-password
 resource "google_secret_manager_secret" "serviceA-agent-token" {
-  #provider = google-beta
-  
   secret_id = "serviceA-agent-token"
   replication {
     automatic = true
@@ -53,6 +51,15 @@ resource "google_service_account" "workload-identity-user-sa" {
   account_id   = "workload-identity-tutorial"
   display_name = "Service Account For Workload Identity"
 }
+resource "google_secret_manager_secret_iam_binding" "binding" {
+  project = var.gcp_project
+  secret_id = google_secret_manager_secret.serviceA-agent-token.id
+  role = "roles/secretmanager.secretAccessor"
+  members = [
+    "serviceAccount:${google_service_account.workload-identity-user-sa.email}",
+  ]
+}
+
 resource "google_project_iam_member" "storage-role" {
   role = "roles/storage.admin"
   # role   = "roles/storage.objectAdmin"
