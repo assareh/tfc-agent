@@ -1,7 +1,3 @@
-variable "dev_role_sa" {
-  description = "Service account email of the dev role to be impersonated (this was created in the producer workspace)"
-}
-
 variable "gcp_project" {
   description = "GCP project name"
 }
