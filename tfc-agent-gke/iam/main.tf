@@ -61,7 +61,7 @@ resource "google_secret_manager_secret_iam_binding" "binding" {
 }
 
 resource "google_project_iam_member" "storage-role" {
-  role = "roles/storage.admin"
+  role = "roles/compute.admin"
   # role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.workload-identity-user-sa.email}"
 }
