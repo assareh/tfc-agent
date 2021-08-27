@@ -10,7 +10,7 @@ data "terraform_remote_state" "iam" {
   backend = "atlas"
   config = {
     address = "https://app.terraform.io"
-    name    = "presto-projects/iam"
+    name    = "presto-projects/gke_iam"
   }
 }
 data "google_client_config" "default" {}

@@ -1,13 +1,13 @@
-module "gke-team-serviceA" {
+module "gke_team_serviceA" {
     source = "../modules/workspace-agent"
     agent_pool_id     = data.terraform_remote_state.presto_projects_iam.outputs.serviceA_agentpool_id
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "gke-team-serviceA"
-    workingdir = "tfc-agent-gke/gke-team-serviceA"
+    workspacename = "gke_team_serviceA"
+    workingdir = "tfc-agent-gke/gke_team_serviceA"
     tfversion = "0.13.6"
-    repobranch = "iam"
+    repobranch = var.repo_branch
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
@@ -32,6 +32,6 @@ data "terraform_remote_state" "presto_projects_iam" {
   backend = "atlas"
   config = {
     address = "https://app.terraform.io"
-    name    = "presto-projects/iam"
+    name    = "presto-projects/gke_iam"
   }
 }

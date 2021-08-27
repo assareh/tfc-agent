@@ -1,12 +1,12 @@
-module "iam" {
+module "gke_iam" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
     workspacename = "iam"
-    workingdir = "tfc-agent-gke/iam"
+    workingdir = "tfc-agent-gke/gke_iam"
     tfversion = "0.13.6"
-    repobranch = "iam"
+    repobranch = var.repo_branch
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
