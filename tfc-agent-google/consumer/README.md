@@ -6,6 +6,8 @@ In this model it is important to enforce least privilege on Terraform Cloud work
 
 ## Usage
 
+You can verify the impersonation by viewing the IAM Audit Logs in the GCP console Logs Explorer.
+
 ### Execution Mode
 NOTE: The [Execution Mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) of this workspace must be set to Agent, and the appropriate agent pool must be selected. Please refer to the [documentation](https://www.terraform.io/docs/cloud/agents/index.html#configuring-workspaces-to-use-the-agent) for instructions on how to configure workspaces to use the agent in the Terraform Cloud console.
 
