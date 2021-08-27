@@ -1,25 +1,10 @@
-#k8s cluster account
-resource "google_service_account" "cluster-serviceaccount" {
-  account_id   = "cluster-serviceaccount"
-  display_name = "Service Account For Terraform To Make GKE Cluster"
-}
 
-# service account
-resource "google_service_account" "workload-identity-user-sa" {
-  account_id   = "workload-identity-tutorial"
-  display_name = "Service Account For Workload Identity"
+# GCP Default SA
+resource "google_service_account" "default" {
+  count = var.gke_service_account_email == "" ? 1 : 0
+  account_id   = "service-account-id"
+  display_name = "Service Account"
 }
-resource "google_project_iam_member" "storage-role" {
-  role = "roles/storage.admin"
-  # role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_service_account.workload-identity-user-sa.email}"
-}
-resource "google_project_iam_member" "workload_identity-role" {
-  role   = "roles/iam.workloadIdentityUser"
-  member = "serviceAccount:${var.gcp_project}.svc.id.goog[tfc-agent/servicea-dev-deploy-servicea]"
-}
-
-
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
@@ -56,11 +41,6 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-resource "google_service_account" "default" {
-  account_id   = "service-account-id"
-  display_name = "Service Account"
-}
-
 # Separately Managed Node Pool
 resource "google_container_node_pool" "primary_nodes" {
   name       = "${google_container_cluster.primary.name}-npool"
@@ -75,17 +55,11 @@ resource "google_container_node_pool" "primary_nodes" {
     max_node_count = 2
   }
   node_config {
-    #service_account = google_service_account.default.email
-    #oauth_scopes = [
-    #  "https://www.googleapis.com/auth/logging.write",
-    #  "https://www.googleapis.com/auth/monitoring",
-    #  "https://www.googleapis.com/auth/cloud-platform"
-    #]
-    service_account = google_service_account.cluster-serviceaccount.email
+    service_account = var.gke_service_account_email == "" ? google_service_account.default.email : var.gke_service_account_email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
-    
+
     labels = {
       env = var.prefix
       region = var.gcp_region

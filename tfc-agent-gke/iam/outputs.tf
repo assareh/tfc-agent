@@ -6,10 +6,6 @@ output "instance_names" {
   value = google_compute_instance.tfc-agent.*.name
 }
 
-output "terraform-dev-role" {
-  value = google_service_account.terraform-dev-role.email
-}
-
-output "tfc-agent-sa" {
-  value = google_service_account.tfc-agent.email
+output "k8s_cluster_sa_email" {
+  value = google_service_account.cluster-serviceaccount.email
 }
