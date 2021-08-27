@@ -23,9 +23,5 @@ module "gke_tfcagents" {
         "stage" = "deploy"
         "name" = "serviceA"
         "environment" = "dev"
-        "token_tmp_out" = tfe_agent_token.serviceA-token.token
-    }
-       tf_variables_sec = {
-        "tfc_agent_token" = tfe_agent_token.serviceA-token.token
     }
 }
