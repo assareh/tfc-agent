@@ -10,7 +10,7 @@ module "gke-team-serviceA" {
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
     oauth_token_id = "${var.oauth_token_id}"
-    gcp_credentials = "${var.gcp_credentials}"
+    #gcp_credentials = "${var.gcp_credentials}"
     gcp_region      = "${var.gcp_region}"
     gcp_project     = "${var.gcp_project}"
     gcp_zone        = "${var.gcp_zone}"
