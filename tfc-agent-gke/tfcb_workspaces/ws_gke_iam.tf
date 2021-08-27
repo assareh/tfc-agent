@@ -3,7 +3,7 @@ module "gke_iam" {
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "iam"
+    workspacename = "gke_iam"
     workingdir = "tfc-agent-gke/gke_iam"
     tfversion = "0.13.6"
     repobranch = var.repo_branch
