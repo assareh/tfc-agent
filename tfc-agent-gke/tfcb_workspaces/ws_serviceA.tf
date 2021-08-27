@@ -1,10 +1,10 @@
-module "iam" {
+module "gke-team-serviceA" {
     source = "../modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "serviceA"
-    workingdir = "tfc-agent-gke/serviceA"
+    workspacename = "gke-team-serviceA"
+    workingdir = "tfc-agent-gke/gke-team-serviceA"
     tfversion = "0.13.6"
     repobranch = "iam"
     #Add /Repo_Name after org
