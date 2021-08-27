@@ -43,10 +43,10 @@ output "serviceA-agent-token" {
 }
 
 #k8s cluster account
-resource "google_service_account" "cluster-serviceaccount" {
-  account_id   = "cluster-serviceaccount"
-  display_name = "Service Account For Terraform To Make GKE Cluster"
-}
+#resource "google_service_account" "cluster-serviceaccount" {
+#  account_id   = "cluster-serviceaccount"
+#  display_name = "Service Account For Terraform To Make GKE Cluster"
+#}
 
 # service account
 resource "google_service_account" "workload-identity-user-sa" {
