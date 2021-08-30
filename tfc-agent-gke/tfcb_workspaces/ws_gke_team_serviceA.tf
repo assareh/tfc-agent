@@ -1,6 +1,7 @@
 module "gke_team_serviceA" {
     source = "../modules/workspace-agent"
-    agent_pool_id     = data.terraform_remote_state.presto_projects_iam.outputs.serviceA_agentpool_id
+    #agent_pool_id     = data.terraform_remote_state.presto_projects_iam.outputs.serviceA_agentpool_id
+    agent_pool_id = "test"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true

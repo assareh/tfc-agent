@@ -20,13 +20,6 @@ data "google_container_cluster" "my_cluster" {
   location = var.gcp_zone
 }
 
-data "google_secret_manager_secret_version" "serviceA-agent-token" {
-  secret   = "serviceA-agent-token"
-}
-output "serviceA-agent-token" {
-  value = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
-}
-
 provider "kubernetes" {
   #version = "~> 1.12"
   load_config_file = false
@@ -47,6 +40,6 @@ module "tfc_agent" {
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-agent"
   service_account_annotations = {
-    "iam.gke.io/gcp-service-account" = "workload-identity-tutorial@${var.gcp_project}.iam.gserviceaccount.com",
+    "iam.gke.io/gcp-service-account" = "team_serviceA@${var.gcp_project}.iam.gserviceaccount.com",
   }
 }

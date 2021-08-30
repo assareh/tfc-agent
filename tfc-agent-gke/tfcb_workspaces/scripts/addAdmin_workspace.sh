@@ -34,7 +34,7 @@ git_url="https://github.com/ppresto/tfc-agent.git"
 workspace="admin_ws_agentdemo"
 # This is the repo dir TFCB will use to run terraform and manage your workspaces with IaC
 WORKSPACE_DIR="tfc-agent-gke/tfcb_workspaces"
-BRANCH="gke3"
+BRANCH="iam"
 TF_VERSION="0.13.6"
 
 # set sensitive environment variables/tokens
@@ -201,33 +201,6 @@ if [ ! -z ${repository} ]; then
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 fi
 
-# Build Azure Credentials
-# example template replacement
-# sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/$key/" -e "s/my-value/$value/" -e "s/my-category/$category/" -e "s/my-hcl/$hcl/" -e "s/my-sensitive/$sensitive/" < variable.template.json  > variable.json
-
-if [[ ! -z ${ARM_CLIENT_ID} && ! -z ${ARM_SUBSCRIPTION_ID} && ! -z ${ARM_CLIENT_SECRET} && ! -z ${ARM_TENANT_ID} ]]; then
-  # ARM_CLIENT_ID
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/arm_client_id/" -e "s/my-value/${ARM_CLIENT_ID}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding ARM_CLIENT_ID"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-
-  # ARM_SUBSCRIPTION_ID
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/arm_subscription_id/" -e "s/my-value/${ARM_SUBSCRIPTION_ID}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding ARM_SUBSCRIPTION_ID"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-
-  # ARM_CLIENT_SECRET
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/arm_client_secret/" -e "s/my-value/${ARM_CLIENT_SECRET}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding ARM_CLIENT_SECRET"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-
-  # ARM_TENANT_ID
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/arm_tenant_id/" -e "s/my-value/${ARM_TENANT_ID}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding ARM_TENANT_ID"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-
-fi
-
 # Build GCP Project Credentials
 if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   # GOOGLE_CREDENTIALS
@@ -236,11 +209,20 @@ if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   gcp_creds=$(echo ${GOOGLE_CREDENTIALS} | awk '{printf "%s\\n", $0}' | sed "s/\"/\\\\\"/g")
   addKeyVars "gcp_credentials" "${gcp_creds}" true
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
+  # add as ENV var too
+  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_CREDENTIALS/" -e "s/my-value/${gcp_creds}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/true/" < variable.template.json  > variable.json
+  echo "Adding GOOGLE_CREDENTIALS"
+  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_PROJECT
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/gcp_project/" -e "s/my-value/${GOOGLE_PROJECT}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
   echo "Adding GOOGLE_PROJECT"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
+  # add as ENV var too
+  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_PROJECT/" -e "s/my-value/${GOOGLE_PROJECT}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
+  echo "Adding GOOGLE_PROJECT"
+  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
+
 fi
 # Set Default Region for GCP if Available
 if [[ ! -z ${GOOGLE_REGION} && ! -z ${GOOGLE_ZONE} ]]; then
@@ -248,31 +230,18 @@ if [[ ! -z ${GOOGLE_REGION} && ! -z ${GOOGLE_ZONE} ]]; then
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/gcp_region/" -e "s/my-value/${GOOGLE_REGION}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
   echo "Adding GOOGLE_REGION"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
+  # add as ENV var too
+  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_REGION/" -e "s/my-value/${GOOGLE_REGION}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
+  echo "Adding GOOGLE_REGION"
+  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_ZONE
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/gcp_zone/" -e "s/my-value/${GOOGLE_ZONE}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
   echo "Adding GOOGLE_ZONE"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-fi
-
-# Build AWS Credentials
-if [[ ! -z ${AWS_ACCESS_KEY_ID} && ! -z ${AWS_SECRET_ACCESS_KEY} ]]; then
-  # AWS_ACCESS_KEY_ID
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/aws_access_key_id/" -e "s/my-value/${AWS_ACCESS_KEY_ID}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding AWS_ACCESS_KEY_ID"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-
-  # AWS_SECRET_ACCESS_KEY
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/aws_secret_access_key/" -e "s/my-value/${AWS_SECRET_ACCESS_KEY}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding AWS_SECRET_ACCESS_KEY"
-  upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
-fi
-
-# Set Default AWS Region if Available
-if [[ ! -z ${AWS_DEFAULT_REGION} ]]; then
-  # AWS_DEFAULT_REGION
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/aws_default_region/" -e "s/my-value/${AWS_DEFAULT_REGION}/" -e "s/my-category/terraform/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding AWS_DEFAULT_REGION"
+  # add as ENV var too
+  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_ZONE/" -e "s/my-value/${GOOGLE_ZONE}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
+  echo "Adding GOOGLE_ZONE"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 fi
 
