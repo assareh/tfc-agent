@@ -1,6 +1,6 @@
 module "gke_team_serviceA" {
     source = "../modules/workspace-agent"
-    agent_pool_id     = data.terraform_remote_state.presto_projects_iam.outputs.serviceA_agentpool_id
+    agent_pool_id     = tfe_agent_pool.pool-serviceA.id
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
@@ -27,11 +27,12 @@ module "gke_team_serviceA" {
     }
 }
 
-// IAM Workspace Data is used by ECS task definitions
-data "terraform_remote_state" "presto_projects_iam" {
+// IAM Workspace can be used for agent_pool id and token data
+/*data "terraform_remote_state" "presto_projects_iam" {
   backend = "atlas"
   config = {
     address = "https://app.terraform.io"
     name    = "presto-projects/gke_iam"
   }
 }
+*/
