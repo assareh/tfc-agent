@@ -12,7 +12,7 @@ resource "tfe_agent_token" "serviceA-agent-token" {
 
 # Create Google service account - ServiceA
 resource "google_service_account" "gsa_team_serviceA" {
-  account_id   = "team-serviceA"
+  account_id   = "teamserviceA"
   display_name = "Service Account For Workload Identity"
 }
 
