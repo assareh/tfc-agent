@@ -65,6 +65,13 @@ fi
 
 function addKeyVars () {
 # Provide 3 Inputs: key_name , key_value, boolean (to enable encryption).
+# optional 4th input to manage variable type (terraform/env)
+if [[ -z ${4} ]]; then
+  category="terraform"
+else
+  category="env" 
+fi
+
   tee variable.json <<EOF
 {
   "data": {
@@ -72,7 +79,7 @@ function addKeyVars () {
     "attributes": {
       "key":"${1}",
       "value":"${2}",
-      "category":"terraform",
+      "category":"${category}",
       "hcl":false,
       "sensitive":${3}
     }
@@ -207,11 +214,11 @@ if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   echo -e "ACTION REQUIRED!! \nGOOGLE_CREDENTIAL Need to be tested.  Key \n char is being interpreted in tfc variable value. \n\n"
 
   gcp_creds=$(echo ${GOOGLE_CREDENTIALS} | awk '{printf "%s\\n", $0}' | sed "s/\"/\\\\\"/g")
-  addKeyVars "gcp_credentials" "${gcp_creds}" true
+  addKeyVars "gcp_credentials" "${gcp_creds}" false
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
-  sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_CREDENTIALS/" -e "s/my-value/${gcp_creds}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/true/" < variable.template.json  > variable.json
-  echo "Adding GOOGLE_CREDENTIALS"
+  gcp_creds=$(echo ${GOOGLE_CREDENTIALS} | sed "s/\"/\\\\\"/g")
+  addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" false "env"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_PROJECT
@@ -220,7 +227,7 @@ if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_PROJECT/" -e "s/my-value/${GOOGLE_PROJECT}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding GOOGLE_PROJECT"
+  echo "Adding GOOGLE_PROJECT ENV"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
 fi
@@ -232,7 +239,7 @@ if [[ ! -z ${GOOGLE_REGION} && ! -z ${GOOGLE_ZONE} ]]; then
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_REGION/" -e "s/my-value/${GOOGLE_REGION}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding GOOGLE_REGION"
+  echo "Adding GOOGLE_REGION ENV"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_ZONE
@@ -241,7 +248,7 @@ if [[ ! -z ${GOOGLE_REGION} && ! -z ${GOOGLE_ZONE} ]]; then
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
   sed -e "s/my-organization/$organization/" -e "s/my-workspace/${workspace}/" -e "s/my-key/GOOGLE_ZONE/" -e "s/my-value/${GOOGLE_ZONE}/" -e "s/my-category/env/" -e "s/my-hcl/false/" -e "s/my-sensitive/false/" < variable.template.json  > variable.json
-  echo "Adding GOOGLE_ZONE"
+  echo "Adding GOOGLE_ZONE ENV"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 fi
 
