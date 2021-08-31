@@ -2,7 +2,68 @@
 
 ## Provision GKE
 
+### Authenticate to GKE on the command line
+
+1. (Optional) You can get the information from the gke workspace outputs in TFCB.  If you want to use your CLI, first login.
+```
+terraform login
+```
+This will request an API token using your browser and store it in `$HOME/.terraform.d/credentials.tfrc.json`.  This will be used by terraform to communicate to the TFCB backend.
+
+Update the `./tfc-agent-gke/gke/backend.tf` to point to your TFCB Organization
+```
+terraform {
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "<ADD_YOUR_ORG_HERE>"
+
+    workspaces {
+      name = "gke"
+    }
+  }
+}
+```
+Save the file and initialize the remote backend
+
+```
+terraform init
+```
+You are now authenticated into TFCB, the backend is setup allowing you to use the local CLI to communicate with your TFCB workspace.  You can now run teraform output to get your GKE cluster details.
+
+Put the terraform output into a local file we can reference quickly.
+```
+terraform output -json > ./tf.out
+
+gcp_region=$(jq -r '.region.value' ./tf.out)
+gcp_zone=$(jq -r '.zone.value' ./tf.out)
+gcp_project=$(jq -r '.gcp_project.value' ./tf.out)
+gcp_cluster_name=$(jq -r '.kubernetes_cluster_name.value' ./tf.out)
+gcp_gke_context=$(jq -r '.context.value' ./tf.out)
+
+echo $gcp_region
+echo $gcp_zone
+echo $gcp_project
+echo $gcp_cluster_name
+echo $gcp_gke_context
+```
+You should have everythig you need now. Lets Auth to GCP and setup your GKE env.
+
+```
+echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
+gcloud auth activate-service-account --key-file=/tmp/credential_key.json
+gcloud config set project ${gcp_project}
+gcloud config set compute/region ${gcp_region}
+gcloud container clusters get-credentials ${gcp_cluster_name} --region ${gcp_zone}
+rm /tmp/credential_key.json
+rm tf.out
+```
+
 ## Provision tfc-agents as a GKE service
+
+Set the current context namespace for simpicity
+```
+kubectl config set-context --current --namespace=tfc-agent
+```
 
 ## Notes
 Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.

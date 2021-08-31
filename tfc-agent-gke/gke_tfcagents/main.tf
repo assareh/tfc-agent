@@ -32,8 +32,8 @@ module "tfc_agent" {
   #tfc_agent_token = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
   tfc_agent_token = var.tfc_agent_token
   namespace_creation_enabled = true
-  kubernetes_namespace       = "tfc-agent"
+  kubernetes_namespace       = "tfc-team1"
   service_account_annotations = {
-    "iam.gke.io/gcp-service-account" = "team-a@${var.gcp_project}.iam.gserviceaccount.com",
+    "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
 }
