@@ -1,8 +1,12 @@
 
 # GCP Default SA
-resource "google_service_account" "default" {
-  account_id   = "service-account-id"
-  display_name = "Service Account"
+#resource "google_service_account" "default" {
+#  account_id   = "service-account-id"
+#  display_name = "Service Account"
+#}
+
+locals {
+  gke_service_account_email = var.gke_service_account_email!="" ? var.gke_service_account_email : "${var.project}-compute@developer.gserviceaccount.com"
 }
 
 # GKE cluster
@@ -54,7 +58,7 @@ resource "google_container_node_pool" "primary_nodes" {
     max_node_count = 2
   }
   node_config {
-    service_account = google_service_account.default.email
+    service_account = local.gke_service_account_email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]

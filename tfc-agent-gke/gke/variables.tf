@@ -43,7 +43,7 @@ variable k8sloadconfig {
     default = ""
 }
 
-variable gsa_gke_email {
+variable gke_service_account_email {
   description = "Default Google Service Account running GKE"
   default = ""
 }

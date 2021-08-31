@@ -4,6 +4,6 @@ resource "google_service_account" "gke" {
   display_name = "Service Account"
 }
 
-output "gsa_gke_email" {
+output "gke_service_account_email" {
   value = google_service_account.gke.email
 }

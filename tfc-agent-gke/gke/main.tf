@@ -7,9 +7,6 @@
 #  }
 #}
 
-locals {
-  gsa_gke_email = var.gsa_gke_email!="" ? var.gsa_gke_email : "${var.project}-compute@developer.gserviceaccount.com"
-}
 
 module "gcp-vpc-gke" {
   source         = "../modules/gcp-vpc-gke"
@@ -20,5 +17,6 @@ module "gcp-vpc-gke" {
   ip_cidr_range = var.ip_cidr_range
   gke_num_nodes = var.gke_num_nodes
   k8sloadconfig = false
+  gke_service_account_email = var.gke_service_account_email
   #gke_namespace  = var.gke_namespace
 }
