@@ -7,6 +7,10 @@
 #  }
 #}
 
+locals {
+  gsa_gke_email = var.gsa_gke_email!="" ? var.gsa_gke_email : "${var.project}-compute@developer.gserviceaccount.com"
+}
+
 module "gcp-vpc-gke" {
   source         = "../modules/gcp-vpc-gke"
   prefix        = var.prefix

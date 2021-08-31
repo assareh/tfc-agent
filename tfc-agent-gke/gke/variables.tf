@@ -43,6 +43,10 @@ variable k8sloadconfig {
     default = ""
 }
 
+variable gsa_gke_email {
+  description = "Default Google Service Account running GKE"
+  default = ""
+}
 #variable "key_ring" {
 #  default     = "vault-unseal-ring"
 #}
