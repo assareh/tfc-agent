@@ -6,7 +6,7 @@
 #}
 
 locals {
-  gke_service_account_email = var.gke_service_account_email!="" ? var.gke_service_account_email : "${var.project}-compute@developer.gserviceaccount.com"
+  gke_service_account_email = var.gke_service_account_email!="" ? var.gke_service_account_email : "${var.gcp_project}-compute@developer.gserviceaccount.com"
 }
 
 # GKE cluster
