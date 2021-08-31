@@ -1,11 +1,11 @@
-module "gke_team_serviceA" {
+module "gke_team_team1" {
     source = "../modules/workspace-agent"
-    agent_pool_id     = tfe_agent_pool.pool-serviceA.id
+    agent_pool_id     = tfe_agent_pool.pool-team1.id
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
-    workspacename = "gke_team_serviceA"
-    workingdir = "tfc-agent-gke/gke_team_serviceA"
+    workspacename = "gke_team_team1"
+    workingdir = "tfc-agent-gke/gke_team_team1"
     tfversion = "0.13.6"
     repobranch = var.repo_branch
     #Add /Repo_Name after org
