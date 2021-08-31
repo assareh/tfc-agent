@@ -211,13 +211,11 @@ fi
 # Build GCP Project Credentials
 if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   # GOOGLE_CREDENTIALS
-  echo -e "ACTION REQUIRED!! \nGOOGLE_CREDENTIAL Need to be tested.  Key \n char is being interpreted in tfc variable value. \n\n"
+  gcp_creds="$(echo ${GOOGLE_CREDENTIALS} | jq -c | sed 's/\\n/\\\\n/g' | sed 's/"/\\"/g')"
 
-  gcp_creds=$(echo ${GOOGLE_CREDENTIALS} | awk '{printf "%s\\n", $0}' | sed "s/\"/\\\\\"/g")
   addKeyVars "gcp_credentials" "${gcp_creds}" false
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
-  gcp_creds=$(echo ${GOOGLE_CREDENTIALS} | sed "s/\"/\\\\\"/g")
   addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" false "env"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
