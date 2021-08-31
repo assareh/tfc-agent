@@ -26,7 +26,7 @@ module "gke" {
         "gke_num_nodes" = 3
         "ip_cidr_range" = "10.10.0.0/24"
         "k8sloadconfig" = true
-        "gsa_gke_email" = google_service_account.gke.email
+        "gke_service_account_email" = google_service_account.gke.email
     }
        tf_variables_sec = {
         "tfe_token"      = var.tfe_token
