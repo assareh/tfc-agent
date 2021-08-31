@@ -25,5 +25,5 @@ resource "google_project_iam_member" "team1-role" {
 # Enable GKE namespace/sa access to Google service account policy via Workload Identity
 resource "google_project_iam_member" "workload_identity-role" {
   role   = "roles/iam.workloadIdentityUser"
-  member = "serviceAccount:${var.gcp_project}.svc.id.goog[tfc-team1/servicea-dev-deploy-servicea]"
+  member = "serviceAccount:${var.gcp_project}.svc.id.goog[tfc-team1/tfc-agent-dev]"
 }

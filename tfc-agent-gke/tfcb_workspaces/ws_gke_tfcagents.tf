@@ -19,9 +19,7 @@ module "gke_tfcagents" {
         "gcp_project" = var.gcp_project
         "gcp_region" = "us-west1"
         "gcp_zone" = "us-west1-c"
-        "namespace" = "serviceA"
-        "stage" = "deploy"
-        "name" = "serviceA"
+        "namespace" = "tfc-agent"
         "environment" = "dev"
     }
     tf_variables_sec = {
