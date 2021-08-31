@@ -6,13 +6,7 @@ data "terraform_remote_state" "gke" {
     name    = "presto-projects/gke"
   }
 }
-data "terraform_remote_state" "iam" {
-  backend = "atlas"
-  config = {
-    address = "https://app.terraform.io"
-    name    = "presto-projects/gke_iam"
-  }
-}
+
 data "google_client_config" "default" {}
 
 data "google_container_cluster" "my_cluster" {
@@ -36,7 +30,7 @@ module "tfc_agent" {
   context = module.this.context
   replicas = 2
   #tfc_agent_token = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
-  tfc_agent_token = data.terraform_remote_state.iam.outputs.serviceA_agent_token
+  tfc_agent_token = var.tfc_agent_token
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-agent"
   service_account_annotations = {

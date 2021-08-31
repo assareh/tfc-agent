@@ -1,7 +1,7 @@
 module "gke" {
     source = "../modules/workspace"
     organization = "${var.organization}"
-    queue_all_runs = true
+    queue_all_runs = false
     auto_apply = true
     workspacename = "gke"
     workingdir = "tfc-agent-gke/gke"
