@@ -50,3 +50,8 @@ locals {
 output "tf_out" {
   value = local.helper_list2
 }
+
+output "tf-test {
+  value = flatten([ for team, value in var.iam_teams:
+  { "team" = team}])
+}

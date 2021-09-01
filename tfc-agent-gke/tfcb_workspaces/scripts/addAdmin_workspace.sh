@@ -35,7 +35,7 @@ workspace="admin_ws_agentdemo"
 # This is the repo dir TFCB will use to run terraform and manage your workspaces with IaC
 WORKSPACE_DIR="tfc-agent-gke/tfcb_workspaces"
 BRANCH="iam"
-TF_VERSION="0.13.6"
+TF_VERSION="1.0.5"
 
 # set sensitive environment variables/tokens
 source $HOME/tfeSetEnv.sh "${organization}"
@@ -216,7 +216,7 @@ if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   addKeyVars "gcp_credentials" "${gcp_creds}" false
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
-  addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" false "env"
+  addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" true "env"
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_PROJECT
