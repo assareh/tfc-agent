@@ -35,3 +35,11 @@ variable "iam_teams" {
     }
   }
 }
+locals {
+  team_roles = flatten([for team, value in var.iam_teams:
+                   flatten([for role in value.roles:
+                    {"team" = team
+                    "role" = role}
+                   ])
+                ])
+}
