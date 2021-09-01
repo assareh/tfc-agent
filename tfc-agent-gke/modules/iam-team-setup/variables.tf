@@ -27,7 +27,7 @@ variable "gcp_zone" {
 
 variable "team" {default = ""}
 variable "team_roles" {default = ""}
-
+variable "team_config" {default = ""}
 variable "iam_teams" {
   default = {
     "team1" = {
