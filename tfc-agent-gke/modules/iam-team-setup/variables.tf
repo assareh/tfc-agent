@@ -8,10 +8,10 @@ variable "prefix" {
 variable "tfe_hostname" {default     = "app.terraform.io"}
 variable "organization" { default = "presto-projects" }
 variable "tfe_token" {}
-variable "oauth_token_id" {}
-variable "repo_org" {}
-variable "repo_branch" { default = "iam"}
-variable "global_remote_state" {default = ""}
+#variable "oauth_token_id" {}
+#variable "repo_org" {}
+#variable "repo_branch" { default = "iam"}
+#variable "global_remote_state" {default = ""}
 
 # GCP
 variable "gcp_credentials" {default = ""}
@@ -41,3 +41,17 @@ variable "iam_teams" {
     }
   }
 }
+
+locals {
+  team_roles = flatten([for team, value in var.iam_teams:
+                   flatten([for role in value.roles:
+                    {"team" = team
+                    "role" = role}
+                   ])
+                ])
+}
+
+output "team_roles" {
+  value = local.team_roles
+}
+
