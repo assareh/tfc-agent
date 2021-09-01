@@ -3,14 +3,9 @@ output "gcp_project" {
 }
 
 output "agentpool_id" {
-  value = tfe_agent_pool.team-pool.id
-}
-output "agentpool_ids" {
-  value = tomap({
-    for k, id in tfe_agent_pool.team-pool.id : k => tfe_agent_pool.team-pool.name
-  })
+  value = tfe_agent_pool.team-pool
 }
 
-output "agent_token" {
-  value = tfe_agent_token.team-agent-token.token
-}
+#output "agent_token" {
+#  value = tfe_agent_token.team-agent-token.token
+#}
