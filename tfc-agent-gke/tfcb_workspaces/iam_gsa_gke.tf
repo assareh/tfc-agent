@@ -19,5 +19,4 @@ module "iam-team-setup" {
   gcp_project = var.gcp_project
   gcp_region  = var.gcp_region
   gcp_zone    = var.gcp_zone
-  iam_teams    = var.iam_teams
 }

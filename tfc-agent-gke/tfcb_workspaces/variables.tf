@@ -27,7 +27,7 @@ variable "gcp_zone" {
 
 variable "iam_teams" {
   default = {
-    "team1" = {
+    "team2" = {
       "gsa" : "gsa-tfc-team1",
       "namespace" : "tfc-team1",
       "k8a_sa" : "tfc-agent-dev",
