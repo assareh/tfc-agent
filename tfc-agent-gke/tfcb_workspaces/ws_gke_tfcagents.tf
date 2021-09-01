@@ -23,6 +23,6 @@ module "gke_tfcagents" {
         "environment" = "dev"
     }
     tf_variables_sec = {
-        "tfc_agent_token" = tfe_agent_token.team1-agent-token.token
+        "tfc_agent_token" = module.iam-team-setup.outputs.agent_token
     }
 }

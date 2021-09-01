@@ -1,6 +1,6 @@
 module "gke_team_team1" {
     source = "../modules/workspace-agent"
-    agent_pool_id     = tfe_agent_pool.pool-team1.id
+    agent_pool_id     = module.iam-team-setup.outputs.agentpool_id
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true
