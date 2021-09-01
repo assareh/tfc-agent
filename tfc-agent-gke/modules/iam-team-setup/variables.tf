@@ -25,9 +25,8 @@ variable "gcp_zone" {
   default     = "us-west1-b"
 }
 
-variable "team" {default = ""}
-variable "team_roles" {default = ""}
-variable "team_config" {default = ""}
+variable "team" {default = {}}
+/*
 variable "iam_teams" {
   default = {
     "team1" = {
@@ -51,4 +50,5 @@ locals {
 output "team_roles" {
   value = local.team_roles
 }
+*/
 

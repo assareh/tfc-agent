@@ -13,8 +13,7 @@ module "iam-team-setup" {
   source         = "../modules/iam-team-setup"
   for_each      = var.iam_teams
   team          = var.iam_teams[each.key]
-  team_config   = var.iam_teams[each.key]
-  team_roles    = flatten([ for role in each.value.roles: {"role" = role} ])
+  #team_roles    = flatten([ for role in each.value.roles: {"role" = role} ])
   prefix        = "${var.prefix}-${each.key}"
   tfe_token     = var.tfe_token
   gcp_project = var.gcp_project

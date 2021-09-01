@@ -31,7 +31,7 @@ variable "iam_teams" {
       "name" : "team1new",
       "gsa" : "gsa-tfc-team1",
       "namespace" : "tfc-team1",
-      "k8a_sa" : "tfc-agent-dev",
+      "k8s_sa" : "tfc-agent-dev",
       "roles" : ["compute.admin","storage.objectAdmin"],
     }
   }
