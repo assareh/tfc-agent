@@ -2,12 +2,12 @@ data "google_project" "project" {}
 
 # Create Agent Pool - ServiceA
 resource "tfe_agent_pool" "team-pool" {
-  name         = "${team}_pool"
+  name         = "${var.team}_pool"
   organization = var.organization
 }
 resource "tfe_agent_token" "team-agent-token" {
   agent_pool_id = tfe_agent_pool.team-pool.id
-  description   = "${team}-agent-token"
+  description   = "${var.team}-agent-token"
 }
 
 # Create Google service account - TeamA
