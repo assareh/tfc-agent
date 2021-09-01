@@ -7,7 +7,7 @@ resource "tfe_agent_pool" "team-pool" {
 }
 resource "tfe_agent_token" "team-agent-token" {
   agent_pool_id = tfe_agent_pool.team-pool.id
-  description   = "${var.team}-agent-token"
+  description   = "${var.team.name}-agent-token"
 }
 
 # Create Google service account - TeamA
@@ -16,14 +16,13 @@ resource "google_service_account" "team_gsa" {
   display_name = "Service Account For ${var.team.name} Workload Identity"
 }
 
-resource "google_project_iam_member" "team1-role" {
+resource "google_project_iam_member" "role" {
   role = "roles/compute.admin"
-  #role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.team_gsa.email}"
 }
 
 # Enable GKE namespace/sa access to Google service account policy via Workload Identity
 resource "google_project_iam_member" "workload_identity-role" {
   role   = "roles/iam.workloadIdentityUser"
-  member = "serviceAccount:${var.gcp_project}.svc.id.goog[tfc-team1/tfc-agent-dev]"
+  member = "serviceAccount:${var.gcp_project}.svc.id.goog[${var.team.namespace}/${var.team.k8s_sa}]"
 }
