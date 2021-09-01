@@ -11,15 +11,15 @@ resource "tfe_agent_token" "team-agent-token" {
 }
 
 # Create Google service account - TeamA
-resource "google_service_account" "gsa_team1" {
-  account_id   = "gsa-tfc-team1"
+resource "google_service_account" "team_gsa" {
+  account_id   = "gsa-tfc-${var.team}"
   display_name = "Service Account For Workload Identity"
 }
 
 resource "google_project_iam_member" "team1-role" {
   role = "roles/compute.admin"
   #role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_service_account.gsa_team1.email}"
+  member = "serviceAccount:${google_service_account.team_gsa.email}"
 }
 
 # Enable GKE namespace/sa access to Google service account policy via Workload Identity
