@@ -8,5 +8,5 @@
 #}
 
 output "team_agentpool_ids" {
-    value = module.iam-team-setup[].agentpool_id
+    value = module.iam-team-setup[*].agentpool_id
 }
