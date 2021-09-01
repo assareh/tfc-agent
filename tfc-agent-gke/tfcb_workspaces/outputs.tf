@@ -9,6 +9,6 @@
 
 output "team_agentpool_ids" {
     value = { for t in sort(keys(var.iam_teams)) : 
-        t => [module.iam-team-setup[t].agentpool_id, module.iam-team-setup[t].agent_token]
+        t => [module.iam-team-setup[t].agentpool_id, module.iam-team-setup[t].team]
     }
 }
