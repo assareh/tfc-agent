@@ -17,7 +17,7 @@ resource "google_service_account" "team_gsa" {
 }
 
 resource "google_project_iam_member" "role" {
-  for_each = var.team.roles
+  for_each = flatten([ for role in var.team.roles: {"role" = role} ])
   role = "roles/${each.value}"
   member = "serviceAccount:${google_service_account.team_gsa.email}"
 }
