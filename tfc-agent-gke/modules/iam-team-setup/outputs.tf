@@ -3,7 +3,7 @@ output "gcp_project" {
 }
 
 output "agentpool_id" {
-  value = tfe_agent_pool.team-pool
+  value = tfe_agent_pool.team-pool.id
 }
 
 #output "agent_token" {
