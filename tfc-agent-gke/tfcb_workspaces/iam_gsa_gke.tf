@@ -1,8 +1,8 @@
 # GKE Default SA with minimal permissions
-resource "google_service_account" "gke" {
-  account_id   = "service-account-id"
-  display_name = "Service Account"
-}
+#resource "google_service_account" "gke" {
+#  account_id   = "service-account-id"
+#  display_name = "Service Account"
+#}
 
 #output "gke_service_account_email" {
 #  value = google_service_account.gke.email

@@ -1,0 +1,20 @@
+"outputs": {
+    "team_agentpool_ids": {
+      "value": [
+        {
+          "team1": {
+            "agentpool_id": "apool-oLmraVdmC8qFSf25",
+            "gcp_project": "projects/presto-project-16556",
+            "team_roles": [
+              {
+                "role": "compute.admin",
+                "team": "team1"
+              },
+              {
+                "role": "storage.objectAdmin",
+                "team": "team1"
+              }
+            ]
+          }
+        }
+      ],

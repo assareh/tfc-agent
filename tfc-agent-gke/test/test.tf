@@ -29,6 +29,26 @@ variable "bq_iam_role_bindings" {
   }
 }
 
+variable "test" {
+  default = [
+        {
+          "team1": {
+            "agentpool_id": "apool-oLmraVdmC8qFSf25",
+            "gcp_project": "projects/presto-project-16556",
+            "team_roles": [
+              {
+                "role": "compute.admin",
+                "team": "team1"
+              },
+              {
+                "role": "storage.objectAdmin",
+                "team": "team1"
+              }
+            ]
+          }
+        }
+  ]
+}
 locals {
   team_roles = flatten([for team, value in var.iam_teams:
                    flatten([for role in value.roles:
@@ -51,7 +71,6 @@ output "tf_out" {
   value = local.helper_list2
 }
 
-output "tf-test {
-  value = flatten([ for team, value in var.iam_teams:
-  { "team" = team}])
+output "test {
+  value   = { for t in sort(keys(local.test)) : t => module.elb_http[p].this_elb_dns_name }
 }
