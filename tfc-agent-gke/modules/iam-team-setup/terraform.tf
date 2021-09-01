@@ -1,12 +1,3 @@
-provider "google" {
-  project = var.gcp_project
-  region  = var.gcp_region
-}
-
-provider "tfe" {
-  hostname = var.tfe_hostname
-  token = var.tfe_token
-}
 terraform {
   required_version = ">= 1.0"
   required_providers {
