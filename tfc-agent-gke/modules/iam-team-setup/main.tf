@@ -17,7 +17,8 @@ resource "google_service_account" "team_gsa" {
 }
 
 resource "google_project_iam_member" "role" {
-  role = "roles/compute.admin"
+  for_each = var.team.roles
+  role = "roles/${each.value}"
   member = "serviceAccount:${google_service_account.team_gsa.email}"
 }
 
