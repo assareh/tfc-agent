@@ -29,7 +29,7 @@ variable "iam_teams" {
   default = {
     "team1" = {
       "name" : "team1new",
-      "gsa" : "gsa-tfc-team1",
+      "gsa" : "gsa-tfc-team1a",
       "namespace" : "tfc-team1",
       "k8s_sa" : "tfc-agent-dev",
       "roles" : ["compute.admin","storage.objectAdmin"],
