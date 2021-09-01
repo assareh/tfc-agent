@@ -7,7 +7,7 @@ output "agentpool_id" {
 }
 output "agentpool_ids" {
   value = tomap({
-    for k, id in tfe_agent_pool.team-pool.id : k => team-pool.name
+    for k, id in tfe_agent_pool.team-pool.id : k => tfe_agent_pool.team-pool.name
   })
 }
 
