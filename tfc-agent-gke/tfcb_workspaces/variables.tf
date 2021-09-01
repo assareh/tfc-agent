@@ -28,19 +28,18 @@ variable "gcp_zone" {
 variable "iam_teams" {
   default = {
     "team1" = {
-      "name" : "team1new",
+      "name" : "team1",
       "gsa" : "gsa-tfc-team1a",
       "namespace" : "tfc-team1",
       "k8s_sa" : "tfc-agent-dev",
-      "roles" : ["compute.admin","storage.objectAdmin"],
+      "roles" : ["compute.admin"],
+    },
+    "team2" = {
+      "name" : "team2",
+      "gsa" : "gsa-tfc-team2",
+      "namespace" : "tfc-team2",
+      "k8s_sa" : "tfc-agent-dev",
+      "roles" : ["storage.objectAdmin"],
     }
   }
-}
-locals {
-  team_roles = flatten([for team, value in var.iam_teams:
-                   flatten([for role in value.roles:
-                    {"team" = team
-                    "role" = role}
-                   ])
-                ])
 }
