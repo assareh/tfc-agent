@@ -4,13 +4,15 @@ resource "google_service_account" "gke" {
   display_name = "Service Account"
 }
 
-output "gke_service_account_email" {
-  value = google_service_account.gke.email
-}
+#output "gke_service_account_email" {
+#  value = google_service_account.gke.email
+#}
 
 # Bootstrap new teams with TFCB Workspace + Agentpool, and GSA with approved roles. tfc-agent on GKE will use GSA roles.
 module "iam-team-setup" {
   source         = "../modules/iam-team-setup"
+  for_each     = var.iam_teams
+  
   prefix        = var.prefix
   tfe_token     = var.tfe_token
   gcp_project = var.gcp_project
