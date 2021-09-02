@@ -36,6 +36,7 @@ output "teams2" {
 }
 
 output "keys" {
-    value = for t in sort(keys(var.iam_teams)) : 
+    value = { for t in sort(keys(var.iam_teams)) : 
     t => var.teams[t]
+    }
 }
