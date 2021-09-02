@@ -14,13 +14,13 @@ output "team_agentpool_ids" {
 }
 
 output "teams" {
-    value = flatten([for value in var.team:
+    value = flatten([for t in sort(keys(var.iam_teams)) :
                   {
-                  "name" = value.name
-                  "roles" = value.roles
-                  "gsa" = value.gsa
-                  "k8s_sa" = value.k8s_sa
-                  "namespace" = value.namespace
-                  "agentpool_id" = module.iam-team-setup[var.team].agentpool_id}
+                  "name" = t.name
+                  "roles" = t.roles
+                  "gsa" = t.gsa
+                  "k8s_sa" = t.k8s_sa
+                  "namespace" = t.namespace
+                  "agentpool_id" = module.iam-team-setup[t].agentpool_id}
                 ])
 }
