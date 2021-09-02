@@ -43,3 +43,35 @@ variable "iam_teams" {
     }
   }
 }
+
+locals {
+  "iam_team_workspaces" = {
+    "team1" = {
+      "organization" : "${var.organization}"
+      "workspacename" : "gke_team_team1"
+      "workingdir" : "tfc-agent-gke/gke_team_team1"
+      "tfversion" : "0.13.6"
+      "queue_all_runs" : false
+      "auto_apply" : true
+      "repobranch" : var.repo_branch
+      "identifier" : "${var.repo_org}/tfc-agent"
+      "oauth_token_id" : "${var.oauth_token_id}"
+      "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
+      "env" : {
+        gcp_credentials : "${var.gcp_credentials}"
+        gcp_region      : "${var.gcp_region}"
+        gcp_project     : "${var.gcp_project}"
+        gcp_zone        : "${var.gcp_zone}"
+      }
+      "tf_variables" : {
+        "prefix" : "presto"
+        "gcp_project" : var.gcp_project
+        "gcp_region" : "us-west1"
+        "gcp_zone" : "us-west1-c"
+      }
+      "tf_variables_sec" : {
+            "test" : "test"
+      }
+    }
+  }
+}

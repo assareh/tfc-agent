@@ -1,0 +1,22 @@
+module "iam_teams" {
+    source = "../modules/workspace-mgr"
+    for_each = {for key, v in local.iam_team_workspaces : key => v if v.oauth_token_id}
+    team          = local.iam_team_workspaces[each.key]
+    organization = local.iam_team_workspaces[each.key].organization
+    workspacename = local.iam_team_workspaces[each.key].workspacename
+    workingdir = local.iam_team_workspaces[each.key].workingdir
+    tfversion = local.iam_team_workspaces[each.key].tfversion
+    queue_all_runs = local.iam_team_workspaces[each.key].queue_all_runs
+    auto_apply = local.iam_team_workspaces[each.key].auto_apply
+
+    repobranch = local.iam_team_workspaces[each.key].repobranch
+    identifier = local.iam_team_workspaces[each.key].identifier
+    oauth_token_id = local.iam_team_workspaces[each.key].oauth_token_id
+
+    agent_pool_id     = module.iam-team-setup.[each.key].agentpool_id
+
+    env      = local.iam_team_workspaces[each.key].env
+
+    tf_variables = local.iam_team_workspaces[each.key].tf_variables
+    tf_variables_sec = local.iam_team_workspaces[each.key].tf_variables_sec
+}
