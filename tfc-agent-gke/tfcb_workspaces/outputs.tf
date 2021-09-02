@@ -13,6 +13,12 @@ output "team_agentpool_ids" {
 }
 
 output "team_config" {
+    value = {for t in sort(keys(var.iam_teams)):
+            t => var.iam_teams[t]}
+
+    )
+}
+output "team_config_all" {
     value = merge(
         {for t in sort(keys(var.iam_teams)):
             t => var.iam_teams[t]},
