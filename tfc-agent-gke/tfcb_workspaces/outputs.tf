@@ -10,7 +10,7 @@ output "team_agent_tokens" {
     value = { for t in sort(keys(var.iam_teams)) :
         t => {"token":module.iam-team-setup[t].agent_token}
     }
-    sensitive = true
+    sensitive = false
 }
 
 output "team_agentpool_ids" {
@@ -24,11 +24,9 @@ output "team_config" {
             t => var.iam_teams[t]}
 }
 output "team_config_all" {
-    value = merge(
-        {for t in sort(keys(var.iam_teams)):
-            t => var.iam_teams[t]},
-        {for team in sort(keys(var.iam_teams)):
-            team => {"pool":module.iam-team-setup[team].agentpool_id}}
-
-    )
+    value = {
+        for team, configs in var.iam_teams: team => merge(
+            configs, {"pool":module.iam-team-setup[team].agentpool_id}
+        )
+    }
 }
