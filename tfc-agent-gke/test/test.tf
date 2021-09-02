@@ -56,5 +56,5 @@ locals {
 }
 
 output "tf_out" {
-  value = local.test
+  value = local.team_roles
 }
