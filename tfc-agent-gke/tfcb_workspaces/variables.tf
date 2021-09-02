@@ -48,7 +48,7 @@ locals {
   iam_team_workspaces = {
     "team1" = {
       "organization" : "${var.organization}"
-      "workspacename" : "gke_team_team1"
+      "workspacename" : "gke_team_team1_new"
       "workingdir" : "tfc-agent-gke/gke_team_team1"
       "tfversion" : "0.13.6"
       "queue_all_runs" : false
