@@ -13,7 +13,7 @@ module "iam_team_workspaces" {
     identifier = local.iam_team_workspaces[each.key].identifier
     oauth_token_id = local.iam_team_workspaces[each.key].oauth_token_id
 
-    #agent_pool_id     = module.iam-team-setup.[each.key].agentpool_id
+    agent_pool_id     = module.iam-team-setup.[each.key].agentpool_id
 
     env_variables      = local.iam_team_workspaces[each.key].env_variables
     env_variables_sec  = local.iam_team_workspaces[each.key].env_variables_sec
