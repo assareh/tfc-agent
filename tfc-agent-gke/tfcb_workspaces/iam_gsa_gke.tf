@@ -1,12 +1,8 @@
 # GKE Default SA with minimal permissions
-#resource "google_service_account" "gke" {
-#  account_id   = "service-account-id"
-#  display_name = "Service Account"
-#}
-
-#output "gke_service_account_email" {
-#  value = google_service_account.gke.email
-#}
+resource "google_service_account" "gke" {
+  account_id   = "service-account-id"
+  display_name = "Service Account"
+}
 
 # Bootstrap new teams with TFCB Workspace + Agentpool, and GSA with approved roles. tfc-agent on GKE will use GSA roles.
 module "iam-team-setup" {
