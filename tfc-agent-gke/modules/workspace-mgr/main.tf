@@ -38,8 +38,8 @@ resource "tfe_variable" "env_vars" {
   key          = "CONFIRM_DESTROY"
   value        = "1"
   category     = "env"
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "name_prefix" {
@@ -47,8 +47,8 @@ resource "tfe_variable" "name_prefix" {
   value        = "${var.workspacename}-presto"
   category     = "terraform"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "tf_vars_txt" {
@@ -57,8 +57,8 @@ resource "tfe_variable" "tf_vars_txt" {
   value        = lookup(var.tf_variables, element(keys(var.tf_variables), count.index), "unknown")
   category     = "terraform"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "tf_vars_sec" {
@@ -67,8 +67,8 @@ resource "tfe_variable" "tf_vars_sec" {
   value        = lookup(var.tf_variables_sec, element(keys(var.tf_variables_sec), count.index), "unknown")
   category     = "terraform"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "aws_secret_access_key" {
@@ -77,8 +77,8 @@ resource "tfe_variable" "aws_secret_access_key" {
   value        = var.aws_secret_access_key
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "aws_access_key_id" {
@@ -87,8 +87,8 @@ resource "tfe_variable" "aws_access_key_id" {
   value        = var.aws_access_key_id
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "aws_default_region" {
@@ -97,8 +97,8 @@ resource "tfe_variable" "aws_default_region" {
   value        = var.aws_default_region
   category     = "env"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "gcp_project" {
@@ -107,8 +107,8 @@ resource "tfe_variable" "gcp_project" {
   value        = var.gcp_project
   category     = "env"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "gcp_credentials" {
@@ -117,8 +117,8 @@ resource "tfe_variable" "gcp_credentials" {
   value        = var.gcp_credentials
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "gcp_region" {
@@ -127,8 +127,8 @@ resource "tfe_variable" "gcp_region" {
   value        = var.gcp_region
   category     = "env"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "gcp_zone" {
@@ -137,8 +137,8 @@ resource "tfe_variable" "gcp_zone" {
   value        = var.gcp_zone
   category     = "env"
   sensitive    = false
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "arm_subscription_id" {
@@ -147,8 +147,8 @@ resource "tfe_variable" "arm_subscription_id" {
   value        = var.arm_subscription_id
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "arm_client_secret" {
@@ -157,8 +157,8 @@ resource "tfe_variable" "arm_client_secret" {
   value        = var.arm_client_secret
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "arm_tenant_id" {
@@ -167,8 +167,8 @@ resource "tfe_variable" "arm_tenant_id" {
   value        = var.arm_tenant_id
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "arm_client_id" {
@@ -177,8 +177,8 @@ resource "tfe_variable" "arm_client_id" {
   value        = var.arm_client_id
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
 
 resource "tfe_variable" "env" {
@@ -187,6 +187,6 @@ resource "tfe_variable" "env" {
   value        = each.value
   category     = "env"
   sensitive    = true
-  workspace_id = var.identifier != "" ? ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [ws-vcs,tfe_workspace.ws-novcs]
+  workspace_id = var.identifier != "" ? tfe_workspace.ws-vcs[0].id : tfe_workspace.ws-novcs[0].id
+  depends_on   = [tfe_workspace.ws-vcs,tfe_workspace.ws-novcs]
 }
