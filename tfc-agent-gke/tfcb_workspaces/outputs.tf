@@ -14,8 +14,9 @@ output "team_agentpool_ids" {
 }
 
 output "teams" {
-    value = flatten([for t in var.iam_teams :
-                  t => {
+    value = { for t in sort(keys(var.iam_teams)) :
+        t => flatten([
+                {
                   "name" = t.name
                   "roles" = t.roles
                   "gsa" = t.gsa
