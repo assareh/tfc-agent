@@ -15,14 +15,18 @@ module "gke_tfcagents" {
     gcp_project     = "${var.gcp_project}"
     gcp_zone        = "${var.gcp_zone}"
     tf_variables = {
-        for t in sort(keys(var.iam_teams)) :
-            "${t}_agent_token" => module.iam-team-setup[t].agent_token
+        "prefix" = "presto"
+        "gcp_project" = var.gcp_project
+        "gcp_region" = "us-west1"
+        "gcp_zone" = "us-west1-c"
+        "namespace" = "tfc-agent"
+        "environment" = "dev"
     }
     #tf_variables_sec = {
     #    "tfc_agent_token" = module.iam-team-setup.agent_token
     #}
-    #tf_variables_sec = { 
-    #    for t in sort(keys(var.iam_teams)) :
-    #        t => module.iam-team-setup[t].agent_token
-    #}
+    tf_variables_sec = { 
+        for t in sort(keys(var.iam_teams)) :
+        "${t}_agent_token" => module.iam-team-setup[t].agent_token
+    }
 }
