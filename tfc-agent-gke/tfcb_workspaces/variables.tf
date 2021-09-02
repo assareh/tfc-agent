@@ -58,10 +58,11 @@ locals {
       "oauth_token_id" : "${var.oauth_token_id}"
       "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
       "env" : {
-        "gcp_credentials" : var.gcp_credentials
-        "gcp_region"      : var.gcp_region
-        "gcp_project"     : var.gcp_project
-        "gcp_zone"        : var.gcp_zone
+        "CONFIRM_DESTROY" : 1
+        "GOOGLE_CREDENTIALS" : var.gcp_credentials
+        "GOOGLE_REGION"      : var.gcp_region
+        "GOOGLE_PROJECT"     : var.gcp_project
+        "GOOGLE_ZONE"        : var.gcp_zone
       }
       "tf_variables" : {
         "prefix" : "presto"
