@@ -26,9 +26,9 @@ output "teams" {
 output "teams2" {
     value = merge(
         {for id in sort(keys(var.iam_teams)):
-            id => module.iam-team-setup[id].agentpool_id},
+            id => {"pool":module.iam-team-setup[id].agentpool_id}},
         {for t in sort(keys(var.iam_teams)):
-            t => {"pool":var.iam_teams[t]}}
+            t => var.iam_teams[t]}
     )
 }
 output "keys" {
