@@ -40,7 +40,7 @@ resource "tfe_variable" "tf_vars_txt" {
   value        = each.value
   category     = "terraform"
   sensitive    = false
-  workspace_id = tfe_workspace.ws-vcs.id
+  workspace_id = tfe_workspace.ws-vcs[each.key].id
 }
 
 resource "tfe_variable" "tf_vars_sec" {
@@ -49,7 +49,7 @@ resource "tfe_variable" "tf_vars_sec" {
   value        = each.value
   category     = "terraform"
   sensitive    = true
-  workspace_id = tfe_workspace.ws-vcs.id
+  workspace_id = tfe_workspace.ws-vcs[each.key].id
 }
 
 resource "tfe_variable" "env" {
@@ -58,5 +58,5 @@ resource "tfe_variable" "env" {
   value        = each.value
   category     = "env"
   sensitive    = true
-  workspace_id = tfe_workspace.ws-vcs.id
+  workspace_id = tfe_workspace.ws-vcs[each.key].id
 }
