@@ -20,12 +20,13 @@ output "teams" {
                   "roles" = t.roles
                   "gsa" = t.gsa
                   "k8s_sa" = t.k8s_sa
-                  "namespace" = t.namespace}
+                  "namespace" = t.namespace
+                  "team_agentpool_id" = module.iam-team-setup[t].agentpool_id}
                 ])
 }
 
 output "keys" {
-    value = { for t in sort(keys(var.iam_teams)) : 
+    value = { for t in sort(keys(var.iam_teams)) :
     t => var.iam_teams[t]
     }
 }
