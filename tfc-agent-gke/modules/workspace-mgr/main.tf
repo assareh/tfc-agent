@@ -8,7 +8,6 @@ data "tfe_workspace_ids" "all" {
 }
 
 resource "tfe_workspace" "ws-vcs" {
-  for_each = {for key, v in var.teams_config : key => v if v.oauth_token_id != ""}
   name              = var.workspacename
   organization      = var.organization
   terraform_version = var.tfversion
@@ -40,7 +39,7 @@ resource "tfe_variable" "tf_vars_txt" {
   value        = each.value
   category     = "terraform"
   sensitive    = false
-  workspace_id = tfe_workspace.ws-vcs[each.key].id
+  workspace_id = tfe_workspace.ws-vcs.id
 }
 
 resource "tfe_variable" "tf_vars_sec" {
@@ -49,7 +48,7 @@ resource "tfe_variable" "tf_vars_sec" {
   value        = each.value
   category     = "terraform"
   sensitive    = true
-  workspace_id = tfe_workspace.ws-vcs[each.key].id
+  workspace_id = tfe_workspace.ws-vcs.id
 }
 
 resource "tfe_variable" "env" {
@@ -58,5 +57,5 @@ resource "tfe_variable" "env" {
   value        = each.value
   category     = "env"
   sensitive    = true
-  workspace_id = tfe_workspace.ws-vcs[each.key].id
+  workspace_id = tfe_workspace.ws-vcs.id
 }
