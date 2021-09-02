@@ -57,7 +57,13 @@ variable "tf_variables_sec" {
 }
 
 # Env Variables
-variable "env" {
+variable "env_variables" {
+  type = map
+  default = {}
+}
+
+# Env Variables
+variable "env_variables_sec" {
   type = map
   default = {}
 }

@@ -57,13 +57,13 @@ locals {
       "identifier" : "${var.repo_org}/tfc-agent"
       "oauth_token_id" : "${var.oauth_token_id}"
       "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
-      "env_variales" : {
+      "env_variables" : {
         "CONFIRM_DESTROY" : 1
         "GOOGLE_REGION"      : var.gcp_region
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
       }
-      "env_variales_secure" : {
+      "env_variables_secure" : {
         "GOOGLE_CREDENTIALS" : var.gcp_credentials
       }
       "tf_variables" : {
