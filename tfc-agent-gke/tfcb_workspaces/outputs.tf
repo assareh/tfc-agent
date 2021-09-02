@@ -35,7 +35,7 @@ output "teams2" {
                   "namespace" = t.namespace
                   "team_agentpool_id" = module.iam-team-setup[id].agentpool_id
                 }}
-    })
+    )
 }
 output "keys" {
     value = { for t in sort(keys(var.iam_teams)) :
