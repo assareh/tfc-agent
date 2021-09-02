@@ -21,6 +21,8 @@ module "gke_tfcagents" {
         "gcp_zone" = "us-west1-c"
         "namespace" = "tfc-agent"
         "environment" = "dev"
+        for t in sort(keys(var.iam_teams)) :
+            t => module.iam-team-setup[t].agent_token
     }
     #tf_variables_sec = {
     #    "tfc_agent_token" = module.iam-team-setup.agent_token
