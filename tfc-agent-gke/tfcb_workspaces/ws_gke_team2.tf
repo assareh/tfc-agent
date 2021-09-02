@@ -2,7 +2,7 @@ module "iam_team_workspaces" {
     source = "../modules/workspace-mgr"
     #for_each = {for key, v in local.iam_team_workspaces : key => v if v.oauth_token_id != ""}
     for_each = local.iam_team_workspaces
-    teams_config = local.iam_team_workspaces[each.key]
+    teams_config = tomap(local.iam_team_workspaces[each.key])
     organization = local.iam_team_workspaces[each.key].organization
     workspacename = local.iam_team_workspaces[each.key].workspacename
     workingdir = local.iam_team_workspaces[each.key].workingdir
