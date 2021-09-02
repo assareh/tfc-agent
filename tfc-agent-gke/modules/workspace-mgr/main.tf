@@ -1,10 +1,5 @@
 terraform {
-  required_version = ">= 0.12.1"
-}
-
-data "tfe_workspace_ids" "all" {
-  names        = ["*"]
-  organization = var.organization
+  required_version = ">= 1.0.5"
 }
 
 resource "tfe_workspace" "ws-vcs" {
@@ -15,6 +10,8 @@ resource "tfe_workspace" "ws-vcs" {
   auto_apply        = var.auto_apply
   working_directory = var.workingdir
   global_remote_state = var.global_remote_state != ""  ? true : false
+  agent_pool_id     = var.agent_pool_id != "" ? var.agent_pool_id : ""
+  execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   vcs_repo {
     identifier     = var.identifier
@@ -33,7 +30,7 @@ resource "tfe_workspace" "ws-novcs" {
   working_directory = var.workingdir
 }
 
-resource "tfe_variable" "tf_vars_txt" {
+resource "tfe_variable" "tf_variables" {
   for_each     = var.tf_variables
   key          = each.key
   value        = each.value
@@ -42,7 +39,7 @@ resource "tfe_variable" "tf_vars_txt" {
   workspace_id = tfe_workspace.ws-vcs.id
 }
 
-resource "tfe_variable" "tf_vars_sec" {
+resource "tfe_variable" "tf_variables_sec" {
   for_each     = var.tf_variables_sec
   key          = each.key
   value        = each.value
@@ -51,8 +48,17 @@ resource "tfe_variable" "tf_vars_sec" {
   workspace_id = tfe_workspace.ws-vcs.id
 }
 
-resource "tfe_variable" "env" {
-  for_each = var.env
+resource "tfe_variable" "env_variables" {
+  for_each = var.env_variables
+  key          = each.key
+  value        = each.value
+  category     = "env"
+  sensitive    = false
+  workspace_id = tfe_workspace.ws-vcs.id
+}
+
+resource "tfe_variable" "env_variables_sec" {
+  for_each = var.env_variables_sec
   key          = each.key
   value        = each.value
   category     = "env"
