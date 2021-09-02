@@ -45,7 +45,7 @@ variable "iam_teams" {
 }
 
 locals {
-  "iam_team_workspaces" = {
+  iam_team_workspaces = {
     "team1" = {
       "organization" : "${var.organization}"
       "workspacename" : "gke_team_team1"
@@ -58,10 +58,10 @@ locals {
       "oauth_token_id" : "${var.oauth_token_id}"
       "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
       "env" : {
-        gcp_credentials : "${var.gcp_credentials}"
-        gcp_region      : "${var.gcp_region}"
-        gcp_project     : "${var.gcp_project}"
-        gcp_zone        : "${var.gcp_zone}"
+        "gcp_credentials" : var.gcp_credentials
+        "gcp_region"      : var.gcp_region
+        "gcp_project"     : var.gcp_project
+        "gcp_zone"        : var.gcp_zone
       }
       "tf_variables" : {
         "prefix" : "presto"
