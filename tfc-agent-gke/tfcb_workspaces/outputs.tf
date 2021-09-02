@@ -23,3 +23,18 @@ output "teams" {
                   "namespace" = t.namespace}
                 ])
 }
+
+output "teams2" {
+    value = {for t in var.iam_teams :
+                  t => {
+                  "name" = t.name
+                  "roles" = t.roles
+                  "gsa" = t.gsa
+                  "k8s_sa" = t.k8s_sa
+                  "namespace" = t.namespace}
+    }
+}
+
+output "keys" {
+    value = for t in sort(keys(var.iam_teams)) : t
+}
