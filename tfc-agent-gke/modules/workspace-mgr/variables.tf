@@ -61,7 +61,9 @@ variable "env" {
   type = map
   default = {}
 }
-# Custom variables
-variable "route53_zone_id" {default = ""}
-variable "ssh_pri_key_data" {default = ""}
-variable "consul_lic" {default = ""}
+
+# IAM Teams Map
+variable "teams_config" {
+  type = map
+  default = {}
+}
