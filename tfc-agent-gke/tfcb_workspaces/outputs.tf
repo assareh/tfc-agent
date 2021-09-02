@@ -27,11 +27,11 @@ output "teams" {
 output "teams2" {
     value = {for t in var.iam_teams :
                   t => {
-                  "name" = t.name
-                  "roles" = t.roles
-                  "gsa" = t.gsa
-                  "k8s_sa" = t.k8s_sa
-                  "namespace" = t.namespace}
+                  "name" => t.name
+                  "roles" => t.roles
+                  "gsa" => t.gsa
+                  "k8s_sa" => t.k8s_sa
+                  "namespace" => t.namespace}
     }
 }
 
