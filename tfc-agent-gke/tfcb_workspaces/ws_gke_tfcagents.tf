@@ -25,5 +25,5 @@ module "gke_tfcagents" {
     #tf_variables_sec = {
     #    "tfc_agent_token" = module.iam-team-setup.agent_token
     #}
-    tf_variables_sec = tomap({ for team, token in module.iam-team-setup.agent_token :
-        team => token})
+    #tf_variables_sec = tomap({ for team, token in module.iam-team-setup.agent_token :
+    #    team => token})

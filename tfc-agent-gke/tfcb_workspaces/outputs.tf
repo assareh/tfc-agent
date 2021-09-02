@@ -6,6 +6,12 @@ output "gke_service_account_email" {
   value = google_service_account.gke.email
 }
 
+output "team_agent_tokens" {
+    value = { for t in sort(keys(var.iam_teams)) :
+        t => {"token":module.iam-team-setup[t].agent_token}
+    }
+}
+
 output "team_agentpool_ids" {
     value = { for t in sort(keys(var.iam_teams)) :
         t => {"agentpool":module.iam-team-setup[t].agentpool_id}
