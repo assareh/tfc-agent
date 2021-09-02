@@ -20,7 +20,6 @@ output "teams" {
                   "roles" = t.roles
                   "gsa" = t.gsa
                   "k8s_sa" = t.k8s_sa
-                  "namespace" = t.namespace
-                  #"agentpool_id" = module.iam-team-setup[t].agentpool_id}
+                  "namespace" = t.namespace}
                 ])
 }
