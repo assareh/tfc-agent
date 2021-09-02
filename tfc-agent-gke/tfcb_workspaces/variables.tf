@@ -63,7 +63,7 @@ locals {
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
       }
-      "env_variables_secure" : {
+      "env_variables_sec" : {
         "GOOGLE_CREDENTIALS" : var.gcp_credentials
       }
       "tf_variables" : {
