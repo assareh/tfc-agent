@@ -24,7 +24,19 @@ output "teams" {
                   "team_agentpool_id" = module.iam-team-setup[t].agentpool_id}
                 ])
 }
-
+output "teams2" {
+    value = tomap(
+                {for t in sort(var.iam_teams) : {
+                {for id in sort(keys(var.iam_teams)): {
+                  "name" = t.name
+                  "roles" = t.roles
+                  "gsa" = t.gsa
+                  "k8s_sa" = t.k8s_sa
+                  "namespace" = t.namespace
+                  "team_agentpool_id" = module.iam-team-setup[id].agentpool_id
+                }}
+    })
+}
 output "keys" {
     value = { for t in sort(keys(var.iam_teams)) :
     t => var.iam_teams[t]
