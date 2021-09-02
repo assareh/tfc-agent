@@ -14,7 +14,7 @@ output "team_agentpool_ids" {
 }
 
 output "teams" {
-    value = { flatten([for value in var.team:
+    value = flatten([for value in var.team:
                   {
                   "name" = value.name
                   "roles" = value.roles
@@ -23,5 +23,4 @@ output "teams" {
                   "namespace" = value.namespace
                   "agentpool_id" = module.iam-team-setup[var.team].agentpool_id}
                 ])
-    }
 }
