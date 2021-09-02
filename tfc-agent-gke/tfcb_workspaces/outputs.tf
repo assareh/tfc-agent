@@ -14,8 +14,7 @@ output "team_agentpool_ids" {
 }
 
 output "teams" {
-    value = { 
-        flatten([for team, value in var.team:
+    value = { flatten([for value in var.team:
                   {
                   "name" = value.name
                   "roles" = value.roles
