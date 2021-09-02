@@ -10,7 +10,7 @@ output "team_agent_tokens" {
     value = { for t in sort(keys(var.iam_teams)) :
         t => {"token":module.iam-team-setup[t].agent_token}
     }
-    sensitive = false
+    sensitive = true
 }
 
 output "team_agentpool_ids" {
