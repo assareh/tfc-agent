@@ -28,7 +28,7 @@ output "teams2" {
         {for id in sort(keys(var.iam_teams)):
             id => module.iam-team-setup[id].agentpool_id},
         {for t in sort(keys(var.iam_teams)):
-            t => var.iam_teams[t]}
+            t => {"pool":var.iam_teams[t]}}
     )
 }
 output "keys" {
