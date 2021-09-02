@@ -181,20 +181,10 @@ resource "tfe_variable" "arm_client_id" {
   depends_on   = [tfe_workspace.ws-template,tfe_workspace.ws-novcs]
 }
 
-resource "tfe_variable" "env_vars_txt" {
-  count        = length(var.env_variables)
-  key          = element(keys(var.env_variables), count.index)
-  value        = lookup(var.env_variables, element(keys(var.env_variables), count.index), "unknown")
-  category     = "env"
-  sensitive    = false
-  workspace_id = var.identifier != "" ? tfe_workspace.ws-template[0].id : tfe_workspace.ws-novcs[0].id
-  depends_on   = [tfe_workspace.ws-template,tfe_workspace.ws-novcs]
-}
-
-resource "tfe_variable" "env_vars_sec" {
-  count        = length(var.env_variables_sec)
-  key          = element(keys(var.env_variables_sec), count.index)
-  value        = lookup(var.env_variables_sec, element(keys(var.env_variables_sec), count.index), "unknown")
+resource "tfe_variable" "env" {
+  for_each = var.env
+  key          = each.key
+  value        = each.value
   category     = "env"
   sensitive    = true
   workspace_id = var.identifier != "" ? tfe_workspace.ws-template[0].id : tfe_workspace.ws-novcs[0].id
