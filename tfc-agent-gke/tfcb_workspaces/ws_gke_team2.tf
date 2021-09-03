@@ -8,7 +8,9 @@ module "iam_team_workspaces" {
     tfversion = local.iam_team_workspaces[each.key].tfversion
     queue_all_runs = local.iam_team_workspaces[each.key].queue_all_runs
     auto_apply = local.iam_team_workspaces[each.key].auto_apply
-    vcs_repo = tomap({"repo" = {local.iam_team_workspaces[each.key].vcs_repo}})
+    #vcs_repo = local.iam_team_workspaces[each.key].vcs_repo
+    vcs_repo = { for item in local.iam_team_workspaces[each.key].vcs_repo: 
+                  keys(item)[0] => values(item)[0]}
     agent_pool_id     = module.iam-team-setup[each.key].agentpool_id
 
     env_variables      = local.iam_team_workspaces[each.key].env_variables
