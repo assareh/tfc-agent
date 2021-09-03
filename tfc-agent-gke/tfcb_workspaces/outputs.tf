@@ -21,9 +21,7 @@ output "team_iam_config" {
 }
 
 output "team_ws_config" {
-    value = flatten([ for team, value in local.iam_team_workspaces:
-                    {
-                        vcs_repo = value.vcs_repo
-                    }
-            ])
+    value = {for team, value in local.iam_team_workspaces:
+                team => value.vcs_repo
+            }
 }
