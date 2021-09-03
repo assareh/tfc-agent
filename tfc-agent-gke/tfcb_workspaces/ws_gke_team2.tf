@@ -13,7 +13,6 @@ module "iam_team_workspaces" {
 
     env_variables      = local.iam_team_workspaces[each.key].env_variables
     env_variables_sec  = local.iam_team_workspaces[each.key].env_variables_sec
-
     tf_variables = local.iam_team_workspaces[each.key].tf_variables
     tf_variables_sec = local.iam_team_workspaces[each.key].tf_variables_sec
 }
