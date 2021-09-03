@@ -23,4 +23,5 @@ output "team_iam_config" {
 output "team_ws_config" {
     value = { for team in local.iam_team_workspaces:
         team => local.iam_team_workspaces[team].agent_pool_id
+    }
 }
