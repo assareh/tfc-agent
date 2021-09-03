@@ -19,3 +19,9 @@ output "team_config" {
         )
     }
 }
+
+output "test" {
+    value = { for t in sort(keys(var.iam_teams)) :
+        t => {"repo" : local.iam_team_workspaces[t].vcs_repo}
+    }
+}
