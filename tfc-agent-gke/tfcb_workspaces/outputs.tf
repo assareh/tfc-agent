@@ -23,7 +23,7 @@ output "team_iam_config" {
 output "team_ws_config" {
     value = {
         for team in local.iam_team_workspaces: 
-            team => {"config" : local.iam_team_workspaces[team]}
+            team => {"env" : local.iam_team_workspaces[team].env_variables}
         )
     }
 }
