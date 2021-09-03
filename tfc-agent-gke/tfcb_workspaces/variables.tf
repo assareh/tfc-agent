@@ -80,12 +80,13 @@ locals {
     }
     "team2" = {
       "organization" : var.organization
-      "workspacename" : "gke_team_team1_new"
-      "workingdir" : "tfc-agent-gke/gke_team_team2"
+      "workspacename" : "gke_team_team2_new"
+      "workingdir" : "tfc-agent-gke/gke_team_team1"
       "tfversion" : "0.13.6"
       "queue_all_runs" : false
       "auto_apply" : true
-      "agent_pool_id"     : module.iam-team-setup["team2"].agentpool_id
+      "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
+      "vcs_repo" : {}
       "env_variables" : {
         "CONFIRM_DESTROY" : 1
         "GOOGLE_REGION"      : var.gcp_region
