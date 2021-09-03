@@ -11,7 +11,7 @@ locals {
       }
   }
   test = {
-    var.vcs_repo
+    repo = {var.vcs_repo}
   }
 }
 
