@@ -23,10 +23,11 @@ output "team_iam_config" {
 output "team_ws_config" {
     value = {for team, value in local.iam_team_workspaces:
                 {for vcs in value.vcs_repo:
-                    {"team" = team
-                    "identifier" = vcs.identifier
-                    "oauth_token_id" = vcs.oauth_token_id
-                    "repobranch" = vcs.repobranch}
+                    team => {
+                        "identifier" = vcs.identifier
+                        "oauth_token_id" = vcs.oauth_token_id
+                        "repobranch" = vcs.repobranch
+                    }
                 }
             }
 }
