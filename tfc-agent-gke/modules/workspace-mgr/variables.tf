@@ -8,8 +8,8 @@ variable "workingdir" {default = ""}
 variable "global_remote_state" {default = ""}
 
 variable "oauth_token_id" {}
-variable "repo_org" {}
-variable "repo_branch" { default = "iam"}
+variable "repo_branch" { default = "main"}
+variable "identifier" {}
 variable "agent_pool_id" {default = ""}
 
 # Terraform Variables

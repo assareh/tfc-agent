@@ -10,7 +10,7 @@ module "iam_team_workspaces" {
     auto_apply = local.iam_team_workspaces[each.key].auto_apply
     identifier     = local.iam_team_workspaces[each.key].identifier
     oauth_token_id = local.iam_team_workspaces[each.key].oauth_token_id
-    branch         = local.iam_team_workspaces[each.key].repobranch
+    repo_branch         = local.iam_team_workspaces[each.key].repobranch
     agent_pool_id     = module.iam-team-setup[each.key].agentpool_id
 
     env_variables      = local.iam_team_workspaces[each.key].env_variables
