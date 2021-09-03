@@ -24,9 +24,9 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = local.vcs_repo
+    for_each = var.vcs_repo
     content {
-      identifier     = vcs_repo.value.identifier
+      identifier     = var.vcs_repo.identifier
       oauth_token_id = vcs_repo.value.oauth_token_id
       branch         = vcs_repo.value.repobranch
     }
