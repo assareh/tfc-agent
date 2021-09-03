@@ -25,8 +25,8 @@ resource "tfe_workspace" "ws-vcs" {
     for_each = local.vcs_repo
     content {
       identifier     = vcs_repo.value.identifier
-      oauth_token_id = vcs_repo.key.oauth_token_id
-      branch         = vcs_repo.value.repobranch
+      oauth_token_id = vcs_repo[key].oauth_token_id
+      branch         = vcs_repo[value].repobranch
     }
   }
 }
