@@ -74,6 +74,7 @@ locals {
         "gcp_region" : "us-west1"
         "gcp_zone" : "us-west1-c"
       }
+      "tf_variables_sec" : {}
     }
   }
 }
