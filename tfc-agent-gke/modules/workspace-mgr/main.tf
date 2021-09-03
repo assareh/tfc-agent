@@ -6,7 +6,7 @@ locals {
   vcs_repo = {
     repo = var.vcs_repo
   }
-  vcs_repo2 = {for key, v in var.vcs_repo : key => v if v.oauth_token_id != ""}
+  vcs_repo2 = {for key, v in local.vcs_repo : key => v if v.oauth_token_id != ""}
 }
 
 resource "tfe_workspace" "ws-vcs" {
