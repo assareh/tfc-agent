@@ -14,7 +14,7 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = tomap(var.team => var.oauth_token_id)
+    for_each = tomap({var.team = var.oauth_token_id})
     identifier     = var.identifier
     oauth_token_id = var.oauth_token_id
     branch         = var.repobranch
