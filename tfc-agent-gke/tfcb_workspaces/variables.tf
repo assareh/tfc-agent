@@ -54,7 +54,7 @@ locals {
       "queue_all_runs" : false
       "auto_apply" : true
       "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
-      "vcs_repo" : {
+      "vcs_repo" = {
         "identifier" : "${var.repo_org}/tfc-agent"
         "oauth_token_id" : var.oauth_token_id
         "repobranch" : var.repo_branch

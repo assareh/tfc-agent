@@ -11,7 +11,7 @@ locals {
       }
   }
 }
- 
+
 resource "tfe_workspace" "ws-vcs" {
   name              = var.workspacename
   organization      = var.organization
