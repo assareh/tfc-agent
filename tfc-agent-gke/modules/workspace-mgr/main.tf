@@ -6,7 +6,6 @@ locals {
   vcs_repo = {
     repo = var.vcs_repo
   }
-  vcs_repo2 = {for key, v in local.vcs_repo : key => v if v.oauth_token_id != ""}
 }
 
 resource "tfe_workspace" "ws-vcs" {
@@ -21,7 +20,7 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = local.vcs_repo2
+    for_each = local.vcs_repo
     content {
       identifier     = vcs_repo.value.identifier
       oauth_token_id = vcs_repo.value.oauth_token_id
