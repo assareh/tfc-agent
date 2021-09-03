@@ -22,12 +22,8 @@ output "team_iam_config" {
 
 output "team_ws_config" {
     value = flatten([ for team, value in local.iam_team_workspaces:
-                flatten([ for vcs in value.vcs_repo:
                     {
-                        "identifier" = vcs.identifier
-                        "oauth_token_id" = vcs.oauth_token_id
-                        "repobranch" = vcs.repobranch
+                        vcs_repo = value.vcs_repo
                     }
-                ])
             ])
 }
