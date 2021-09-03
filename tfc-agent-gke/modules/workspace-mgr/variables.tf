@@ -2,6 +2,7 @@ variable "oauth_token_id" {}
 
 variable "organization" {}
 
+variable "team" {}
 variable "workspacename" {}
 
 variable "queue_all_runs" {default = true}

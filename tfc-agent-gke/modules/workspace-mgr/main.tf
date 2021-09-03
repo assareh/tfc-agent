@@ -13,12 +13,22 @@ resource "tfe_workspace" "ws-vcs" {
   agent_pool_id     = var.agent_pool_id != "" ? var.agent_pool_id : ""
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
-  vcs_repo {
-    count          = var.oauth_token_id != "" ? 1 : 0
+  dynamic "vcs_repo" {
+    for_each = tomap(var.team => var.oauth_token_id)
     identifier     = var.identifier
     oauth_token_id = var.oauth_token_id
     branch         = var.repobranch
   }
+}
+
+resource "tfe_workspace" "ws-novcs" {
+  count             = var.identifier == "" ? 1 : 0
+  name              = var.workspacename
+  organization      = var.organization
+  terraform_version = var.tfversion
+  queue_all_runs    = var.queue_all_runs
+  auto_apply        = var.auto_apply
+  working_directory = var.workingdir
 }
 
 resource "tfe_variable" "tf_variables" {
