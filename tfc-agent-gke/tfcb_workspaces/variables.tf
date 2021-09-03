@@ -64,7 +64,6 @@ locals {
         "GOOGLE_REGION"      : var.gcp_region
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
-        "test"               : "test"
       }
       "env_variables_sec" : {
         "GOOGLE_CREDENTIALS" : var.gcp_credentials
@@ -74,9 +73,6 @@ locals {
         "gcp_project" : var.gcp_project
         "gcp_region" : "us-west1"
         "gcp_zone" : "us-west1-c"
-      }
-      "tf_variables_sec" : {
-            "test" : "test"
       }
     }
   }
