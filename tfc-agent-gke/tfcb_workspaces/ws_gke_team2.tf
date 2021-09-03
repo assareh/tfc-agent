@@ -9,7 +9,7 @@ module "iam_team_workspaces" {
     queue_all_runs = local.iam_team_workspaces[each.key].queue_all_runs
     auto_apply = local.iam_team_workspaces[each.key].auto_apply
     #vcs_repo = {for team, value in local.iam_team_workspaces: team => value.vcs_repo}
-    vcs_repo = {for k,v in local.iam_team_workspaces[each.key]: k => v.vcs_repo}
+    vcs_repo = local.iam_team_workspaces[each.key].vcs_repo
     agent_pool_id     = module.iam-team-setup[each.key].agentpool_id
 
     env_variables      = local.iam_team_workspaces[each.key].env_variables
