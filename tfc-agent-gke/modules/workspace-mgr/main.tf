@@ -2,12 +2,6 @@ terraform {
   required_version = ">= 1.0.5"
 }
 
-locals {
-  vcs_repo = {
-    repo = var.vcs_repo
-  }
-}
-
 resource "tfe_workspace" "ws-vcs" {
   name              = var.workspacename
   organization      = var.organization
@@ -19,13 +13,10 @@ resource "tfe_workspace" "ws-vcs" {
   agent_pool_id     = var.agent_pool_id != "" ? var.agent_pool_id : ""
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
-  dynamic "vcs_repo" {
-    for_each = {for k, v in local.vcs_repo : k => v if contains(toset(local.vcs_repo), "oauth_token_id")}
-    content {
-      identifier     = vcs_repo.value.identifier
-      oauth_token_id = vcs_repo.value.oauth_token_id
-      branch         = vcs_repo.value.repobranch
-    }
+  vcs_repo {
+    identifier     = var.identifier
+    oauth_token_id = var.oauth_token_id
+    branch         = var.repobranch
   }
 }
 
