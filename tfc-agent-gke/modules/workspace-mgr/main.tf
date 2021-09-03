@@ -15,20 +15,10 @@ resource "tfe_workspace" "ws-vcs" {
 
   dynamic "vcs_repo" {
     for_each = var.vcs_repo
-    identifier     = vcs_repo[value].identifier
-    oauth_token_id = vcs_repo[value].oauth_token_id
-    branch         = vcs_repo[value].repobranch
+    identifier     = vcs_repo.value.identifier
+    oauth_token_id = vcs_repo.value.oauth_token_id
+    branch         = vcs_repo.value.repobranch
   }
-}
-
-resource "tfe_workspace" "ws-novcs" {
-  count             = var.identifier == "" ? 1 : 0
-  name              = var.workspacename
-  organization      = var.organization
-  terraform_version = var.tfversion
-  queue_all_runs    = var.queue_all_runs
-  auto_apply        = var.auto_apply
-  working_directory = var.workingdir
 }
 
 resource "tfe_variable" "tf_variables" {

@@ -37,10 +37,9 @@ variable "arm_tenant_id" {default = ""}
 variable "arm_client_id" {default = ""}
 
 variable "vcs_repo" {
-  type = map
-  default = {}
+  type = list(object({}))
+  default = []
 }
-
 # Terraform Variables
 variable "tf_variables" {
   type = map
