@@ -1,5 +1,3 @@
-variable "oauth_token_id" {}
-
 variable "organization" {}
 
 variable "workspacename" {}
@@ -7,10 +5,6 @@ variable "workspacename" {}
 variable "queue_all_runs" {default = true}
 
 variable "auto_apply" {default = true}
-
-variable "repobranch" {default = "master"}
-
-variable "identifier" {}
 
 variable "tfversion" {default = "0.11.14"}
 
