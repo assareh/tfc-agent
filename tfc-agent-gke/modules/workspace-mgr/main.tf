@@ -20,7 +20,7 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = {for k, v in local.vcs_repo : k => v if v.oauth_token_id != ""}
+    for_each = {for k, v in local.vcs_repo : k => v if contains(local.vcs_repo, "oauth_token_id")}
     content {
       identifier     = vcs_repo.value.identifier
       oauth_token_id = vcs_repo.value.oauth_token_id
