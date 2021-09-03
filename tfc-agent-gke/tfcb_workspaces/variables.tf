@@ -64,7 +64,7 @@ locals {
         "GOOGLE_REGION"      : var.gcp_region
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
-        "test"               " "test"
+        "test"               : "test"
       }
       "env_variables_sec" : {
         "GOOGLE_CREDENTIALS" : var.gcp_credentials
