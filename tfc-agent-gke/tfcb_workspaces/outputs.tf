@@ -12,10 +12,18 @@ output "agentpool_id" {
     }
 }
 
-output "team_config" {
+output "team_iam_config" {
     value = {
         for team, configs in var.iam_teams: team => merge(
             configs, {"pool":module.iam-team-setup[team].agentpool_id}
+        )
+    }
+}
+
+output "team_ws_config" {
+    value = {
+        for team in local.iam_team_workspaces: 
+            team => {local.iam_team_workspaces[team]}
         )
     }
 }
