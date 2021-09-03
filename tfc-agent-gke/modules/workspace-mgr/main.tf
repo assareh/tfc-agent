@@ -4,9 +4,9 @@ terraform {
 
 locals {
   vcs_repo = {
-        "identifier" = "ppresto/tfc-agent"
-        "oauth_token_id" = "test"
-        "repobranch" = "main"
+        "identifier" : "ppresto/tfc-agent"
+        "oauth_token_id" : "test"
+        "repobranch" : "main"
       }
 }
  
@@ -25,7 +25,7 @@ resource "tfe_workspace" "ws-vcs" {
     for_each = local.vcs_repo
     content {
       identifier     = vcs_repo.value.identifier
-      oauth_token_id = vcs_repo.value.oauth_token_id
+      oauth_token_id = vcs_repo.key.oauth_token_id
       branch         = vcs_repo.value.repobranch
     }
   }
