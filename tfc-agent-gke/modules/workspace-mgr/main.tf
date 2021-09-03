@@ -10,6 +10,9 @@ locals {
         "repobranch" = "main"
       }
   }
+  test = {
+    var.vcs_repo
+  }
 }
 
 resource "tfe_workspace" "ws-vcs" {
@@ -24,7 +27,7 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = var.vcs_repo
+    for_each = local.test
     content {
       identifier     = var.vcs_repo.identifier
       oauth_token_id = var.vcs_repo.oauth_token_id
