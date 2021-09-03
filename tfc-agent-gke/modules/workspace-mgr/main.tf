@@ -2,6 +2,14 @@ terraform {
   required_version = ">= 1.0.5"
 }
 
+locals {
+  vcs_repo = [{
+        "identifier" = "ppresto/tfc-agent"
+        "oauth_token_id" = "test"
+        "repobranch" = "main"
+      }]
+}
+ 
 resource "tfe_workspace" "ws-vcs" {
   name              = var.workspacename
   organization      = var.organization
@@ -14,7 +22,7 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = var.vcs_repo
+    for_each = local.vcs_repo
     content {
       identifier     = vcs_repo.value.identifier
       oauth_token_id = vcs_repo.value.oauth_token_id
