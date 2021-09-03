@@ -2,7 +2,6 @@ variable "oauth_token_id" {}
 
 variable "organization" {}
 
-variable "team" {}
 variable "workspacename" {}
 
 variable "queue_all_runs" {default = true}
@@ -42,6 +41,11 @@ variable "arm_client_secret" {default = ""}
 variable "arm_tenant_id" {default = ""}
 
 variable "arm_client_id" {default = ""}
+
+variable "vcs_repo" {
+  type = map
+  default = {}
+}
 
 # Terraform Variables
 variable "tf_variables" {

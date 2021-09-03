@@ -53,10 +53,12 @@ locals {
       "tfversion" : "0.13.6"
       "queue_all_runs" : false
       "auto_apply" : true
-      "repobranch" : var.repo_branch
-      "identifier" : "${var.repo_org}/tfc-agent"
-      "oauth_token_id" : "${var.oauth_token_id}"
       "agent_pool_id"     : module.iam-team-setup["team1"].agentpool_id
+      "vcs_repo" " {
+        "repobranch" : var.repo_branch
+        "identifier" : "${var.repo_org}/tfc-agent"
+        "oauth_token_id" : "${var.oauth_token_id}"
+      }
       "env_variables" : {
         "CONFIRM_DESTROY" : 1
         "GOOGLE_REGION"      : var.gcp_region
