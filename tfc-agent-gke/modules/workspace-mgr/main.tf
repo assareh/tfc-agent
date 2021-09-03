@@ -4,13 +4,6 @@ terraform {
 
 locals {
   vcs_repo = {
-    team1 = {
-        "identifier" = "ppresto/tfc-agent"
-        "oauth_token_id" = "test"
-        "repobranch" = "main"
-      }
-  }
-  test = {
     repo = var.vcs_repo
   }
 }
@@ -27,9 +20,9 @@ resource "tfe_workspace" "ws-vcs" {
   execution_mode    = var.agent_pool_id != "" ? "agent" : "remote"
 
   dynamic "vcs_repo" {
-    for_each = local.test
+    for_each = local.vcs_repo
     content {
-      identifier     = var.vcs_repo.identifier
+      identifier     = vcs_repo.value.identifier
       oauth_token_id = var.vcs_repo.oauth_token_id
       branch         = var.vcs_repo.repobranch
     }
