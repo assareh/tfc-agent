@@ -47,7 +47,7 @@ variable "iam_teams" {
 locals {
   iam_team_workspaces = {
     "team1" = {
-      "organization" : "${var.organization}"
+      "organization" : var.organization
       "workspacename" : "gke_team_team1_new"
       "workingdir" : "tfc-agent-gke/gke_team_team1"
       "tfversion" : "0.13.6"
@@ -57,7 +57,7 @@ locals {
       "vcs_repo" : {
         "repobranch" : var.repo_branch
         "identifier" : "${var.repo_org}/tfc-agent"
-        "oauth_token_id" : "${var.oauth_token_id}"
+        "oauth_token_id" : var.oauth_token_id
       }
       "env_variables" : {
         "CONFIRM_DESTROY" : 1
