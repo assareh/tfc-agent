@@ -31,7 +31,7 @@ organization="presto-projects"
 #  Github Repo URL
 git_url="https://github.com/ppresto/tfc-agent.git"
 # Admin Workspace Config
-workspace="admin_ws_agentdemo"
+workspace="admin_ws_tfcagents_gke"
 # This is the repo dir TFCB will use to run terraform and manage your workspaces with IaC
 WORKSPACE_DIR="tfc-agent-gke/tfcb_workspaces"
 BRANCH="iam"
