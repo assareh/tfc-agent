@@ -65,5 +65,5 @@ data "kubernetes_service" "vault_ingress" {
 }
 
 output "ip" {
-  value = data.kubernetes_service.vault_ingress.load_balancer_ingress.0.ip
+  value = data.kubernetes_service.vault_ingress
 }
