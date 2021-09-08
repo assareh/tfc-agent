@@ -22,7 +22,7 @@ variable "tf_variables" {
 variable "tf_variables_map" {
   type = map
   default = {
-    default = {"prefix":myproject"}
+    default = {"prefix":"myproject"}
   }
 }
 
