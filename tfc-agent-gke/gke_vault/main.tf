@@ -26,9 +26,10 @@ provider "kubernetes" {
 }
 
 resource "helm_release" "vault" {
-  name       = "vault"
+  name       = "hashicorp/vault"
   repository = "https://helm.releases.hashicorp.com"
-  chart      = "hashicorp/vault"
+  chart      = "vault"
+  version    = "0.6.0"
 
   #values = [
   #  file("${path.module}/override-values.yaml")
