@@ -1,0 +1,4 @@
+server:
+  ha:
+    enabled: true
+    replicas: 5
