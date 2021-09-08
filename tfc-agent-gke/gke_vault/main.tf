@@ -14,17 +14,6 @@ data "google_container_cluster" "my_cluster" {
   location = var.gcp_zone
 }
 
-provider "kubernetes" {
-  #version = "~> 1.12"
-  load_config_file = false
-  host = "https://${data.terraform_remote_state.gke.outputs.k8s_endpoint}"
-  config_context = data.terraform_remote_state.gke.outputs.context
-  token                  = data.google_client_config.default.access_token
-  #client_certificate     = base64decode(data.terraform_remote_state.gke.outputs.k8s_master_auth_client_certificate)
-  #client_key             = base64decode(data.terraform_remote_state.gke.outputs.k8s_master_auth_client_key)
-  cluster_ca_certificate = base64decode(data.terraform_remote_state.gke.outputs.k8s_master_auth_cluster_ca_certificate)
-}
-
 provider "helm" {
   kubernetes {
     host                   = "https://${data.terraform_remote_state.gke.outputs.k8s_endpoint}"
