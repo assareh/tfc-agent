@@ -55,7 +55,7 @@ resource "helm_release" "vault" {
   }
 }
 
-data "kubernetes_ingress" "vault" {
+data "kubernetes_service" "vault_ingress" {
   metadata {
     name      = "vault"
     namespace = "default"
@@ -65,5 +65,5 @@ data "kubernetes_ingress" "vault" {
 }
 
 output "ip" {
-  value = data.kubernetes_ingress.vault
+  value = data.kubernetes_service.vault_ingress
 }
