@@ -1,4 +1,6 @@
-server:
-  ha:
-    enabled: true
-    replicas: 5
+# Vault UI
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  serviceNodePort: null
+  externalPort: 8200
