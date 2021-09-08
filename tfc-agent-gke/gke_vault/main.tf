@@ -35,10 +35,10 @@ provider "helm" {
 }
 
 resource "helm_release" "vault" {
-  name       = "hashicorp/vault"
+  name       = "vault"
   repository = "https://helm.releases.hashicorp.com"
   chart      = "vault"
-  #version    = "0.6.0"
+  version    = "0.6.0"
 
   #values = [
   #  file("${path.module}/override-values.yaml")
