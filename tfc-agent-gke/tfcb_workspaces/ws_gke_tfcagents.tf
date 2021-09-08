@@ -33,9 +33,3 @@ module "gke_tfcagents" {
         t => {"agent_token":module.iam-team-setup[t].agent_token}
     }
 }
-
-output "agentpool_id" {
-    value = { for t in sort(keys(var.iam_teams)) :
-        t => {"agentpool":module.iam-team-setup[t].agentpool_id}
-    }
-}
