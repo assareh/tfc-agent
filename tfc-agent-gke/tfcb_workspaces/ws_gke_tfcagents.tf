@@ -21,12 +21,21 @@ module "gke_tfcagents" {
         "gcp_zone" = "us-west1-c"
         "namespace" = "tfc-team1"
         "environment" = "dev"
+        "test" = { for t in sort(keys(var.iam_teams)) :
+             t => {"agent_token":module.iam-team-setup[t].agent_token}}
     }
-    #tf_variables_sec = {
-    #    "tfc_agent_token" = module.iam-team-setup.agent_token
+    #tf_variables_sec = { 
+    #    for t in sort(keys(var.iam_teams)) :
+    #    "${t}_agent_token" => module.iam-team-setup[t].agent_token
     #}
     tf_variables_sec = { 
         for t in sort(keys(var.iam_teams)) :
-        "${t}_agent_token" => module.iam-team-setup[t].agent_token
+        t => {"agent_token":module.iam-team-setup[t].agent_token}
+    }
+}
+
+output "agentpool_id" {
+    value = { for t in sort(keys(var.iam_teams)) :
+        t => {"agentpool":module.iam-team-setup[t].agentpool_id}
     }
 }
