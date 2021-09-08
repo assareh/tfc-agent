@@ -23,8 +23,7 @@ module "gke_vault" {
         "environment" = "dev"
     }
 
-    tf_variables_sec = { 
-        for t in sort(keys(var.iam_teams)) :
-        "${t}_agent_token" => module.iam-team-setup[t].agent_token
+    tf_variables_sec = {
+        "tfe_token"      = var.tfe_token
     }
 }
