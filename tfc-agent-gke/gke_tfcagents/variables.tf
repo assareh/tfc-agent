@@ -7,7 +7,12 @@ variable "gcp_zone" {
   default = "us-west1-c"
 }
 
-variable "tfc_agent_token" {
+variable "team2_agent_token" {
+  type        = string
+  description = "Terraform Cloud Agent Token"
+  default = ""
+}
+variable "team1_agent_token" {
   type        = string
   description = "Terraform Cloud Agent Token"
   default = ""
