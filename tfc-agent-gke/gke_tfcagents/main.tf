@@ -33,6 +33,7 @@ module "tfc_agent" {
   tfc_agent_token = var.tfc_agent_token
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-team1"
+  #k8s serviceaccount = ${kubernetes_namespace}-${environment}
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
