@@ -24,7 +24,6 @@ provider "helm" {
 // Kubernetes resources
 provider "kubernetes" {
   #version = "~> 1.12"
-  load_config_file = false
   host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
   cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
   token                  = data.google_client_config.default.access_token
