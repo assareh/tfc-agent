@@ -61,7 +61,7 @@ resource "kubernetes_endpoints" "vault_hcp" {
   }
   subset {
     address {
-      ip = "external-vault"
+      ip = "54.202.212.187"
     }
     port {
       name     = "https"
