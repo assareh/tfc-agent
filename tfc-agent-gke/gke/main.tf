@@ -23,15 +23,14 @@ module "gcp-vpc-gke" {
 
 // Install Vault injector
 data "google_client_config" "default" {}
-provider "helm" {}
-#provider "helm" {
-##  kubernetes {
-#    host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
-##    cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
-#    config_context         = module.gcp-vpc-gke.context
-#    token                  = data.google_client_config.default.access_token
-#  }
-#}
+provider "helm" {
+  kubernetes {
+    host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
+    cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
+    #config_context         = module.gcp-vpc-gke.context
+    token                  = data.google_client_config.default.access_token
+  }
+}
 
 resource "helm_release" "vault" {
   name       = "vault"
