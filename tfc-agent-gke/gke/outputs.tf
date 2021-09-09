@@ -53,3 +53,14 @@ output "context" {
 output "gcp_project" {
   value = var.gcp_project
 }
+
+output "vault_helm" {
+  value = helm_release.vault.metadata
+}
+
+output "vault_k8s_endpoint_hostname" {
+  value = kubernetes_endpoints.vault_hcp.hostname
+}
+output "vault_k8s_endpoint_ip" {
+  value = kubernetes_endpoints.vault_hcp.ip
+}

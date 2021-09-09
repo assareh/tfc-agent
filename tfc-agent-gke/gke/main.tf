@@ -1,13 +1,3 @@
-// Workspace Data
-#data "terraform_remote_state" "iam" {
-#  backend = "atlas"
-#  config = {
-#    address = "https://app.terraform.io"
-#    name    = "presto-projects/iam"
-#  }
-#}
-
-
 module "gcp-vpc-gke" {
   source         = "../modules/gcp-vpc-gke"
   prefix        = var.prefix
@@ -27,7 +17,6 @@ provider "helm" {
   kubernetes {
     host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
     cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
-    #config_context         = module.gcp-vpc-gke.context
     token                  = data.google_client_config.default.access_token
   }
 }
@@ -40,5 +29,35 @@ resource "helm_release" "vault" {
   set {
     name  = "injector.externalVaultAddr"
     value = "http://external-vault:8200"
+  }
+}
+
+resource "kubernetes_service" "vault-hcp" {
+  metadata {
+    name = "external-vault"
+    namespace = "default"
+  }
+  spec {
+    port {
+      port        = 8200
+      target_port = 8200
+    }
+  }
+}
+
+resource "kubernetes_endpoints" "vault_hcp" {
+  metadata {
+    name = "external-vault"
+    namespace = "default"
+  }
+  subset {
+    address {
+      ip = "external-vault"
+    }
+    port {
+      name     = "https"
+      port     = 8200
+      protocol = "TCP"
+    }
   }
 }
