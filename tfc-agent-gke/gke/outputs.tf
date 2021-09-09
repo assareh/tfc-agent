@@ -62,5 +62,5 @@ output "vault_k8s_endpoint_hostname" {
   value = kubernetes_endpoints.vault_hcp.hostname
 }
 output "vault_k8s_endpoint_ip" {
-  value = kubernetes_endpoints.vault_hcp.ip
+  value = kubernetes_endpoints.vault_hcp
 }
