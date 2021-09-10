@@ -66,6 +66,33 @@ kubectl config set-context --current --namespace=tfc-agent
 ```
 
 ## Notes
+
+### Vault GKE Integration
+Test authentiation by starting the basic devwebapp pod and connecting to it.
+```
+cd gke
+kubectl apply -f devwebapp.yaml
+kubectl exec --stdin=true --tty=true devwebapp -- /bin/sh
+KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+
+curl --insecure --request POST \
+      -H "X-Vault-Namespace: admin" \
+      --data '{"jwt": "'"$KUBE_TOKEN"'", "role": "devweb-app"}' \
+      $VAULT_ADDR/v1/auth/kubernetes/login
+
+```
+
+vault-agent-init (only has wget)
+```
+KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+export VAULT_ADDR="https://hcp-vault-cluster.vault.11eb13d3-0dd1-af4a-9eb3-0242ac110018.aws.hashicorp.cloud:8200"
+
+wget -O - -q --no-check-certificate --header="X-Vault-Namespace: admin" \
+--post-data '{"jwt": "'"$KUBE_TOKEN"'", "role": "devweb-app"}' \
+$VAULT_ADDR/v1/auth/kubernetes/login
+```
+
+### GCP Service Accounts
 Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
 
 

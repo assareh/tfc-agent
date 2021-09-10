@@ -37,7 +37,7 @@ resource "helm_release" "vault" {
   version    = "0.15.0"
   set {
     name  = "injector.externalVaultAddr"
-    value = "http://external-vault:8200"
+    value = "https://external-vault:8200"
   }
 }
 
