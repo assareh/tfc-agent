@@ -52,14 +52,23 @@ resource "google_compute_instance" "tfc-agent" {
   }
 
   metadata = {
-    google-logging-enabled    = "true"
     gce-container-declaration = "spec:\n  containers:\n    - name: ${var.prefix}-${count.index}\n      image: 'docker.io/hashicorp/tfc-agent:latest'\n      env:\n        - name: TFC_AGENT_TOKEN\n          value: ${var.tfc_agent_token}\n        - name: TFC_AGENT_SINGLE\n          value: true\n      stdin: false\n      tty: false\n  restartPolicy: Always\n\n# This container declaration format is not public API and may change without notice. Please\n# use gcloud command-line tool or Google Cloud Console to run Containers on Google Compute Engine."
+    google-logging-enabled    = "true"
+    shutdown-script           = "#! /bin/bash\n\n# Shut down any running agents\ndocker kill --signal=SIGQUIT $(docker ps -q)"
+    startup-script            = "#! /bin/bash\n\n# Ensure agents are shut down gracefully on instance stop\nmkdir -p /etc/systemd/system/docker.service.d\nprintf \"[Service]\nExecStop=/bin/sh -c 'docker stop \\$(docker ps -q)'\" > /etc/systemd/system/docker.service.d/override.conf"
+    # NOTE: shutdown-script is the "correct" way to shutdown running agents before power off but it did not work reliably for me
+    # the startup-script solution from https://stackoverflow.com/a/68444519 worked for me
   }
 
   network_interface {
     network = "default"
 
     access_config {}
+  }
+
+  scheduling {
+    on_host_maintenance = "MIGRATE"
+    automatic_restart   = true
   }
 
   service_account {
