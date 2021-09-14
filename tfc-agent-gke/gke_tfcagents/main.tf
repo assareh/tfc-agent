@@ -38,3 +38,13 @@ module "tfc_agent" {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
 }
+module "tfc_agent2" {
+  source = "./modules/gke-tfcagent"
+  replicas = 1
+  kubernetes_namespace       = "default"
+  service_account_name = "tfc-team3"
+  service_account_annotations = {
+    "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
+  }
+  tfc_agent_token = var.team1_agent_token
+}
