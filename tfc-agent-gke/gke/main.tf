@@ -37,7 +37,7 @@ resource "helm_release" "vault" {
   version    = "0.15.0"
   set {
     name  = "injector.externalVaultAddr"
-    value = "https://external-vault:8200"
+    value = "https://hcp-vault-cluster.vault.11eb13d3-0dd1-af4a-9eb3-0242ac110018.aws.hashicorp.cloud:8200"
   }
 }
 
