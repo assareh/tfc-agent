@@ -2,12 +2,15 @@ locals {
   service_account_name = "tfc-team3"
   deployment_name = "tfc-team3"
   namespace = "default"
-  tags = {}
   token = var.team1_agent_token
   service_account_annotations = {"iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",}
 
 }
-
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "Additional tags (e.g. `map('BusinessUnit','XYZ')`"
+}
 variable "replicas" {default = 1}
 variable "agent_image" {default = "hashicorp/tfc-agent:latest"}
 variable "agent_cli_args" {default = []}
@@ -51,18 +54,18 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
   metadata {
     name      = local.deployment_name
     namespace = local.namespace
-    labels    = local.tags
+    labels    = var.tags
   }
   spec {
     selector {
-      match_labels = local.tags
+      match_labels = var.tags
     }
     replicas = var.replicas
 
     template {
       metadata {
         namespace   = local.namespace
-        labels      = local.tags
+        labels      = var.tags
         annotations = {}
       }
       spec {
