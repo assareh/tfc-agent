@@ -3,12 +3,15 @@ locals {
   deployment_name = "tfc-team3"
   namespace = "default"
   tags = {}
+  token = var.team1_agent_token
+  service_account_annotations = {"iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",}
+
 }
 
 variable "replicas" {default = 1}
 variable "agent_image" {default = "hashicorp/tfc-agent:latest"}
 variable "agent_cli_args" {default = []}
-variable "token" {default = var.team1_agent_token}
+
 variable "tfc_address" {
   type        = string
   default     = "https://app.terraform.io"
@@ -34,14 +37,13 @@ variable "resource_requests_memory" {
   default     = "50Mi"
   description = "Kubernetes deployment resource memory requests"
 }
-variable "service_account_annotations" {default = {"iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",}}
 
 resource "kubernetes_service_account" "service_account" {
 
   metadata {
     name        = local.service_account_name
     namespace   = local.namespace
-    annotations = var.service_account_annotations
+    annotations = local.service_account_annotations
   }
 }
 
@@ -72,7 +74,7 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
           args  = var.agent_cli_args
           env {
             name = "TFC_AGENT_TOKEN"
-            value = "var.token"
+            value = "local.token"
           }
           env {
             name  = "TFC_AGENT_NAME"
