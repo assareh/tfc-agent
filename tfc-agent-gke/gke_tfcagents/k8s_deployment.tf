@@ -72,7 +72,7 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
           args  = var.agent_cli_args
           env {
             name = "TFC_AGENT_TOKEN"
-            value = "local.token"
+            value = local.token
           }
           env {
             name  = "TFC_AGENT_NAME"
@@ -80,7 +80,7 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
           }
           env {
             name  = "TFC_AGENT_LOG_LEVEL"
-            value = "info"
+            value = "debug"
           }
           env {
             name  = "TFC_AGENT_SINGLE"
