@@ -40,6 +40,7 @@ module "tfc_agent" {
 }
 module "tfc_agent2" {
   source = "../modules/gke-tfcagent"
+  tags = module.this.tags
   replicas = 1
   deployment_name = "tfc-team3-dev"
   kubernetes_namespace       = "default"
