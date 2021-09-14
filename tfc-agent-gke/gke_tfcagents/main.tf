@@ -39,7 +39,7 @@ module "tfc_agent" {
   }
 }
 module "tfc_agent2" {
-  source = "./modules/gke-tfcagent"
+  source = "../modules/gke-tfcagent"
   replicas = 1
   kubernetes_namespace       = "default"
   service_account_name = "tfc-team3"
