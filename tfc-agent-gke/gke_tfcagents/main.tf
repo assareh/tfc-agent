@@ -41,6 +41,7 @@ module "tfc_agent" {
 module "tfc_agent2" {
   source = "../modules/gke-tfcagent"
   replicas = 1
+  deployment_name = "tfc-team3-dev"
   kubernetes_namespace       = "default"
   service_account_name = "tfc-team3"
   service_account_annotations = {
