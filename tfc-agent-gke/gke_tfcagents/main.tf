@@ -28,7 +28,7 @@ provider "kubernetes" {
 module "tfc_agent" {
   source = "git::https://github.com/cloudposse/terraform-kubernetes-tfc-cloud-agent.git?ref=tags/0.3.0"
   context = module.this.context
-  replicas = 0
+  replicas = 1
   #tfc_agent_token = data.google_secret_manager_secret_version.serviceA-agent-token.secret_data
   tfc_agent_token = var.team1_agent_token
   namespace_creation_enabled = true
