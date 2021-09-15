@@ -41,32 +41,29 @@ resource "helm_release" "vault" {
   }
 }
 
-resource "kubernetes_service" "vault-hcp" {
+resource "kubernetes_namespace" "namespace" {
+  for_each = var.iam_team
   metadata {
-    name = "external-vault"
-    namespace = "default"
-  }
-  spec {
-    port {
-      port        = 8200
-      target_port = 8200
-    }
+    name = var.iam_teams[each.key].namespace
   }
 }
 
-resource "kubernetes_endpoints" "vault_hcp" {
+resource "kubernetes_service_account" "service_account" {
+  for_each = var.iam_team
+
   metadata {
-    name = "external-vault"
-    namespace = "default"
+    name        = var.iam_teams[each.key].k8s_sa
+    namespace   = var.iam_teams[each.key].namespace
+    annotations = {"iam.gke.io/gcp-service-account" = "${var.iam_teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",}
   }
-  subset {
-    address {
-      ip = "54.202.212.187"
-    }
-    port {
-      name     = "https"
-      port     = 8200
-      protocol = "TCP"
-    }
-  }
+}
+module "iam-team-setup" {
+  source         = "../modules/iam-team-setup"
+  for_each      = var.iam_teams
+  team          = var.iam_teams[each.key]
+  prefix        = "${var.prefix}-${each.key}"
+  tfe_token     = var.tfe_token
+  gcp_project = var.gcp_project
+  gcp_region  = var.gcp_region
+  gcp_zone    = var.gcp_zone
 }

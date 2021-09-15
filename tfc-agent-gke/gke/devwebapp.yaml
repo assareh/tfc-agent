@@ -17,4 +17,4 @@ spec:
       - name: VAULT_NAMESPACE
         value: "admin"
       - name: VAULT_TOKEN
-        value: s.h0jJF0fHXL00aTeyLGcyYJeM.BVGzz
+        value: ""

@@ -47,9 +47,22 @@ variable gke_service_account_email {
   description = "Default Google Service Account running GKE"
   default = ""
 }
-#variable "key_ring" {
-#  default     = "vault-unseal-ring"
-#}
-#variable "crypto_key" {
-#  default     = "vault-unseal-key"
-#}
+
+variable "iam_teams" {
+  default = {
+    "team1b" = {
+      "name" : "team1b",
+      "gsa" : "gsa-tfc-team1",
+      "namespace" : "tfc-team1b",
+      "k8s_sa" : "tfc-team1-dev",
+      "roles" : ["compute.admin","storage.objectAdmin"],
+    },
+    "team2b" = {
+      "name" : "team2b",
+      "gsa" : "gsa-tfc-team2",
+      "namespace" : "tfc-team2b",
+      "k8s_sa" : "tfc-team2-dev",
+      "roles" : ["storage.objectAdmin"],
+    }
+  }
+}
