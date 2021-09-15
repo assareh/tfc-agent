@@ -5,7 +5,7 @@ module "gke" {
     auto_apply = true
     workspacename = "gke"
     workingdir = "tfc-agent-gke/gke"
-    tfversion = "0.13.6"
+    tfversion = "1.0.5"
     repobranch = var.repo_branch
     #Add /Repo_Name after org
     identifier = "${var.repo_org}/tfc-agent"
