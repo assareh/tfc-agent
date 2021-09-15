@@ -1,6 +1,5 @@
 output "gke_sa" {
-  value = module.tfc_agent.gke_sa
-}
-output "gke_deployment" {
-  value = module.tfc_agent.gke_deployment
+    value = { for t in sort(keys(local.teams)) :
+        t => {"gke_sa":module.tfc_agent[t].gke_deployment}
+    }
 }
