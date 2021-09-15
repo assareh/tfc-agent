@@ -29,9 +29,9 @@ module "tfc_agent" {
   source = "../modules/gke-tfcagent"
   tags = module.this.tags
   replicas = 1
-  deployment_name = "tfc-team3-dev"
+  deployment_name = "tfc-team1-dev"
   kubernetes_namespace       = "default"
-  service_account_name = "tfc-team3"
+  service_account_name = "tfc-team1"
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
