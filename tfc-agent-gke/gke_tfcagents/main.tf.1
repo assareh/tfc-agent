@@ -40,10 +40,8 @@ module "tfc_agent" {
     "vault.hashicorp.com/namespace" = "admin/"
     "vault.hashicorp.com/role" = "devweb-app"
     "vault.hashicorp.com/tls-skip-verify": "true"
-    "vault.hashicorp.com/log-level" = "info"
-    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = "terraform/creds/devweb-app"
+    "vault.hashicorp.com/log-level" = "debug"
+    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = "secret/data/devwebapp/config"
   }
   tfc_agent_token = var.team1_agent_token
-  resource_limits_memory = "128Mi"
-  resource_limits_cpu = ".5"
 }
