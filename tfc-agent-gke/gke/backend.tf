@@ -4,7 +4,7 @@ terraform {
     organization = "presto-projects"
 
     workspaces {
-      name = "gke"
+      name = "gke_cluster"
     }
   }
 }

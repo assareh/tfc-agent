@@ -28,4 +28,3 @@ module "gke_tfcagents" {
         "${t}_agent_token" => module.iam-team-setup[t].agent_token
     }
 }
-

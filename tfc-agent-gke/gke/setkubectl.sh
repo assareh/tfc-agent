@@ -10,11 +10,12 @@ echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
 
 # Using zone for the region in tf makes smaller GKS footprint
 client_email=$(jq -r '.client_email' < /tmp/credential_key.json) || echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
-gcp_region=$(terraform output region)
-gcp_zone=$(terraform output zone)
-gcp_project=$(terraform output gcp_project)
-gcp_cluster_name=$(terraform output kubernetes_cluster_name)
-gcp_gke_context=$(terraform output context)
+output=$(terraform output -json)
+gcp_region=$(echo $output | jq -r '.region.value')
+gcp_zone=$(echo $output | jq -r '.zone.value')
+gcp_project=$(echo $output | jq -r '.gcp_project.value')
+gcp_cluster_name=$(echo $output | jq -r '.kubernetes_cluster_name.value')
+gcp_gke_context=$(echo $output | jq -r '.context.value')
 
 # Authenticate to GKE cluster
 if [[ ! $(gcloud auth list | grep ${client_email}) ]]; then
