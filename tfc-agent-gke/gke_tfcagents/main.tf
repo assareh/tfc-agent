@@ -35,5 +35,13 @@ module "tfc_agent" {
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
+  deployment_annotations = {
+    "vault.hashicorp.com/agent-inject" = 'true'
+    "vault.hashicorp.com/namespace" = 'admin/'
+    "vault.hashicorp.com/role" = 'devweb-app'
+    "vault.hashicorp.com/tls-skip-verify": 'true'
+    "vault.hashicorp.com/log-level" = 'debug'
+    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = 'secret/data/devwebapp/config'
+  }
   tfc_agent_token = var.team1_agent_token
 }

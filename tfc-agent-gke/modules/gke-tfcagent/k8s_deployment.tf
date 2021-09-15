@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
       metadata {
         namespace   = var.kubernetes_namespace
         labels      = var.tags
-        annotations = {}
+        annotations = var.deployment_annotations
       }
       spec {
         service_account_name            = var.service_account_name
@@ -53,7 +53,7 @@ resource "kubernetes_deployment" "tfc_cloud_agent" {
           }
           env {
             name  = "TFC_AGENT_NAME"
-            value = "tfc-agent-3"
+            value = var.deployment_name
           }
           env {
             name  = "TFC_AGENT_LOG_LEVEL"
