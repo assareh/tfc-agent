@@ -29,13 +29,15 @@ variable "iam_teams" {
   default = {
     "team1" = {
       "name" : "team1",
+      "env" : "dev",
       "gsa" : "gsa-tfc-team1",
-      "namespace" : "tfc-team1",
+      "namespace" : "default",
       "k8s_sa" : "tfc-team1-dev",
       "roles" : ["compute.admin","storage.objectAdmin"],
     },
     "team2" = {
       "name" : "team2",
+      "env" : "dev",
       "gsa" : "gsa-tfc-team2",
       "namespace" : "tfc-team2",
       "k8s_sa" : "tfc-team2-dev",

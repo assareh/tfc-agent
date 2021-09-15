@@ -7,6 +7,20 @@ data "terraform_remote_state" "gke" {
   }
 }
 
+data "terraform_remote_state" "admin_tfcagents_iam" {
+  backend = "remote"
+  config = {
+    hostname = "app.terraform.io"
+    organization = "presto-projects"
+    workspaces    = {
+      name = "gke_ADMIN_IAM"
+    }
+  }
+}
+
+locals {
+  teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
+}
 data "google_client_config" "default" {}
 
 data "google_container_cluster" "my_cluster" {
@@ -27,17 +41,18 @@ provider "kubernetes" {
 
 module "tfc_agent" {
   source = "../modules/gke-tfcagent"
+  for_each = local.teams
   tags = {
-    "Environment" = "dev"
-    "Name" = "tfc-team-dev"
-    "Namespace" = "tfc-team"
+    "Environment" = local.teams[each.key].env
+    "Name" = local.teams[each.key].k8s_sa
+    "Namespace" = local.teams[each.key].namespace
   }
-  replicas = 1
-  deployment_name = "tfc-team1-dev"
-  kubernetes_namespace       = "default"
-  service_account_name = "tfc-team1"
+  replicas = 2
+  deployment_name = local.teams[each.key].k8s_sa
+  kubernetes_namespace       = local.teams[each.key].namespace
+  service_account_name = local.teams[each.key].k8s_sa
   service_account_annotations = {
-    "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
+    "iam.gke.io/gcp-service-account" = "${local.teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",
   }
   tfc_agent_token = var.team1_agent_token
   resource_limits_memory = "128Mi"
