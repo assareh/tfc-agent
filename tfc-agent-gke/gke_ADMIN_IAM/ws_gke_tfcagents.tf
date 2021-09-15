@@ -2,7 +2,7 @@ module "gke_svc_tfcagents" {
     source = "../modules/workspace-mgr"
     agent_pool_id     = ""
     organization = var.organization
-    workspacename = "gke_tfcagents"
+    workspacename = "gke_svc_tfcagents"
     workingdir = "tfc-agent-gke/gke_tfcagents"
     tfversion = "1.0.5"
     queue_all_runs = false
