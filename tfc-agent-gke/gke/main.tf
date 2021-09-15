@@ -11,7 +11,7 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
 }
 
 locals {
-  teams = data.terraform_remote_state.admin_tfcagents_iam.team_iam_config
+  teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
 }
 
 module "gcp-vpc-gke" {
