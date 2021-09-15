@@ -2,7 +2,7 @@
 data "terraform_remote_state" "admin_tfcagents_iam" {
   backend = "remote"
   config = {
-    address = "https://app.terraform.io"
+    hostname = "app.terraform.io"
     organization = "presto-projects"
     workspaces    = {
       name = "admin_tfcagents_iam"
