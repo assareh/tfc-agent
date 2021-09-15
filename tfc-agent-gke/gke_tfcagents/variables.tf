@@ -150,8 +150,12 @@ variable "resource_requests_memory" {
   description = "Kubernetes deployment resource memory requests"
 }
 
-#variable "tags" {
-#  type        = map(string)
-#  default     = {}
-#  description = "Additional tags (e.g. `map('BusinessUnit','XYZ')`"
-#}
+variable "tags" {
+  type        = map(string)
+  default     = {
+    "Environment" = "dev"
+    "Name" = "tfc-team-dev"
+    "Namespace" = "tfc-team"
+  }
+  description = "Additional tags (e.g. `map('BusinessUnit','XYZ')`"
+}

@@ -27,21 +27,17 @@ provider "kubernetes" {
 
 module "tfc_agent" {
   source = "../modules/gke-tfcagent"
-  tags = module.this.tags
+  tags = {
+    "Environment" = "dev"
+    "Name" = "tfc-team-dev"
+    "Namespace" = "tfc-team"
+  }
   replicas = 1
   deployment_name = "tfc-team1-dev"
   kubernetes_namespace       = "default"
   service_account_name = "tfc-team1"
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
-  }
-  deployment_annotations = {
-    "vault.hashicorp.com/agent-inject" = "true"
-    "vault.hashicorp.com/namespace" = "admin/"
-    "vault.hashicorp.com/role" = "devweb-app"
-    "vault.hashicorp.com/tls-skip-verify": "true"
-    "vault.hashicorp.com/log-level" = "info"
-    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = "terraform/creds/devweb-app"
   }
   tfc_agent_token = var.team1_agent_token
   resource_limits_memory = "128Mi"
