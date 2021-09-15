@@ -39,7 +39,7 @@ module "tfc_agent2" {
   }
 }
 module "tfc_agent" {
-  source = "./modules/gke-tfcagent"
+  source = "../modules/gke-tfcagent"
   tags = module.this.tags
   replicas = 1
   deployment_name = "tfc-team3-dev"
