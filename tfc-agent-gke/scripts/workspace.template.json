@@ -5,6 +5,7 @@
       "name":"workspace_name",
       "terraform-version":"VERSION",
       "working-directory":"workspace_dir",
+      "global-remote-state":false,
       "auto-apply":true,
         "vcs-repo": {
           "identifier":"org/workspace_repo",

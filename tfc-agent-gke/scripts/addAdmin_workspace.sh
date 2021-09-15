@@ -128,6 +128,9 @@ sed "s/workspace_name/${workspace}/" < workspace.template.json > workspace.json
 sed -i.backup "s/org\/workspace_repo/${repository/\//\\/}/g" ./workspace.json
 sed -i.backup "s/main/${BRANCH}/g" ./workspace.json
 
+# Allow remote state to be shared globally.  Restrict to specific ws in Prod!
+sed -i.backup "s/false/true/g" ./workspace.json
+
 #Set my github org oauth token
 sed -i.backup "s/oauth_token_id/${OAUTH_TOKEN_ID}/g" ./workspace.json
 sed -i.backup "s/workspace_dir/${WORKSPACE_DIR//\//\\/}/g" ./workspace.json
