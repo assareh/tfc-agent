@@ -57,7 +57,3 @@ output "gcp_project" {
 output "vault_helm" {
   value = helm_release.vault.metadata
 }
-
-output "vault_k8s_endpoint_ip" {
-  value = kubernetes_endpoints.vault_hcp
-}
