@@ -25,13 +25,13 @@ output "k8s_instance_group_urls" {
   value = module.gcp-vpc-gke.k8s_instance_group_urls
 }
 
-output "k8s_master_auth_client_certificate" {
-  value = module.gcp-vpc-gke.k8s_master_auth_client_certificate
-}
+#output "k8s_master_auth_client_certificate" {
+#  value = module.gcp-vpc-gke.k8s_master_auth_client_certificate
+#}
 
-output "k8s_master_auth_client_key" {
-  value = module.gcp-vpc-gke.k8s_master_auth_client_key
-}
+#output "k8s_master_auth_client_key" {
+#  value = module.gcp-vpc-gke.k8s_master_auth_client_key
+#}
 
 output "k8s_master_auth_cluster_ca_certificate" {
   value = module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate
