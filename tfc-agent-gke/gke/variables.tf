@@ -48,6 +48,7 @@ variable gke_service_account_email {
   default = ""
 }
 
+variable teams { default = {}}
 variable "iam_teams" {
   default = {
     "team1b" = {

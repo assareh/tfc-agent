@@ -1,3 +1,16 @@
+// Workspace Data
+data "terraform_remote_state" "admin_tfcagents_iam" {
+  backend = "atlas"
+  config = {
+    address = "https://app.terraform.io"
+    name    = "presto-projects/admin_tfcagents_iam"
+  }
+}
+
+locals {
+  teams = data.terraform_remote_state.admin_tfcagents_iam.team_iam_config
+}
+
 module "gcp-vpc-gke" {
   source         = "../modules/gcp-vpc-gke"
   prefix        = var.prefix
@@ -42,18 +55,18 @@ resource "helm_release" "vault" {
 }
 
 resource "kubernetes_namespace" "namespace" {
-  for_each = var.iam_teams
+  for_each = local.teams
   metadata {
-    name = var.iam_teams[each.key].namespace
+    name = local.teams[each.key].namespace
   }
 }
 
 resource "kubernetes_service_account" "service_account" {
-  for_each = var.iam_teams
+  for_each = local.teams
 
   metadata {
-    name        = var.iam_teams[each.key].k8s_sa
-    namespace   = var.iam_teams[each.key].namespace
-    annotations = {"iam.gke.io/gcp-service-account" = "${var.iam_teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",}
+    name        = local.teams[each.key].k8s_sa
+    namespace   = local.teams[each.key].namespace
+    annotations = {"iam.gke.io/gcp-service-account" = "${local.teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",}
   }
 }
