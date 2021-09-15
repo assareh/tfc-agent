@@ -5,13 +5,22 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
     hostname = "app.terraform.io"
     organization = "presto-projects"
     workspaces    = {
-      name = "admin_tfcagents_iam"
+      name = "gke_ADMIN_IAM"
     }
   }
 }
 
 locals {
   teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
+}
+
+// Kubernetes resources
+provider "kubernetes" {
+  #version = "~> 1.12"
+  host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
+  cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
+  token                  = data.google_client_config.default.access_token
+  #config_context = data.terraform_remote_state.gke.outputs.context
 }
 
 module "gcp-vpc-gke" {
@@ -35,15 +44,6 @@ provider "helm" {
     cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
     token                  = data.google_client_config.default.access_token
   }
-}
-
-// Kubernetes resources
-provider "kubernetes" {
-  #version = "~> 1.12"
-  host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
-  cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
-  token                  = data.google_client_config.default.access_token
-  #config_context = data.terraform_remote_state.gke.outputs.context
 }
 
 resource "helm_release" "vault" {
