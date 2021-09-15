@@ -4,7 +4,7 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
   config = {
     address = "https://app.terraform.io"
     organization = "presto-projects"
-    workspace    = {
+    workspaces    = {
       name = "admin_tfcagents_iam"
     }
   }
