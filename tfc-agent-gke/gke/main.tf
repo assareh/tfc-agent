@@ -1,6 +1,6 @@
 // Workspace Data
 data "terraform_remote_state" "admin_tfcagents_iam" {
-  backend = "atlas"
+  backend = "remote"
   config = {
     address = "https://app.terraform.io"
     name    = "presto-projects/admin_tfcagents_iam"
