@@ -1,5 +1,5 @@
 module "gke" {
-    source = "../modules/workspace"
+    source = "./modules/workspace"
     organization = "${var.organization}"
     queue_all_runs = false
     auto_apply = true

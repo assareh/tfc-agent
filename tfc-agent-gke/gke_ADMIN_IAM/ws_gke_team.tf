@@ -1,5 +1,5 @@
 module "iam_team_workspaces" {
-    source = "../modules/workspace-mgr"
+    source = "./modules/workspace-mgr"
     #for_each = {for key, v in local.iam_team_workspaces : key => v if v.oauth_token_id != ""}
     for_each = local.iam_team_workspaces
 
