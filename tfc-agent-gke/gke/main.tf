@@ -24,7 +24,7 @@ provider "kubernetes" {
 }
 
 module "gcp-vpc-gke" {
-  source         = "../modules/gcp-vpc-gke"
+  source         = "./modules/gcp-vpc-gke"
   prefix        = var.prefix
   gcp_project = var.gcp_project
   gcp_region  = var.gcp_region

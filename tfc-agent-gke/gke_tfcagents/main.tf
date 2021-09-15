@@ -25,7 +25,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.terraform_remote_state.gke.outputs.k8s_master_auth_cluster_ca_certificate)
 }
 
-module "tfc_agent" {
+module "tfc_agent2" {
   source = "git::https://github.com/cloudposse/terraform-kubernetes-tfc-cloud-agent.git?ref=tags/0.3.0"
   context = module.this.context
   replicas = 1
@@ -38,8 +38,8 @@ module "tfc_agent" {
     "iam.gke.io/gcp-service-account" = "gsa-tfc-team1@${var.gcp_project}.iam.gserviceaccount.com",
   }
 }
-module "tfc_agent2" {
-  source = "../modules/gke-tfcagent"
+module "tfc_agent" {
+  source = "./modules/gke-tfcagent"
   tags = module.this.tags
   replicas = 1
   deployment_name = "tfc-team3-dev"
