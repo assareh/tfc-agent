@@ -12,6 +12,12 @@ output "agentpool_id" {
     }
 }
 
+output "agentpool_token" {
+    value = { for t in sort(keys(var.iam_teams)) :
+        t => {"agent_token" : module.iam-team-setup[t].agent_token}
+    }
+}
+
 output "team_iam_config" {
     value = {
         for team, configs in var.iam_teams: team => merge(
