@@ -47,7 +47,7 @@ module "tfc_agent" {
     "Name" = local.teams[each.key].k8s_sa
     "Namespace" = local.teams[each.key].namespace
   }
-  replicas = 2
+  replicas = 1
   deployment_name = local.teams[each.key].k8s_sa
   kubernetes_namespace       = local.teams[each.key].namespace
   service_account_name = local.teams[each.key].k8s_sa
