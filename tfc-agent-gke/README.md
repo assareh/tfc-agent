@@ -1,4 +1,5 @@
 # Credential free provisioning with Terraform Cloud Agent on GCP GKE
+This Demo will create a default set of TFCB and GCP resources to enable multiple teams to each use IaC in their own TFCB agent pool.  Each team will have a K8s namespace, and a mapping between their K8s service account and Google Service account.  The GSA has specific Roles set that enable the IAM team to provide access to only the API's each team should have access to.  Using Workload Identity the K8s SA is linked to the GSA and therefor the tfc-agent running under that K8s SA will have a limitted set of access.
 
 ## Create the IAM Admin workspace using TFCB API
 This workspace will create the following Identify and resource requirements for every team.
@@ -65,15 +66,20 @@ Finished
 ```
 Login to TFCB and you should see the admin workspace you just created (default: `gke_ADMIN_IAM`).  Under variables you should see all your Terraform and ENV variables properly set to build out your core GCP Platform.
 
-3.  Click this workspace -> Actions -> Start new plan
+## Create Core IAM resources and TFCB workspaces
+Click `gke_ADMIN_IAM` -> Actions -> Start new plan -> Start Plan
 
-This will run the IaC in ./gke_ADMIN_IAM and create the access and resources needed by all teams defined in iam_teams{} (./gke_ADMIN_IAM/variables.tf).  Additionally it will create workspaces gke_cluster and  gke_svc_tfcagents service we will deploy next.
+This will run the IaC in ./gke_ADMIN_IAM and create the access and resources needed by all teams defined in var.iam_teams{} (`./gke_ADMIN_IAM/variables.tf`).  Additionally it will create workspaces gke_cluster and gke_svc_tfcagents that we will run next.  
+
+**Currently var.iam_teams assumes every team will have its own unique K8s namespace and service account that doesn't currently exist. The gke_cluster workspace will read these values and attempt to create them.**
 
 ## Provision GKE
+Click `gke_cluster` -> Actions -> Start new plan -> Start Plan
+
+This will run the IaC in ./gke_cluster to create your VPC, GKE cluster, and each of the defined Team's kubernetes namespace and service account.  Once complete you should have a fully useable GKE cluster with the necessary namespaces created for the teams that will consume it.
 
 ### Authenticate to GKE on the command line
-
-1. (Optional) You can get the information from the gke workspace outputs in TFCB.  If you want to use your CLI, first login.
+You can get the information from the gke workspace outputs in GCP or TFCB UI.  Alternatively you can use the Terraform CLI!  If you want to use your CLI, first login.
 ```
 terraform login
 ```
@@ -115,7 +121,11 @@ echo $gcp_project
 echo $gcp_cluster_name
 echo $gcp_gke_context
 ```
-You should have everythig you need now. Run the script: `./setkubectl.sh` or do it manually with the commands below assuming you set these variables in your environment with the test above.
+You should have everythig you need now. Run the script: `./setkubectl.sh`.
+```
+./setkubectl.sh
+```
+You can also do this manually with the commands below assuming you set these variables in your environment when you did the tf output test above.
 
 ```
 echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
@@ -126,9 +136,12 @@ gcloud container clusters get-credentials ${gcp_cluster_name} --region ${gcp_zon
 rm /tmp/credential_key.json
 rm tf.out
 ```
-
 ## Provision tfc-agents as a GKE service
+Every team defined will have a tfc-agent service deployed within their K8s namespace.  This service will use the defined K8s SA which is mapped to the teams Google SA.  Roles to the allowed API's are defined at the Google SA level.
 
+Click `gke_svc_tfcagents` -> Actions -> Start new plan -> Start Plan
+
+This will run the IaC in ./gke_svc_tfcagents that will apply a K8s deployment in the teams K8s namespace
 Set the current context namespace for simpicity
 ```
 kubectl config set-context --current --namespace=tfc-agent
