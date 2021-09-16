@@ -1,9 +1,12 @@
 // Workspace Data
 data "terraform_remote_state" "gke" {
-  backend = "atlas"
+  backend = "remote"
   config = {
-    address = "https://app.terraform.io"
-    name    = "presto-projects/gke_cluster"
+    hostname = "app.terraform.io"
+    organization = "presto-projects"
+    workspaces    = {
+      name    = "gke_cluster"
+    }
   }
 }
 
@@ -51,12 +54,12 @@ module "tfc_agent" {
   replicas = 1
   deployment_name = local.teams[each.key].k8s_sa
   kubernetes_namespace       = local.teams[each.key].namespace
+  tfc_agent_token = local.agent_pool_tokens[each.key].agent_token
+  resource_limits_memory = "128Mi"
+  resource_limits_cpu = ".5"
   service_account_name = local.teams[each.key].k8s_sa
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "${local.teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",
   }
-  #tfc_agent_token = var.team1_agent_token
-  tfc_agent_token = local.agent_pool_tokens[each.key].agent_token
-  resource_limits_memory = "128Mi"
-  resource_limits_cpu = ".5"
+
 }
