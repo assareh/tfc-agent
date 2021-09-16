@@ -32,9 +32,9 @@ module "gke_svc_tfcagents" {
         for t in sort(keys(var.iam_teams)) :
         "${t}_agent_token" => module.iam-team-setup[t].agent_token
     }
-    tf_variables_map = {
+    tf_variables_map = jsonencode({
         for t in sort(keys(var.iam_teams)) :
-        t => jsonencode({"agent_token" : module.iam-team-setup[t].agent_token})
-    }
+        t => {"agent_token" : module.iam-team-setup[t].agent_token}
+    })
 
 }
