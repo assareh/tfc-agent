@@ -41,7 +41,7 @@ variable "iam_teams" {
       "gsa" : "gsa-tfc-team2",
       "namespace" : "tfc-team2",
       "k8s_sa" : "tfc-team2-dev",
-      "roles" : ["storage.objectAdmin"],
+      "roles" : ["compute.admin","storage.objectAdmin"],
     }
   }
 }
