@@ -38,14 +38,6 @@ provider "kubernetes" {
   #config_context = data.terraform_remote_state.gke.outputs.context
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
-    cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
-    token                  = data.google_client_config.default.access_token
-  }
-}
-
 resource "kubernetes_namespace" "namespace" {
   for_each = local.teams
   metadata {
