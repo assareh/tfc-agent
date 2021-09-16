@@ -73,8 +73,8 @@ variable "agent_envs" {
 }
 
 variable "agent_tokens" {
-  type        = string
-  default     = ""
+  #type        = string
+  #default     = ""
   description = <<-EOF
     The agent token to use when making requests to the Terraform Cloud API.
     This token must be obtained from the API or UI.  It is recommended to use
