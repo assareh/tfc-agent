@@ -11,7 +11,7 @@ module "iam_team_workspaces" {
     tfversion = local.iam_team_workspaces[each.key].tfversion
     queue_all_runs = local.iam_team_workspaces[each.key].queue_all_runs
     auto_apply = local.iam_team_workspaces[each.key].auto_apply
-    
+
     identifier     = local.iam_team_workspaces[each.key].identifier
     oauth_token_id = local.iam_team_workspaces[each.key].oauth_token_id
     repo_branch         = local.iam_team_workspaces[each.key].repobranch

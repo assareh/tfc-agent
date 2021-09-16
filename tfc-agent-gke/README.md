@@ -137,35 +137,71 @@ rm /tmp/credential_key.json
 rm tf.out
 ```
 ## Provision tfc-agents as a GKE service
-Every team defined will have a tfc-agent service deployed within their K8s namespace.  This service will use the defined K8s SA which is mapped to the teams Google SA.  Roles to the allowed API's are defined at the Google SA level.
+Every team defined will have a tfc-agent service deployed within their K8s namespace.  This service will use the defined K8s SA which is mapped to the team's Google SA.  Roles to the allowed API's are defined at the Google SA level and this was all created in `gke_ADMIN_IAM`.
 
 Click `gke_svc_tfcagents` -> Actions -> Start new plan -> Start Plan
 
-This will run the IaC in ./gke_svc_tfcagents that will apply a K8s deployment in the teams K8s namespace
-Set the current context namespace for simpicity
+This will run the IaC in ./gke_svc_tfcagents that will apply a K8s tfc-agent deployment in the teams K8s namespace.  You should take a close look at each `tfc-team#` namespace in your K8s cluster.
 ```
-kubectl config set-context --current --namespace=tfc-agent
+kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   97m
+kube-node-lease   Active   97m
+kube-public       Active   97m
+kube-system       Active   98m
+tfc-team1         Active   94m
+tfc-team2         Active   94m
 ```
 
+To look at the resources built for team1 do the following:
+```
+kubectl config set-context --current --namespace=tfc-team1
+kubectl get pods
+kubectl get deployment
+kubectl get secret
+kubectl get sa
+```
+
+If you take a close look at the service account (sa) you will see an annotation mapping it to the team's Google service account + project which has the roles that enable which API's the tfc-agent will have access to.
+```
+kubectl get sa tfc-team1-dev -o json | jq -r '.metadata.annotations'
+```
+If you want to change a teams access permissions you will need to first update the team's roles in var.iam_teams defined in `./gke_ADMIN_IAM/variables.tf`.  This will trigger an automatic run and the team's GSA will be updated.  The current running tfc-agent service should pick these up the next run.
 ## Notes
 
-### Vault GKE Integration
-Test authentiation by starting the basic devwebapp pod and connecting to it.
+### HCP Vault GKE Integration
+Refer to `./gke/main.tf.withVault` for an example of installing the vault injector.  This allows us to update the tfc-agent deployment by only adding some pod annotations.  The devwebapp use case below is based on the [Vault learn guide](https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault?in=vault/kubernetes).  Walk though this on your vaul cluster to setup any auth/secrets/policies on the vault side.
+
+Test authentiation by starting the basic devwebapp pod that has the VAULT_TOKEN defined.  be sure to update the devwebapp.yaml to point to your vault instance, token, and namespace.
 ```
-cd gke
+cd ./test
 kubectl apply -f devwebapp.yaml
-kubectl exec --stdin=true --tty=true devwebapp -- /bin/sh
+kubectl exec --stdin=true --tty=true devwebapp_podname -- /bin/sh
 KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
 
 curl --insecure --request POST \
       -H "X-Vault-Namespace: admin" \
       --data '{"jwt": "'"$KUBE_TOKEN"'", "role": "devweb-app"}' \
       $VAULT_ADDR/v1/auth/kubernetes/login
-
 ```
 
+Setup the tfc-agent deployment to use vault annotations by defining the following variable for ./modules/gke-tfcagent
+```
+deployment_annotations = {
+    "vault.hashicorp.com/agent-inject" = "true"
+    "vault.hashicorp.com/namespace" = "admin/"
+    "vault.hashicorp.com/role" = "devweb-app"
+    "vault.hashicorp.com/tls-skip-verify": "true"
+    "vault.hashicorp.com/log-level" = "debug"
+    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = "secret/data/devwebapp/config"
+  }
+```
+
+Use the devwebappp-agentinjector.yaml to test the tfc-agent pod using the vault annotations.
 vault-agent-init (only has wget)
 ```
+kubectl apply -f devwebappp-agentinjector.yaml
+kubectl exec -it <podname> sh
 KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
 export VAULT_ADDR="https://hcp-vault-cluster.vault.11eb13d3-0dd1-af4a-9eb3-0242ac110018.aws.hashicorp.cloud:8200"
 
@@ -183,7 +219,7 @@ gcloud iam service-accounts list
 gcloud iam service-accounts delete <email>
 ```
 
-Test default K8s cluster service account (use test with storage permission)
+Test default K8s cluster service account (use test with storage permission).
 ```
 kubectl run --rm -it test --image gcr.io/cloud-builders/gsutil ls
 ```
@@ -193,7 +229,8 @@ Test tfc-agent namespace/sa with storage permission
 kubectl run -n tfc-agent --rm --serviceaccount=servicea-dev-deploy-servicea -it test --image gcr.io/cloud-builders/gsutil ls
 ```
 
-IAM Ref: https://medium.com/the-telegraph-engineering/binding-gcp-accounts-to-gke-service-accounts-with-terraform-dfca4e81d2a0
+IAM References:
+https://medium.com/the-telegraph-engineering/binding-gcp-accounts-to-gke-service-accounts-with-terraform-dfca4e81d2a0
 
 ## Additional Topics
 * A [Sentinel](https://www.terraform.io/docs/cloud/sentinel/index.html) policy like [this example](https://github.com/hashicorp/terraform-guides/blob/master/governance/third-generation/aws/restrict-assumed-roles-by-workspace.sentinel) can be used to restrict which roles would be allowed in a given workspace.

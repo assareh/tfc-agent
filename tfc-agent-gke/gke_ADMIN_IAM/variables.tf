@@ -77,8 +77,8 @@ locals {
     "team2" = {
       "organization" : var.organization
       "workspacename" : "gke_team_team2"
-      "workingdir" : "tfc-agent-gke/gke_tfc_team1"
-      "tfversion" : "0.13.6"
+      "workingdir" : "tfc-agent-gke/gke_tfc_team2"
+      "tfversion" : "1.0.5"
       "queue_all_runs" : false
       "auto_apply" : true
       "agent_pool_id"     : module.iam-team-setup["team2"].agentpool_id
