@@ -19,7 +19,7 @@ variable "image" {
 
 variable "instance_name" {
   description = "GCP instance name"
-  default     = "created-with-terraform-cloud-agent"
+  default     = "team2_machine"
 }
 
 variable "labels" {
