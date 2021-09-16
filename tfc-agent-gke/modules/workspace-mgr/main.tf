@@ -58,7 +58,7 @@ resource "tfe_variable" "env_variables_sec" {
 
 resource "tfe_variable" "tf_variables_map" {
   for_each     = var.tf_variables_map
-  key          = "agentpool"
+  key          = "agentpool_new"
   value        = jsonencode(var.tf_variables_map)
   category     = "terraform"
   hcl          = true
