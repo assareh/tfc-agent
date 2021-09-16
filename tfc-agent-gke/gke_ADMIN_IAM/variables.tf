@@ -65,9 +65,7 @@ locals {
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
       }
-      "env_variables_sec" : {
-        "GOOGLE_CREDENTIALS" : var.gcp_credentials
-      }
+      "env_variables_sec" : {}
       "tf_variables" : {
         "prefix" : "presto"
         "gcp_project" : var.gcp_project
@@ -93,9 +91,7 @@ locals {
         "GOOGLE_PROJECT"     : var.gcp_project
         "GOOGLE_ZONE"        : var.gcp_zone
       }
-      "env_variables_sec" : {
-        "GOOGLE_CREDENTIALS" : var.gcp_credentials
-      }
+      "env_variables_sec" : {}
       "tf_variables" : {
         "prefix" : "presto"
         "gcp_project" : var.gcp_project
