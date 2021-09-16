@@ -19,6 +19,12 @@ variable "tf_variables" {
     prefix = "myproject"
   }
 }
+# Terraform Variables
+variable "tf_variables_map" {
+  default = {
+    labels = {"prefix" = "myproject"}
+  }
+}
 
 # Terraform HCL Variables
 variable "tf_variables_sec" {

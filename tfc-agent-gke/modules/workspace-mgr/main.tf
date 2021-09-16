@@ -55,3 +55,12 @@ resource "tfe_variable" "env_variables_sec" {
   sensitive    = true
   workspace_id = tfe_workspace.ws-vcs.id
 }
+
+resource "tfe_variable" "tf_variables_map" {
+  for_each     = var.tf_variables_map
+  key          = each.key
+  value        = each.value
+  category     = "terraform"
+  sensitive    = false
+  workspace_id = tfe_workspace.ws-vcs.id
+}
