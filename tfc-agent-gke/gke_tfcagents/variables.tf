@@ -72,7 +72,7 @@ variable "agent_envs" {
   description = "A map of any extra environment variables to pass to the TFC agent"
 }
 
-variable "tfc_agent_token" {
+variable "agent_tokens" {
   type        = string
   default     = ""
   description = <<-EOF
