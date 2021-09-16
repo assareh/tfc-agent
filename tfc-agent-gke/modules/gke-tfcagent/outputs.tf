@@ -1,3 +1,6 @@
+output "gke_namespace" {
+  value = var.kubernetes_namespace
+}
 output "gke_sa" {
   value = kubernetes_service_account.service_account
 }

@@ -1,3 +1,5 @@
+data "google_client_config" "default" {}
+
 // Workspace Data
 data "terraform_remote_state" "admin_tfcagents_iam" {
   backend = "remote"

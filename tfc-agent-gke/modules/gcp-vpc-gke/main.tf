@@ -1,10 +1,3 @@
-
-# GCP Default SA
-#resource "google_service_account" "default" {
-#  account_id   = "service-account-id"
-#  display_name = "Service Account"
-#}
-
 locals {
   gke_service_account_email = var.gke_service_account_email != "" ? var.gke_service_account_email : "compute@developer.gserviceaccount.com"
 }

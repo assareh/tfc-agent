@@ -45,7 +45,7 @@ variable "env_variables_sec" {
 }
 
 # IAM Teams Map
-variable "teams_config" {
-  type = map
-  default = {}
-}
+#variable "teams_config" {
+#  type = map
+#  default = {}
+#}
