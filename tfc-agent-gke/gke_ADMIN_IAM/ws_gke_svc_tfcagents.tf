@@ -30,8 +30,5 @@ module "gke_svc_tfcagents" {
         "agentpool_tokens" = jsonencode({for t in sort(keys(var.iam_teams)):
             t => {"agent_token" : module.iam-team-setup[t].agent_token}})
     }
-    tf_variables_sec = {
-        for t in sort(keys(var.iam_teams)) :
-        "${t}_agent_token" => module.iam-team-setup[t].agent_token
-    }
+    tf_variables_sec = {}
 }

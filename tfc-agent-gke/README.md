@@ -164,6 +164,11 @@ $VAULT_ADDR/v1/auth/kubernetes/login
 ### GCP Service Accounts
 Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
 
+list/delete gsa
+```
+gcloud iam service-accounts list
+gcloud iam service-accounts delete <email>
+```
 
 Test default K8s cluster service account (use test with storage permission)
 ```
