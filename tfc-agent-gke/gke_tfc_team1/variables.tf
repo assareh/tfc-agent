@@ -19,7 +19,7 @@ variable "image" {
 
 variable "instance_name" {
   description = "GCP instance name"
-  default     = "team1_machine"
+  default     = "team1-machine"
 }
 
 variable "labels" {
