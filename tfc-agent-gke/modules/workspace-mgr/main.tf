@@ -59,7 +59,7 @@ resource "tfe_variable" "env_variables_sec" {
 resource "tfe_variable" "tf_variables_map" {
   for_each     = var.tf_variables_map
   key          = each.key
-  value        = each.value
+  value        = tostring(each.value)
   category     = "terraform"
   sensitive    = false
   workspace_id = tfe_workspace.ws-vcs.id
