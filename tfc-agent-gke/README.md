@@ -1,5 +1,74 @@
 # Credential free provisioning with Terraform Cloud Agent on GCP GKE
 
+## Create the IAM Admin workspace using TFCB API
+This workspace will create the following Identify and resource requirements for every team.
+* Google service account, Roles, and Workload Identity Mapping
+* Kubernetes service account (placeholder)
+* Kubernetes namespace (placeholder)
+* TFCB Agent Pool and Token per team
+* Default TFCB Team Workspace to build IaC
+
+1. First fork this repo in your github.com account and clone it locally.
+```
+cd <your_working_project_dir>  # this is your project base dir. It can by any dir you want.
+git clone <your_git_URL>
+cd tfc-agents/tfc-agent-gke/scripts
+```
+
+2. `./addAdmin_workspace.sh` uses curl to interact with Terraform Enterprise via the Terraform Enterprise REST API. The same APIs are often used from Jenkins or other solutions to incorporate Terraform Enterprise into a CI/CD pipeline.
+
+This script requires the default TFE and GCP variables to be locally sourced into your shell during runtime. It will build the new workspace with these defined. Sensitive credentials like ATLAS_TOKEN and GOOGLE_CREDENTIALS will be encrypted for security.
+
+Required environment variables in your shell.
+```
+OAUTH_TOKEN_ID <setup github oauth and use ID here>
+ATLAS_TOKEN <Enterprise TF Token>
+organization <your github org name>
+GOOGLE_CREDENTIAL
+GOOGLE_PROJECT
+GOOGLE_REGION
+GOOGLE_ZONE
+```
+
+Once these are available in your shell's env you are ready to build the admin workspace.
+```
+$  ./addAdmin_workspace.sh
+Using Github repo: https://github.com/ppresto/tfc-agent.git
+Using workspace name:  gke_ADMIN_IAM
+Checking to see if workspace exists
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'data'
+Workspace ID:
+Workspace did not already exist; will create it.
+Checking Workspace Result: {"data":{"id":"ws-JBHmrQUaM7cfYADr","type":"workspaces","attributes":{"allow-destroy-plan":true,"auto-apply":true,"auto-destroy-at":null,
+
+...
+
+Workspace ID:  ws-JBHmrQUaM7cfYADr
+Adding CONFIRM_DESTROY
+Adding OAUTH_TOKEN_ID
+Adding ATLAS_TOKEN
+Adding organization
+Adding Github org ppresto
+
+...
+
+Adding GOOGLE_PROJECT
+Adding GOOGLE_PROJECT ENV
+Adding GOOGLE_REGION
+Adding GOOGLE_REGION ENV
+Adding GOOGLE_ZONE
+Adding GOOGLE_ZONE ENV
+Number of Sentinel policies:  0
+Finished
+```
+Login to TFCB and you should see the admin workspace you just created (default: `gke_ADMIN_IAM`).  Under variables you should see all your Terraform and ENV variables properly set to build out your core GCP Platform.
+
+3.  Click this workspace -> Actions -> Start new plan
+
+This will run the IaC in ./gke_ADMIN_IAM and create the access and resources needed by all teams defined in iam_teams{} (./gke_ADMIN_IAM/variables.tf).  Additionally it will create workspaces gke_cluster and  gke_svc_tfcagents service we will deploy next.
+
 ## Provision GKE
 
 ### Authenticate to GKE on the command line
@@ -18,7 +87,7 @@ terraform {
     organization = "<ADD_YOUR_ORG_HERE>"
 
     workspaces {
-      name = "gke"
+      name = "gke_cluster"
     }
   }
 }
@@ -28,9 +97,9 @@ Save the file and initialize the remote backend
 ```
 terraform init
 ```
-You are now authenticated into TFCB, the backend is setup allowing you to use the local CLI to communicate with your TFCB workspace.  You can now run teraform output to get your GKE cluster details.
+You are now authenticated into TFCB, the backend is setup allowing you to use the local CLI to communicate with your TFCB workspace.  You can now run teraform output to get your GKE cluster details locally which the `./gke/setkubectl.sh` will attempt to do for you.
 
-Put the terraform output into a local file we can reference quickly.
+Test the terraform output is working and setting all the necessary variables correctly.
 ```
 terraform output -json > ./tf.out
 
@@ -46,7 +115,7 @@ echo $gcp_project
 echo $gcp_cluster_name
 echo $gcp_gke_context
 ```
-You should have everythig you need now. Lets Auth to GCP and setup your GKE env.
+You should have everythig you need now. Run the script: `./setkubectl.sh` or do it manually with the commands below assuming you set these variables in your environment with the test above.
 
 ```
 echo ${GOOGLE_CREDENTIALS} > /tmp/credential_key.json
