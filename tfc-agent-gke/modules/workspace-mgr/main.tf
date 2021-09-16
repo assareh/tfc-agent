@@ -61,7 +61,7 @@ resource "tfe_variable" "tf_variables_map" {
   key          = "agentpool_new"
   value        = jsonencode(var.tf_variables_map)
   category     = "terraform"
-  hcl          = true
+  hcl          = false
   sensitive    = false
   workspace_id = tfe_workspace.ws-vcs.id
 }
