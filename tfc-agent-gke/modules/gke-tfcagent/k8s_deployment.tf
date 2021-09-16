@@ -1,12 +1,3 @@
-  
-#resource "kubernetes_service_account" "service_account" {
-#  metadata {
-#    name        = var.service_account_name
-#    namespace   = var.kubernetes_namespace
-#    annotations = var.service_account_annotations
-#  }
-#}
-
 resource "kubernetes_secret" "secret" {
   metadata {
       name      = var.deployment_name

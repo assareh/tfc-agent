@@ -79,7 +79,7 @@ locals {
     "team2" = {
       "organization" : var.organization
       "workspacename" : "gke_team_team2"
-      "workingdir" : "tfc-agent-gke/gke_team_team2"
+      "workingdir" : "tfc-agent-gke/gke_tfc_team1"
       "tfversion" : "0.13.6"
       "queue_all_runs" : false
       "auto_apply" : true
