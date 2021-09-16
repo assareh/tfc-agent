@@ -20,6 +20,7 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
 
 locals {
   teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
+  agent_pool_tokens = jsondecode(var.agent_tokens)
 }
 data "google_client_config" "default" {}
 
@@ -55,7 +56,7 @@ module "tfc_agent" {
     "iam.gke.io/gcp-service-account" = "${local.teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",
   }
   #tfc_agent_token = var.team1_agent_token
-  tfc_agent_token = var.agent_tokens[each.key].agent_token
+  tfc_agent_token = local.agent_pool_tokens[each.key].agent_token
   resource_limits_memory = "128Mi"
   resource_limits_cpu = ".5"
 }
