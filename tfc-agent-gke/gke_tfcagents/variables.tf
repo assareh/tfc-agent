@@ -34,6 +34,16 @@ variable "deployment_annotations" {
   type        = map
   default     = {}
   description = "Annotations to add to the Kubernetes deployment"
+  /*  HCP Vault Example to pass credentials to tfc-agent pod
+  deployment_annotations = {
+    "vault.hashicorp.com/agent-inject" = "true"
+    "vault.hashicorp.com/namespace" = "admin/"
+    "vault.hashicorp.com/role" = "devweb-app"
+    "vault.hashicorp.com/tls-skip-verify": "true"
+    "vault.hashicorp.com/log-level" = "debug"
+    "vault.hashicorp.com/agent-inject-secret-credentials.txt" = "secret/data/devwebapp/config"
+  }
+  */
 }
 
 variable "service_account_annotations" {
