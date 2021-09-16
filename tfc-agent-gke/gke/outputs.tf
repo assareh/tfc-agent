@@ -53,7 +53,3 @@ output "context" {
 output "gcp_project" {
   value = var.gcp_project
 }
-
-output "vault_helm" {
-  value = helm_release.vault.metadata
-}
