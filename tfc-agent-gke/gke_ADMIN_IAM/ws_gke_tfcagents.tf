@@ -4,7 +4,7 @@ module "gke_svc_tfcagents" {
     organization = var.organization
     workspacename = "gke_svc_tfcagents"
     workingdir = "tfc-agent-gke/gke_tfcagents"
-    tfversion = "0.13.6"
+    tfversion = "1.0.5"
     queue_all_runs = false
     auto_apply = true
     identifier     = "${var.repo_org}/tfc-agent"
