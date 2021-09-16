@@ -54,7 +54,8 @@ module "tfc_agent" {
   service_account_annotations = {
     "iam.gke.io/gcp-service-account" = "${local.teams[each.key].gsa}@${var.gcp_project}.iam.gserviceaccount.com",
   }
-  tfc_agent_token = var.team1_agent_token
+  #tfc_agent_token = var.team1_agent_token
+  tfc_agent_token = var.agent_tokens[each.key].agent_token
   resource_limits_memory = "128Mi"
   resource_limits_cpu = ".5"
 }
