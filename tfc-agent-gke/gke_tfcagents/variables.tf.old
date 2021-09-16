@@ -7,6 +7,12 @@ variable "gcp_zone" {
   default = "us-west1-c"
 }
 
+variable "team1_agent_token" {
+  type        = string
+  description = "Terraform Cloud Agent Token"
+  default = ""
+}
+
 variable "service_account_name" {
   type        = string
   default     = null
@@ -22,6 +28,12 @@ variable "kubernetes_namespace" {
   type        = string
   default     = null
   description = "Kubernetes namespace override"
+}
+
+variable "namespace_creation_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable this if the Kubernetes namespace does not already exist"
 }
 
 variable "replicas" {
@@ -60,7 +72,7 @@ variable "agent_envs" {
   description = "A map of any extra environment variables to pass to the TFC agent"
 }
 
-variable "agentpool_tokens" {
+variable "agent_tokens" {
   #type        = string
   #default     = ""
   description = <<-EOF

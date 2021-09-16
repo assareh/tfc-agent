@@ -21,15 +21,16 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
   }
 }
 
-locals {
-  teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
-  agent_pool_tokens = jsondecode(var.agent_tokens)
-}
 data "google_client_config" "default" {}
 
 data "google_container_cluster" "my_cluster" {
   name = data.terraform_remote_state.gke.outputs.kubernetes_cluster_name
   location = var.gcp_zone
+}
+
+locals {
+  teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
+  agentpool_tokens = jsondecode(var.agentpool_tokens)
 }
 
 provider "kubernetes" {
@@ -54,7 +55,7 @@ module "tfc_agent" {
   replicas = 1
   deployment_name = local.teams[each.key].k8s_sa
   kubernetes_namespace       = local.teams[each.key].namespace
-  tfc_agent_token = local.agent_pool_tokens[each.key].agent_token
+  tfc_agent_token = local.agentpool_tokens[each.key].agent_token
   resource_limits_memory = "128Mi"
   resource_limits_cpu = ".5"
   service_account_name = local.teams[each.key].k8s_sa
