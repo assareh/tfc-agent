@@ -58,7 +58,7 @@ resource "tfe_variable" "env_variables_sec" {
 
 resource "tfe_variable" "tf_variables_map" {
   key          = "agentpool_tokens"
-  value        = jsonencode(var.tf_variables_map)
+  value        = var.tf_variables_map
   category     = "terraform"
   sensitive    = false
   workspace_id = tfe_workspace.ws-vcs.id
