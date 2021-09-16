@@ -1,5 +1,3 @@
-data "google_client_config" "default" {}
-
 // Workspace Data
 data "terraform_remote_state" "admin_tfcagents_iam" {
   backend = "remote"
@@ -16,6 +14,15 @@ locals {
   teams = data.terraform_remote_state.admin_tfcagents_iam.outputs.team_iam_config
 }
 
+// Kubernetes resources
+provider "kubernetes" {
+  #version = "~> 1.12"
+  host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
+  cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
+  token                  = data.google_client_config.default.access_token
+  #config_context = data.terraform_remote_state.gke.outputs.context
+}
+
 module "gcp-vpc-gke" {
   source         = "../modules/gcp-vpc-gke"
   prefix        = var.prefix
@@ -29,13 +36,25 @@ module "gcp-vpc-gke" {
   #gke_namespace  = var.gke_namespace
 }
 
-// Configure Kubernetes resources
-provider "kubernetes" {
-  #version = "~> 1.12"
-  host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
-  cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
-  token                  = data.google_client_config.default.access_token
-  #config_context = data.terraform_remote_state.gke.outputs.context
+// Install Vault injector
+data "google_client_config" "default" {}
+provider "helm" {
+  kubernetes {
+    host                   = "https://${module.gcp-vpc-gke.k8s_endpoint}"
+    cluster_ca_certificate = base64decode(module.gcp-vpc-gke.k8s_master_auth_cluster_ca_certificate)
+    token                  = data.google_client_config.default.access_token
+  }
+}
+
+resource "helm_release" "vault" {
+  name       = "vault"
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "vault"
+  version    = "0.15.0"
+  set {
+    name  = "injector.externalVaultAddr"
+    value = "https://hcp-vault-cluster.vault.11eb13d3-0dd1-af4a-9eb3-0242ac110018.aws.hashicorp.cloud:8200"
+  }
 }
 
 resource "kubernetes_namespace" "namespace" {
