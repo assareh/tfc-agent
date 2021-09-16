@@ -58,8 +58,8 @@ resource "tfe_variable" "env_variables_sec" {
 
 resource "tfe_variable" "tf_variables_map" {
   for_each     = var.tf_variables_map
-  key          = each.key
-  value        = each.value
+  key          = "agentpool"
+  value        = var.tf_variables_map
   category     = "terraform"
   hcl          = true
   sensitive    = false
