@@ -3,7 +3,7 @@ module "gke_workspace" {
     agent_pool_id     = ""
     organization = var.organization
     workspacename = "gke_cluster"
-    workingdir = "tfc-agent-gke/gke"
+    workingdir = "tfc-agent-gke/gke_cluster"
     tfversion = "1.0.5"
     queue_all_runs = false
     auto_apply = true

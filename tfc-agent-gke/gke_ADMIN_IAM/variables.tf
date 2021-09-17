@@ -10,7 +10,7 @@ variable "organization" { default = "presto-projects" }
 variable "tfe_token" {}
 variable "oauth_token_id" {}
 variable "repo_org" {}
-variable "repo_branch" { default = "iam"}
+variable "repo_branch" { default = "gke"}
 variable "global_remote_state" {default = ""}
 
 # GCP
@@ -41,7 +41,7 @@ variable "iam_teams" {
       "gsa" : "gsa-tfc-team2",
       "namespace" : "tfc-team2",
       "k8s_sa" : "tfc-team2-dev",
-      "roles" : ["compute.admin","storage.objectAdmin"],
+      "roles" : ["storage.objectAdmin"],
     }
   }
 }

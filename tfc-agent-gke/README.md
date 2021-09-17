@@ -103,7 +103,7 @@ Save the file and initialize the remote backend
 ```
 terraform init
 ```
-You are now authenticated into TFCB, the backend is setup allowing you to use the local CLI to communicate with your TFCB workspace.  You can now run teraform output to get your GKE cluster details locally which the `./gke/setkubectl.sh` will attempt to do for you.
+You are now authenticated into TFCB, the backend is setup allowing you to use the local CLI to communicate with your TFCB workspace.  You can now run teraform output to get your GKE cluster details locally which the `./gke_cluster/setkubectl.sh` will attempt to do for you.
 
 Test the terraform output is working and setting all the necessary variables correctly.
 ```
@@ -167,6 +167,16 @@ If you take a close look at the service account (sa) you will see an annotation 
 kubectl get sa tfc-team1-dev -o json | jq -r '.metadata.annotations'
 ```
 If you want to change a teams access permissions you will need to first update the team's roles in var.iam_teams defined in `./gke_ADMIN_IAM/variables.tf`.  This will trigger an automatic run and the team's GSA will be updated.  The current running tfc-agent service should pick these up the next run automatically.
+
+## Run Team1 and Team2 workspaces
+Now you have two team workspaces that are eached mapped to a different repo/workingdir.  Any IaC updates will trigger a run within the given workspace.  Each are mapped to a different agentpool that has a different tfc-agent listening.  The tfc-agent will provision the IaC using the Google Service Account associated to each teams kubernetes service account and namespace hosting the tfc-agent.  If you look at the workspace variables you should find no sensitive cloud credentials in these workspaces.
+
+Testing...
+* Run a plan in gke_tfc_team1 and it should successfully build a compute instance.
+* Run a plan in gke_tfc_team2 and it should fail.
+
+Team2 is configured the same and using the same tf code as team1.  The only difference is the google service account built for team2 was only assigned storage.Admin role so it doesn't have access to build compute.  You can update the roles for each team in `./gke_ADMIN_IAM/variables.tf`
+
 ## Notes/Troubleshooting
 ### GCP Service Accounts
 Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
@@ -188,7 +198,7 @@ kubectl run -n tfc-agent --rm --serviceaccount=servicea-dev-deploy-servicea -it 
 ```
 
 ### HCP Vault GKE Integration
-Refer to `./gke/main.tf.withVault` for an example of installing the vault injector.  This allows us to update the tfc-agent deployment by only adding some pod annotations.  The devwebapp use case below is based on the [Vault learn guide](https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault?in=vault/kubernetes).  Walk though this on your vaul cluster to setup any auth/secrets/policies on the vault side.
+Refer to `./gke_cluster/main.tf.withVault` for an example of installing the vault injector.  This allows us to update the tfc-agent deployment by only adding some pod annotations.  The devwebapp use case below is based on the [Vault learn guide](https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault?in=vault/kubernetes).  Walk though this on your vaul cluster to setup any auth/secrets/policies on the vault side.
 
 Test authentiation by starting the basic devwebapp pod that has the VAULT_TOKEN defined.  be sure to update the devwebapp.yaml to point to your vault instance, token, and namespace.
 ```
