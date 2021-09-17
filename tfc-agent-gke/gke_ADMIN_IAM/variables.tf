@@ -10,7 +10,7 @@ variable "organization" { default = "presto-projects" }
 variable "tfe_token" {}
 variable "oauth_token_id" {}
 variable "repo_org" {}
-variable "repo_branch" { default = "gke3"}
+variable "repo_branch" { default = "master"}
 variable "global_remote_state" {default = ""}
 
 # GCP
