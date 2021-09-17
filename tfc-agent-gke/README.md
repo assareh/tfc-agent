@@ -178,6 +178,15 @@ Testing...
 Team2 is configured the same and using the same tf code as team1.  The only difference is the google service account built for team2 was only assigned storage.Admin role so it doesn't have access to build compute.  You can update the roles for each team in `./gke_ADMIN_IAM/variables.tf`
 
 ## Notes/Troubleshooting
+
+### Nested Variables
+To support multiple teams sometimes more complex structures are needed.  This demo uses local variables to dynamically generate the right values at runtime and pulls some of these values from nested maps.  To troubleshoot looping through complex objects use local variables and outputs found here: `./test/test_nested_opjects.tf`.
+
+```
+cd ./test
+terraform init
+terraform plan
+```
 ### GCP Service Accounts
 Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
 
