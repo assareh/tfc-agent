@@ -1,23 +1,18 @@
-provider "google" {
-  alias  = "tokengen"
-  scopes = ["cloud-platform", "userinfo-email"]
-}
+# this block is if you would like to show source identity as terraform output
+# provider "google" {
+#   alias  = "source"
+#   scopes = ["cloud-platform", "userinfo-email"]
+# }
 
-data "google_service_account_access_token" "default" {
-  provider               = google.tokengen
-  target_service_account = var.dev_role_sa
-  lifetime               = "600s"
-  scopes                 = ["cloud-platform", "userinfo-email"]
-}
-
-data "google_client_openid_userinfo" "source" {
-  provider = google.tokengen
-}
+# this block is if you would like to show source identity as terraform output
+# data "google_client_openid_userinfo" "source" {
+#   provider = google.source
+# }
 
 provider "google" {
-  access_token = data.google_service_account_access_token.default.access_token
-  project      = var.gcp_project
-  region       = var.gcp_region
+  impersonate_service_account = var.dev_role_sa
+  project                     = var.gcp_project
+  region                      = var.gcp_region
 }
 
 data "google_client_openid_userinfo" "target" {}
