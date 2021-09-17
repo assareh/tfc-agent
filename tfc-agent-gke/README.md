@@ -1,5 +1,5 @@
 # Credential free provisioning with Terraform Cloud Agent on GCP GKE
-This Demo will create a default set of TFCB and GCP resources to enable multiple teams to each use IaC in their own TFCB agent pool.  Each team will have a K8s namespace, and a mapping between their K8s service account and Google Service account.  The GSA has specific Roles set that enable the IAM team to provide access to only the API's each team should have access to.  Using Workload Identity the K8s SA is linked to the GSA and therefor the tfc-agent running under that K8s SA will have a limitted set of access.
+This Demo will create the TFCB and GCP resources needed to enable multiple teams to each use IaC in their own isolated environments that require no GCP credentials.  Each team will have a K8s namespace, and a mapping between their K8s service account and Google service account (GSA).  The GSA contains the specific roles the IAM team want to provide each team access to.  Using Google Workload Identity the K8s SA is linked to the GSA.  So the tfc-agent running as a K8s SA will be limitted by the GSA Roles its linked to.  These roles will apply to all Kubernetes clusters within a GCP project unless conditions are defined.
 
 ## Create the IAM Admin workspace using TFCB API
 This workspace will create the following Identify and resource requirements for every team.
@@ -69,14 +69,14 @@ Login to TFCB and you should see the admin workspace you just created (default: 
 ## Create Core IAM resources and TFCB workspaces
 Click `gke_ADMIN_IAM` -> Actions -> Start new plan -> Start Plan
 
-This will run the IaC in ./gke_ADMIN_IAM and create the access and resources needed by all teams defined in var.iam_teams{} (`./gke_ADMIN_IAM/variables.tf`).  Additionally it will create workspaces gke_cluster and gke_svc_tfcagents that we will run next.  
+This will run the IaC in ./gke_ADMIN_IAM and create the access and resources needed by all teams defined in var.iam_teams{} (`./gke_ADMIN_IAM/variables.tf`).  This will create the 2 default team workspaces with no credentials and configure them to each use the correct TFCB agentpool. Additionally it will create workspaces for the core servicess gke_cluster and gke_svc_tfcagents that we will run next.
 
 **Currently var.iam_teams assumes every team will have its own unique K8s namespace and service account that doesn't currently exist. The gke_cluster workspace will read these values and attempt to create them.**
 
 ## Provision GKE
 Click `gke_cluster` -> Actions -> Start new plan -> Start Plan
 
-This will run the IaC in ./gke_cluster to create your VPC, GKE cluster, and each of the defined Team's kubernetes namespace and service account.  Once complete you should have a fully useable GKE cluster with the necessary namespaces created for the teams that will consume it.
+This will run the IaC in ./gke_cluster to create your VPC, GKE cluster, and each of the defined Team's kubernetes namespace and service account.  Once complete you should have a fully useable GKE cluster with the necessary namespaces created for the teams that will consume it.  We will deploy the tfc-agents into these namespaces next.  But first take a look at the GKE cluster.
 
 ### Authenticate to GKE on the command line
 You can get the information from the gke workspace outputs in GCP or TFCB UI.  Alternatively you can use the Terraform CLI!  If you want to use your CLI, first login.
@@ -166,8 +166,26 @@ If you take a close look at the service account (sa) you will see an annotation 
 ```
 kubectl get sa tfc-team1-dev -o json | jq -r '.metadata.annotations'
 ```
-If you want to change a teams access permissions you will need to first update the team's roles in var.iam_teams defined in `./gke_ADMIN_IAM/variables.tf`.  This will trigger an automatic run and the team's GSA will be updated.  The current running tfc-agent service should pick these up the next run.
-## Notes
+If you want to change a teams access permissions you will need to first update the team's roles in var.iam_teams defined in `./gke_ADMIN_IAM/variables.tf`.  This will trigger an automatic run and the team's GSA will be updated.  The current running tfc-agent service should pick these up the next run automatically.
+## Notes/Troubleshooting
+### GCP Service Accounts
+Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
+
+list/delete gsa
+```
+gcloud iam service-accounts list
+gcloud iam service-accounts delete <email>
+```
+
+Test default K8s cluster service account (use test with storage permission).
+```
+kubectl run --rm -it test --image gcr.io/cloud-builders/gsutil ls
+```
+
+Test tfc-agent namespace/sa with storage permission
+```
+kubectl run -n tfc-agent --rm --serviceaccount=servicea-dev-deploy-servicea -it test --image gcr.io/cloud-builders/gsutil ls
+```
 
 ### HCP Vault GKE Integration
 Refer to `./gke/main.tf.withVault` for an example of installing the vault injector.  This allows us to update the tfc-agent deployment by only adding some pod annotations.  The devwebapp use case below is based on the [Vault learn guide](https://learn.hashicorp.com/tutorials/vault/kubernetes-external-vault?in=vault/kubernetes).  Walk though this on your vaul cluster to setup any auth/secrets/policies on the vault side.
@@ -210,34 +228,13 @@ wget -O - -q --no-check-certificate --header="X-Vault-Namespace: admin" \
 $VAULT_ADDR/v1/auth/kubernetes/login
 ```
 
-### GCP Service Accounts
-Setting up GCP service account with IAM roles and then map this to K8s namespace/serviceaccount.  This will apply to any K8s cluster in the project unless additional IAM conditions are added to isolate clusters.
-
-list/delete gsa
-```
-gcloud iam service-accounts list
-gcloud iam service-accounts delete <email>
-```
-
-Test default K8s cluster service account (use test with storage permission).
-```
-kubectl run --rm -it test --image gcr.io/cloud-builders/gsutil ls
-```
-
-Test tfc-agent namespace/sa with storage permission
-```
-kubectl run -n tfc-agent --rm --serviceaccount=servicea-dev-deploy-servicea -it test --image gcr.io/cloud-builders/gsutil ls
-```
-
-IAM References:
-https://medium.com/the-telegraph-engineering/binding-gcp-accounts-to-gke-service-accounts-with-terraform-dfca4e81d2a0
-
 ## Additional Topics
 * A [Sentinel](https://www.terraform.io/docs/cloud/sentinel/index.html) policy like [this example](https://github.com/hashicorp/terraform-guides/blob/master/governance/third-generation/aws/restrict-assumed-roles-by-workspace.sentinel) can be used to restrict which roles would be allowed in a given workspace.
 * Terraform code and policies to support IAM roles and workspaces for example service-A and service-B are in `/files`.
 
-
 ## References
+* [Bind Google SA to Kubernetes SA to enforce IAM roles](https://medium.com/the-telegraph-engineering/binding-gcp-accounts-to-gke-service-accounts-with-terraform-dfca4e81d2a0)
+* [Google Workload Identity IAM conditions](https://medium.com/google-cloud/solving-the-workload-identity-sameness-with-iam-conditions-c02eba2b0c13)
 * [Terraform Cloud Agent Docs](https://www.terraform.io/docs/cloud/workspaces/agent.html)
 * [Agent Pools and Agents API](https://www.terraform.io/docs/cloud/api/agents.html)
 * [Agent Tokens API](https://www.terraform.io/docs/cloud/api/agent-tokens.html)
