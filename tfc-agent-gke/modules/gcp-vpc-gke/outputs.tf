@@ -41,7 +41,3 @@ output "gke_namespace" {
   value = var.gke_namespace
 }
 
-output "gcp_wiu_sa_name" {
-  value = google_service_account.workload-identity-user-sa.name
-}
-
