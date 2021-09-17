@@ -1,3 +1,5 @@
+project ="project_name"
+
 namespace = "eg"
 
 environment = "ue2"

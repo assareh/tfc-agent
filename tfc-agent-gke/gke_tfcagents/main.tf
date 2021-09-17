@@ -6,6 +6,7 @@ data "terraform_remote_state" "gke" {
     name    = "presto-projects/gke"
   }
 }
+
 data "google_client_config" "default" {}
 
 data "google_container_cluster" "my_cluster" {
@@ -32,4 +33,7 @@ module "tfc_agent" {
 
   namespace_creation_enabled = true
   kubernetes_namespace       = "tfc-agent"
+  service_account_annotations = {
+    "iam.gke.io/gcp-service-account" = "workload-identity-tutorial@${var.gcp_project}.iam.gserviceaccount.com",
+  }
 }
