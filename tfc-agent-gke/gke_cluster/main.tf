@@ -42,6 +42,9 @@ resource "kubernetes_namespace" "namespace" {
   for_each = local.teams
   metadata {
     name = local.teams[each.key].namespace
+    labels {
+      gke_ver = module.gcp-vpc-gke.k8s_master_version
+    }
   }
 }
 
