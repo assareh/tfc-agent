@@ -4,7 +4,7 @@
 ## Introduction
 This script uses curl to interact with Terraform Enterprise via the Terraform Enterprise REST API. The same APIs could be used from Jenkins or other solutions to incorporate Terraform Enterprise into your CI/CD pipeline.
 
-You can Add your sensitive Cloud credentials by sourcing them into your shell as local environment variables.  The default script will look for the default AWS, GCP, or Azure ENV variables during runtime. Here are a list of terraform and environment variables the script will look for.
+You can Add your sensitive Cloud credentials by sourcing them into your shell as local environment variables.  The default script will look for TFE and GCP ENV variables during runtime.  Here are a list of terraform and environment variables the script will look for.
 
 
 Required
@@ -16,9 +16,10 @@ organization <your github org name>
 
 Recommended for this AWS excersize.
 ```
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION
+GOOGLE_CREDENTIAL
+GOOGLE_PROJECT
+GOOGLE_REGION
+GOOGLE_ZONE
 ```
 
 Other
@@ -27,10 +28,9 @@ ARM_CLIENT_ID
 ARM_SUBSCRIPTION_ID
 ARM_CLIENT_SECRET
 ARM_TENANT_ID
-GOOGLE_CREDENTIAL
-GOOGLE_PROJECT
-GOOGLE_REGION
-GOOGLE_ZONE
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION
 ```
 
 You will see a couple `template.json` files in this ./scripts directory.  The script will update these templates and using curl will call the TFCB API to create your workspace and any defined variables.
@@ -60,7 +60,7 @@ organization="presto-projects"
 git_url="https://github.com/ppresto/tfc-agent.git"
 
 # Admin Workspace Name
-workspace="ADMIN-TFCB-WS"
+workspace="my-admin-ws"
 
 # Github repo path to use for managing your workspaces with IaC
 WORKSPACE_DIR="tfc-agent-ecs-multi/files/create_tfcb_workspaces"
