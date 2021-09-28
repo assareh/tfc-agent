@@ -22,6 +22,7 @@ module "gke_svc_tfcagents" {
     }
     tf_variables = {
         "prefix" = "presto",
+        "organization" = var.organization,
         "gcp_project" = var.gcp_project,
         "gcp_region" = "us-west1",
         "gcp_zone" = "us-west1-c",
