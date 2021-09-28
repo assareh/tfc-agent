@@ -1,6 +1,6 @@
 # GKE Default SA with minimal permissions
 resource "google_service_account" "gke" {
-  account_id   = "${var.organization}=iam-gke-sa-default"
+  account_id   = "${var.organization}-iam-gke-sa-default"
   display_name = "GKE Default Service Account"
 }
 
