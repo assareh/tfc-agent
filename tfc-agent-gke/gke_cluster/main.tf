@@ -5,7 +5,7 @@ data "terraform_remote_state" "admin_tfcagents_iam" {
   backend = "remote"
   config = {
     hostname = "app.terraform.io"
-    organization = "presto-projects"
+    organization = var.organization
     workspaces    = {
       name = "gke_ADMIN_IAM"
     }
