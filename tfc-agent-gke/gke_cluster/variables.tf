@@ -1,6 +1,7 @@
 variable "prefix" {
   description = "This prefix will be included in the name of some resources. Use your own name or any other short string here."
 }
+variable "organization" { default = "presto-projects" }
 
 variable "gcp_project" {
   description = "GCP Project ID can be sourced from Env.  Prefix with TF_VAR_"
