@@ -67,7 +67,7 @@ locals {
       }
       "env_variables_sec" : {}
       "tf_variables" : {
-        "prefix" : "presto"
+        "prefix" : var.organization
         "gcp_project" : var.gcp_project
         "gcp_region" : "us-west1"
         "gcp_zone" : "us-west1-c"
@@ -93,7 +93,7 @@ locals {
       }
       "env_variables_sec" : {}
       "tf_variables" : {
-        "prefix" : "presto"
+        "prefix" : var.organization
         "gcp_project" : var.gcp_project
         "gcp_region" : "us-west1"
         "gcp_zone" : "us-west1-c"

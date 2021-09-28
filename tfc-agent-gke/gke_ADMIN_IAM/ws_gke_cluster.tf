@@ -21,7 +21,7 @@ module "gke_workspace" {
     "GOOGLE_CREDENTIALS" : var.gcp_credentials
     }
     tf_variables = {
-    "prefix" = "presto"
+    "prefix" = "${var.organization}"
     "organization" = var.organization
     "gcp_project" = var.gcp_project
     "gcp_region" = "us-west1"
