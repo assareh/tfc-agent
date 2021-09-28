@@ -16,22 +16,21 @@ git clone <your_git_URL>
 cd tfc-agents/tfc-agent-gke/scripts
 ```
 
-2. `./addAdmin_workspace.sh` uses curl to interact with Terraform Enterprise via the Terraform Enterprise REST API. The same APIs are often used from Jenkins or other solutions to incorporate Terraform Enterprise into a CI/CD pipeline.
-
-This script requires the default TFE and GCP variables to be locally sourced into your shell during runtime. It will build the new workspace with these defined. Sensitive credentials like ATLAS_TOKEN and GOOGLE_CREDENTIALS will be encrypted for security.
+2. `./addAdmin_workspace.sh` uses curl to interact with Terraform Enterprise via the Terraform Enterprise REST API. The same APIs are often used from Jenkins or other solutions to incorporate Terraform Enterprise into a CI/CD pipeline.  
+   * Review the GLOBAL variables towards the top of the script to define your environment values like your TFCB `organization` or other preferences.  You can use the defaults and add your organization as a CLI param.
+   * This script requires the default TFE and GCP variables to be locally sourced into your shell during runtime. It will build the new workspace with these defined. Sensitive credentials like ATLAS_TOKEN and GOOGLE_CREDENTIALS will be encrypted for security.
 
 Required environment variables in your shell.
 ```
 OAUTH_TOKEN_ID <setup github oauth and use ID here>
 ATLAS_TOKEN <Enterprise TF Token>
-organization <your github org name>
 GOOGLE_CREDENTIAL
 GOOGLE_PROJECT
 GOOGLE_REGION
 GOOGLE_ZONE
 ```
 
-Once these are available in your shell's env you are ready to build the admin workspace.
+Once these are available in your shell's env you are ready to build the admin workspace.  **Note: you can define your organization as the first param on the CLI ./addAdmin_workspace.sh <organization>**
 ```
 $  ./addAdmin_workspace.sh
 Using Github repo: https://github.com/ppresto/tfc-agent.git

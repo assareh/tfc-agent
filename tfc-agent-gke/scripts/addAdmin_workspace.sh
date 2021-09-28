@@ -25,8 +25,9 @@
 # ./addAdmin_workspace.sh
 #
 
-# Provide your TFCB Org and Address
-# override organization from CLI
+#
+### GLOBAL VARIABLES
+#
 if [ ! -z $1 ]; then
   organization="${1}"
 else
