@@ -2,6 +2,8 @@ variable "gcp_project" {
   description = "GCP Project ID can be sourced from Env.  Prefix with TF_VAR_"
 }
 
+variable "organization" { default = "presto-projects" }
+
 variable "gcp_zone" {
   type        = string
   default = "us-west1-c"
