@@ -1,7 +1,7 @@
 #!/bin/bash
 # This Script creates an ADMIN workspace in TFCB if it does not already exist,
 # and adds standard terraform & env variables to it using your current host environment.
-# This requires Github integration to be setup and a repo to map this admin workspace to.
+# This requires Github OAuth integration to be setup and a repo to map this admin workspace to.
 
 # WARNING:
 # This workspace can manage all sensitive data within your org.
@@ -25,10 +25,16 @@
 # ./addAdmin_workspace.sh
 #
 
-# Provide your TFCB address, TFCB Organization
+# Provide your TFCB Org and Address
+# override organization from CLI
+if [ ! -z $1 ]; then
+  organization="${1}"
+else
+  organization="presto-projects"
+fi
 address="app.terraform.io"
-organization="presto-projects"
-#  Github Repo URL
+
+#  Github Repo URL is required for VCS integration.  VCS provider needs to already be setup.
 git_url="https://github.com/ppresto/tfc-agent.git"
 # Admin Workspace Config
 workspace="gke_ADMIN_IAM"
@@ -40,16 +46,8 @@ TF_VERSION="1.0.5"
 # set sensitive environment variables/tokens
 source $HOME/tfeSetEnv.sh "${organization}"
 
-# Set git_url
-if [ ! -z $1 ]; then
-  git_url=$1
-fi
+echo "Using Org: $organization"
 echo "Using Github repo: $git_url"
-
-# workspace name should not have spaces
-if [ ! -z "$2" ]; then
-  workspace=$2
-fi
 echo "Using workspace name: " $workspace
 
 if [ -z ${OAUTH_TOKEN_ID} ]; then
@@ -215,11 +213,11 @@ fi
 if [[ ! -z ${GOOGLE_CREDENTIALS} && ! -z ${GOOGLE_PROJECT} ]]; then
   # GOOGLE_CREDENTIALS
   gcp_creds="$(echo ${GOOGLE_CREDENTIALS} | jq -c | sed 's/\\n/\\\\n/g' | sed 's/"/\\"/g')"
-
-  addKeyVars "gcp_credentials" "${gcp_creds}" false
+  echo "Adding GOOGLE_CREDENTIALS"
+  addKeyVars "gcp_credentials" "${gcp_creds}" false > /dev/null
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
   # add as ENV var too
-  addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" true "env"
+  addKeyVars "GOOGLE_CREDENTIALS" "${gcp_creds}" true "env" > /dev/null
   upload_variable_result=$(curl -s --header "Authorization: Bearer $ATLAS_TOKEN" --header "Content-Type: application/vnd.api+json" --data @variable.json "https://${address}/api/v2/vars?filter%5Borganization%5D%5Bname%5D=${organization}&filter%5Bworkspace%5D%5Bname%5D=${workspace}")
 
   # GOOGLE_PROJECT

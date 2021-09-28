@@ -10,6 +10,7 @@ module "iam-team-setup" {
   for_each      = var.iam_teams
   team          = var.iam_teams[each.key]
   prefix        = "${var.prefix}-${each.key}"
+  organization  = var.organization
   tfe_token     = var.tfe_token
   gcp_project = var.gcp_project
   gcp_region  = var.gcp_region
