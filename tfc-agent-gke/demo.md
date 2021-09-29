@@ -46,6 +46,7 @@ This workspace might be owned by the platform team managing the GKE cluster.  It
 `Open VCode tab ./gke_cluster/main.tf`
 
 This workspace is using remote_state to pull the latest team configurations from the IAM workspace to configure GKE namespaces and service accounts.SA
+
 `Open TFCB Browser Tab to gke_ADMIN_IAM outputs` : team_iam_config
 
 `Switch back to the VCode tab ./gke_cluster/main.tf`
@@ -61,22 +62,21 @@ Take a look at the GKE deployment
 ```
 kubectl get namespaces
 kubectl config set-context --current --namespace=tfc-team1
-kubectl get pods
 kubectl get deployment
-kubectl get secret
+kubectl get pods
 kubectl get sa
 kubectl get sa tfc-team1-dev -o json | jq -r '.metadata.annotations'
+kubectl get secret
 ```
 
 `Open TFCB Browser tab to Settings->Agents`
-* Agent pools are 
+* Watch Team based agent pools as we kick off the next plans
 ### Run/Review team1, team2
+Run a Plan on both workspaces.  Team1 should run successfully. Team2 should fail.
 Team1 and Team2 are running the same IaC.
 `Open VCode tab ./gke_tfc_team1/main.tf`
 `Open VCode tab ./gke_tfc_team2/main.tf`
 
-Run a Plan on both workspaces.  Team1 should run successfully. Team2 should fail.
-
 Why did Team2 fail?
 
-hint: review ./gke_ADMIN_IAM/variables.tf to see the roles
+hint: `review ./gke_ADMIN_IAM/variables.tf` to see the different roles
