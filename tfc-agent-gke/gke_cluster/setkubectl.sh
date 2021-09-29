@@ -45,3 +45,5 @@ kubectl config use-context ${gcp_gke_context}
 # kubectl config current-context
 # kubectl config view -minify
 # kubectl config get-contexts -o=name
+
+# kubectl config set-context --current --namespace=tfc-team1

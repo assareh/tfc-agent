@@ -10,6 +10,10 @@ output "agent_token" {
   value = tfe_agent_token.team_agent_token.token
 }
 
+output "team_gsa" {
+  value = google_service_account.team_gsa.email
+}
+
 output "team" {
   value = var.team
 }

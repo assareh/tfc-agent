@@ -1,6 +1,6 @@
 # GKE Default SA with minimal permissions
 resource "google_service_account" "gke" {
-  account_id   = "${var.prefix}-gke-sa-default"
+  account_id   = "${var.organization}-gke-sa-default"
   display_name = "GKE Default Service Account"
 }
 
@@ -9,7 +9,8 @@ module "iam-team-setup" {
   source         = "../modules/iam-team-setup"
   for_each      = var.iam_teams
   team          = var.iam_teams[each.key]
-  prefix        = "${var.prefix}-${each.key}"
+  #prefix        = "${var.prefix}-${each.key}"
+  prefix        = var.organization
   organization  = var.organization
   tfe_token     = var.tfe_token
   gcp_project = var.gcp_project

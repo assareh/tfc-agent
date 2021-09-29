@@ -1,7 +1,7 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "presto-projects"
+    organization = "unity-pov" 
 
     workspaces {
       name = "gke_cluster"
