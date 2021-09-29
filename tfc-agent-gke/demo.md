@@ -6,12 +6,16 @@ Using the TFCB API you will create the main admin workspace responsible for mana
 define the TFE ATLAS_TOKEN, and default GCP variables including GOOGLE_CREDENTIALS into your local environment.  These are required to build the admin workspace `gke_ADMIN_IAM` that will bootstrap your TFCB environment.
 
 `Open TFCB Browser to your TFCB Organization` : presto-projects
+
 ```
 cd ./scripts
 source $HOME/tfeSetEnv.sh presto-projects
 source $HOME/gcpSetEnv.sh
 ./addAdmin_workspace.sh
 ```
+**tfeSetEnv.sh, gcpSetEnv.sh are placeholders and not part of this repo**
+
+To manually set up the required environment variables refer to `./scripts/TFE_Workspace_README.md`
 
 ### Review gke_ADMIN_IAM
 Run the gek_ADMIN_IAM workspace to create all resources while reviewing the IaC below.

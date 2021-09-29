@@ -9,28 +9,13 @@ You can Add your sensitive Cloud credentials by sourcing them into your shell as
 
 Required
 ```
+organization <your github org name>
 OAUTH_TOKEN_ID <setup github oauth and use ID here>
 ATLAS_TOKEN <Enterprise TF Token>
-organization <your github org name>
-```
-
-Recommended for this AWS excersize.
-```
 GOOGLE_CREDENTIAL
 GOOGLE_PROJECT
 GOOGLE_REGION
 GOOGLE_ZONE
-```
-
-Other
-```
-ARM_CLIENT_ID
-ARM_SUBSCRIPTION_ID
-ARM_CLIENT_SECRET
-ARM_TENANT_ID
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION
 ```
 
 You will see a couple `template.json` files in this ./scripts directory.  The script will update these templates and using curl will call the TFCB API to create your workspace and any defined variables.
