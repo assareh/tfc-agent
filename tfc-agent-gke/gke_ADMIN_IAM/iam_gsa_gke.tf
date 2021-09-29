@@ -7,8 +7,8 @@ resource "google_service_account" "gke" {
 # Bootstrap new teams with TFCB Workspace + Agentpool, and GSA with approved roles. tfc-agent on GKE will use GSA roles.
 module "iam-team-setup" {
   source         = "../modules/iam-team-setup"
-  for_each      = var.iam_teams
-  team          = var.iam_teams[each.key]
+  for_each      = local.iam_teams
+  team          = local.iam_teams[each.key]
   #prefix        = "${var.prefix}-${each.key}"
   prefix        = var.organization
   organization  = var.organization

@@ -47,6 +47,24 @@ variable "iam_teams" {
 }
 
 locals {
+  iam_teams = {
+    "team1" = {
+      "name" : "team1",
+      "env" : "dev",
+      "gsa" : "${var.organization}-gsa-tfc-team1",
+      "namespace" : "tfc-team1",
+      "k8s_sa" : "tfc-team1-dev",
+      "roles" : ["compute.admin","storage.objectAdmin"],
+    },
+    "team2" = {
+      "name" : "team2",
+      "env" : "dev",
+      "gsa" : "${var.organization}-gsa-tfc-team2",
+      "namespace" : "tfc-team2",
+      "k8s_sa" : "tfc-team2-dev",
+      "roles" : ["storage.objectAdmin"],
+    }
+  }
   iam_team_workspaces = {
     "team1" = {
       "organization" : var.organization
