@@ -9,8 +9,7 @@ module "iam-team-setup" {
   source         = "../modules/iam-team-setup"
   for_each      = local.iam_teams
   team          = local.iam_teams[each.key]
-  #prefix        = "${var.prefix}-${each.key}"
-  prefix        = var.organization
+  prefix        = "${var.prefix}-${each.key}"
   organization  = var.organization
   tfe_token     = var.tfe_token
   gcp_project = var.gcp_project
