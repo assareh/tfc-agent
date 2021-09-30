@@ -1,6 +1,6 @@
 # tfc-agent
 
-This repository contains usage examples of the [Terraform Cloud Agent](https://www.terraform.io/docs/cloud/workspaces/agent.html).
+This repository contains usage examples of the [Terraform Cloud Agent](https://www.terraform.io/docs/cloud/workspaces/agent.html). As of Sep-2021 the Terraform Cloud Agent is available with Terraform Cloud Business tier and self-managed Terraform Enterprise.
 
 * `tfc-agent-ecs` provides an example of running tfc-agent on AWS ECS Fargate, and enabling credential free provisioning from Terraform Cloud by leveraging AWS IAM and [AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) to automatically generate short-lived security credentials.
 * `tfc-agent-azure` provides an example of running tfc-agent on Azure Container Instances, and enabling credential free provisioning from Terraform Cloud by leveraging Azure MSI to automatically generate short-lived security credentials. (Beta)
@@ -18,6 +18,7 @@ The agent can be run in any environment, and typically behind the firewall. This
 
 ## Other Resources
 * [Terraform Cloud Agent Docs](https://www.terraform.io/docs/cloud/workspaces/agent.html)
+* [Terraform Cloud Agent on TFE Docs](https://www.terraform.io/docs/enterprise/admin/agents-on-tfe.html)
 * [hashicorp/tfc-agent on DockerHub](https://hub.docker.com/r/hashicorp/tfc-agent)
 * [terraform-cloud-agent on Kubernetes module by Phil Sautter](https://registry.terraform.io/modules/redeux/terraform-cloud-agent/kubernetes/latest)
 * [tfc-cloud-agent on Kubernetes module by Cloud Posse](https://registry.terraform.io/modules/cloudposse/tfc-cloud-agent/kubernetes/latest)
