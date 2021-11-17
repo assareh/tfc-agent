@@ -14,22 +14,22 @@ provider "aws" {
 data "aws_caller_identity" "current" {
 }
 
-data "aws_ami" "ubuntu-vault-oss" {
-  owners      = ["679593333241"] # HashiCorp
+data "aws_ami" "amazon-linux" {
   most_recent = true
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["hashicorp/marketplace/vault-1.5.0-*"]
+    values = ["amzn2-ami-hvm*"]
   }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "owner-alias"
+    values = ["amazon"]
   }
 }
 
 resource "aws_instance" "vault" {
-  ami           = data.aws_ami.ubuntu-vault-oss.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t3.micro"
 }
