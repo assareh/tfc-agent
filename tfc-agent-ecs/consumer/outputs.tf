@@ -3,9 +3,9 @@ output "caller" {
 }
 
 output "instance_arn" {
-  value = aws_instance.vault.arn
+  value = aws_instance.example.arn
 }
 
 output "public_dns" {
-  value = aws_instance.vault.public_dns
+  value = aws_instance.example.public_dns
 }
