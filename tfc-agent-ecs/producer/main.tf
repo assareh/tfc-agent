@@ -171,6 +171,11 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "dev_sqs_role_attach" {
+  role       = aws_iam_role.terraform_dev_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+}
+
 # networking for agents to reach internet
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
