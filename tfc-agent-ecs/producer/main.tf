@@ -143,6 +143,11 @@ resource "aws_iam_role_policy_attachment" "agent_task_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role_policy_attachment" "dev_sqs_role_attach" {
+  role       = aws_iam_role.agent.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+}
+
 # a role for terraform consumer to assume into
 # you'll need to customize IAM policies to access resources as desired
 resource "aws_iam_role" "terraform_dev_role" {
@@ -169,11 +174,6 @@ data "aws_iam_policy_document" "dev_assume_role_policy_definition" {
 resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
   role       = aws_iam_role.terraform_dev_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-}
-
-resource "aws_iam_role_policy_attachment" "dev_sqs_role_attach" {
-  role       = aws_iam_role.terraform_dev_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
 }
 
 # networking for agents to reach internet
