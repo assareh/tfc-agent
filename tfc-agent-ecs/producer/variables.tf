@@ -8,6 +8,16 @@ variable "desired_count" {
   default     = 4
 }
 
+variable "ip_cidr_vpc" {
+  description = "IP CIDR for VPC"
+  default     = "172.32.0.0/16"
+}
+
+variable "ip_cidr_agent_subnet" {
+  description = "IP CIDR for tfc-agent subnet"
+  default     = "172.32.16.0/24"
+}
+
 variable "max_count" {
   description = "Maximum count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2."
   default     = 4

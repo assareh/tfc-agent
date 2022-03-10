@@ -178,12 +178,12 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
 
 # networking for agents to reach internet
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.ip_cidr_vpc
 }
 
 resource "aws_subnet" "tfc_agent" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.101.0/24"
+  cidr_block        = var.ip_cidr_agent_subnet
   availability_zone = "${var.region}a"
 }
 
