@@ -216,6 +216,8 @@ resource "aws_route_table" "main" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main.id
   }
+
+  # to peer to an HVN add your route here, for example
 }
 
 resource "aws_route_table_association" "main" {
