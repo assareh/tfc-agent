@@ -18,7 +18,7 @@ resource "aws_ecs_service" "tfc_agent" {
   desired_count   = var.desired_count
   network_configuration {
     security_groups  = [aws_security_group.tfc_agent.id]
-    subnets          = [module.vpc.public_subnets[0]]
+    subnets          = [aws_subnet.tfc_agent.id]
     assign_public_ip = true
   }
 }
@@ -177,20 +177,20 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
 }
 
 # networking for agents to reach internet
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
 
-  name = "${var.prefix}-vpc"
-  cidr = "10.0.0.0/16"
-
-  azs            = ["${var.region}a"]
-  public_subnets = ["10.0.101.0/24"]
+resource "aws_subnet" "tfc_agent" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.101.0/24"
+  availability_zone = "${var.region}a"
 }
 
 resource "aws_security_group" "tfc_agent" {
   name_prefix = "${var.prefix}-sg"
   description = "Security group for tfc-agent-vpc"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = aws_vpc.main.id
   lifecycle {
     create_before_destroy = true
   }
