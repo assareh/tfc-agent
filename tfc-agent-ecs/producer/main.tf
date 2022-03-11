@@ -18,7 +18,7 @@ resource "aws_ecs_service" "tfc_agent" {
   desired_count   = var.desired_count
   network_configuration {
     security_groups  = [aws_security_group.tfc_agent.id]
-    subnets          = [module.vpc.public_subnets[0]]
+    subnets          = [aws_subnet.tfc_agent.id]
     assign_public_ip = true
   }
 }
@@ -172,20 +172,20 @@ resource "aws_iam_role_policy_attachment" "dev_ec2_role_attach" {
 }
 
 # networking for agents to reach internet
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+resource "aws_vpc" "main" {
+  cidr_block = var.ip_cidr_vpc
+}
 
-  name = "${var.prefix}-vpc"
-  cidr = "10.0.0.0/16"
-
-  azs            = ["${var.region}a"]
-  public_subnets = ["10.0.101.0/24"]
+resource "aws_subnet" "tfc_agent" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.ip_cidr_agent_subnet
+  availability_zone = "${var.region}a"
 }
 
 resource "aws_security_group" "tfc_agent" {
   name_prefix = "${var.prefix}-sg"
   description = "Security group for tfc-agent-vpc"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = aws_vpc.main.id
   lifecycle {
     create_before_destroy = true
   }
@@ -198,6 +198,30 @@ resource "aws_security_group_rule" "allow_egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table" "main" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  # to peer to an HVN add your route here, for example
+  #   route {
+  #     cidr_block                = "172.25.16.0/24"
+  #     vpc_peering_connection_id = "pcx-07ee5501175307837"
+  #   }
+}
+
+resource "aws_route_table_association" "main" {
+  subnet_id      = aws_subnet.tfc_agent.id
+  route_table_id = aws_route_table.main.id
 }
 
 # from here to EOF is optional, for lambda autoscaling
