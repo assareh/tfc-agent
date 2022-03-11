@@ -213,10 +213,10 @@ resource "aws_route_table" "main" {
   }
 
   # to peer to an HVN add your route here, for example
-  route {
-    cidr_block                = "172.25.16.0/24"
-    vpc_peering_connection_id = "pcx-07ee5501175307837"
-  }
+  #   route {
+  #     cidr_block                = "172.25.16.0/24"
+  #     vpc_peering_connection_id = "pcx-07ee5501175307837"
+  #   }
 }
 
 resource "aws_route_table_association" "main" {
