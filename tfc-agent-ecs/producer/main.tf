@@ -234,7 +234,7 @@ resource "aws_lambda_function" "webhook" {
   runtime                 = "python3.7"
 
   s3_bucket = aws_s3_bucket.webhook.bucket
-  s3_key    = aws_s3_bucket_object.webhook.id
+  s3_key    = aws_s3_object.webhook.id
 
   environment {
     variables = {
@@ -271,7 +271,7 @@ resource "aws_s3_bucket_acl" "webhook" {
   acl    = "private"
 }
 
-resource "aws_s3_bucket_object" "webhook" {
+resource "aws_s3_object" "webhook" {
   bucket = aws_s3_bucket.webhook.id
   key    = "v${var.app_version}/webhook.zip"
   source = "${path.module}/files/webhook.zip"
