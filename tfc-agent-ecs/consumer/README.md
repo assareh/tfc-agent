@@ -22,7 +22,9 @@ Prior to the addition of these attributes to the tfe provider, I had written a h
 
 ### Variables
 Please provide a value for the following required [variable](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables):
-* `dev_role_arn`: The Amazon Resource Name of the dev role to be assumed. This is the value of output `terraform_dev_role` from the Producer workspace.
+* `aws_role_arn`: The Amazon Resource Name of the role to be assumed. This is the value of output `terraform_aws_role` from the Producer workspace.
+
+**NOTE**: Data can be passed between workspaces securely using the [tfe_outputs](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/outputs) data source.
 
 In addition, I recommend that you review all other variables and configure their values according to your specifications.
 
