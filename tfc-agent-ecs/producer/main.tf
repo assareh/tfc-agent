@@ -264,6 +264,10 @@ resource "aws_ssm_parameter" "notification_token" {
 
 resource "aws_s3_bucket" "webhook" {
   bucket = var.prefix
+}
+
+resource "aws_s3_bucket_acl" "webhook" {
+  bucket = aws_s3_bucket.webhook.id
   acl    = "private"
 }
 
