@@ -1,10 +1,10 @@
 provider "aws" {
   region = var.region
 
-  assume_role {
-    role_arn     = var.aws_role_arn
-    session_name = var.TFC_RUN_ID
-  }
+  #assume_role {
+  #  role_arn     = var.aws_role_arn
+  #  session_name = var.TFC_RUN_ID
+  #}
 
   default_tags {
     tags = local.common_tags
