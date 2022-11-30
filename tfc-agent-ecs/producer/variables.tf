@@ -78,3 +78,27 @@ locals {
     hc-internet-facing = "false" # true/false
   }
 }
+
+variable "infra_tools_account_id" {
+  description = "Account ID for pd-infra-tools AWS account"
+  default     = "299299379634"
+  type        = string
+}
+
+variable "main_account_id" {
+  description = "Account ID for pd-main AWS account"
+  default     = "193567999519"
+  type        = string
+}
+
+variable "staging_account_id" {
+  description = "Account ID for pd-staging AWS account"
+  default     = "433233631458"
+  type        = string
+}
+
+variable "production_account_id" {
+  description = "Account ID for pd-production AWS account"
+  default     = "791438786431"
+  type        = string
+}
