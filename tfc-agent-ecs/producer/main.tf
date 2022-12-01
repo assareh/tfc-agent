@@ -120,6 +120,12 @@ data "aws_iam_policy_document" "agent_assume_role_policy_definition" {
       identifiers = ["ecs-tasks.amazonaws.com"]
       type        = "Service"
     }
+    resources = [
+      "arn:aws:iam::${var.infra_tools_account_id}:role/tfc-onemedical-terraform_dev_role",
+      "arn:aws:iam::${var.main_account_id}:role/tfe-prod-master-iam_role",
+      "arn:aws:iam::${var.staging_account_id}:role/tfe-prod-staging-iam_role",
+      "arn:aws:iam::${var.production_account_id}:role/tfe-prod-production-iam_role"
+    ]
   }
 }
 
