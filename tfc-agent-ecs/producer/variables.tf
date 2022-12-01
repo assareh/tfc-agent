@@ -102,3 +102,15 @@ variable "production_account_id" {
   default     = "791438786431"
   type        = string
 }
+
+variable "pd_ml_staging_account_id" {
+  description = "Account ID for pd-ml-staging AWS account"
+  default     = "213676009675"
+  type        = string
+}
+
+variable "pd_ml_production_account_id" {
+  description = "Account ID for pd-ml-production AWS account"
+  default     = "602771406891"
+  type        = string
+}
