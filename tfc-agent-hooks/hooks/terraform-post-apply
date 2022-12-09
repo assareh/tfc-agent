@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Revoking apply credentials..."
+
+export VAULT_TOKEN=$(cat ~/.vault-token)
+
+RESPONSE=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/token/revoke-self \
+    --header "X-Vault-Token: $VAULT_TOKEN" --request POST)
+
+response=$?
+
+if test "$response" != "0"; then
+   echo "The curl command failed with: $response. Credentials may not have been revoked, or were already revoked."
+elif test "$RESPONSE" != ""; then
+   echo "The curl command failed with: $RESPONSE. Credentials may not have been revoked, or were already revoked."
+else
+   echo "Apply credentials revoked"
+fi

@@ -3,6 +3,7 @@
 This repository contains usage examples of the [Terraform Cloud Agent](https://www.terraform.io/docs/cloud/workspaces/agent.html). As of Sep-2021 the Terraform Cloud Agent is available with Terraform Cloud Business tier and self-managed Terraform Enterprise.
 
 * `tfc-agent-ecs` provides an example of running tfc-agent on AWS ECS Fargate, and enabling credential free provisioning from Terraform Cloud by leveraging AWS IAM and [AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) to automatically generate short-lived security credentials.
+* `tfc-agent-hooks` provides an example of a custom tfc-agent container leveraging [Hooks](https://developer.hashicorp.com/terraform/cloud-docs/agents/hooks) to deliver just in time short-lived AWS credentials from Vault. 
 * `tfc-agent-azure` provides an example of running tfc-agent on Azure Container Instances, and enabling credential free provisioning from Terraform Cloud by leveraging Azure MSI to automatically generate short-lived security credentials. (Beta)
 * `tfc-agent-google` provides an example of running tfc-agent on Google Compute Engine, and enabling credential free provisioning from Terraform Cloud by leveraging GCP IAM and [Service Account Impersonation](https://cloud.google.com/iam/docs/impersonating-service-accounts) to automatically generate short-lived security credentials.
 * `tfc-agent-vsphere` provides an example of using Packer to build a machine image with tfc-agent runners.

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo "Preparing AWS provider auth for apply..."
+
+jq -n -r --arg JWT "$TFC_WORKLOAD_IDENTITY_TOKEN" --arg ROLE "$TFC_VAULT_APPLY_ROLE" '{"jwt": $JWT, "role": $ROLE}' > payload.json
+
+export VAULT_TOKEN=$(curl --insecure --silent --show-error $VAULT_ADDR/v1/auth/jwt/login \
+    --request POST \
+    --data @payload.json | jq -r '.auth.client_token')
+
+echo $VAULT_TOKEN > ~/.vault-token
+
+CREDS=$(curl --insecure --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/aws/creds/$TFC_VAULT_APPLY_ROLE)
+AWS_ACCESS_KEY_ID="$(jq -r '.data.access_key' <<<$CREDS)"
+AWS_SECRET_ACCESS_KEY="$(jq -r '.data.secret_key' <<<$CREDS)"
+
+sleep 10  # wait for IAM User eventual consistency
+
+mkdir ~/.aws
+cat <<EOF > ~/.aws/credentials
+[default]
+aws_access_key_id=$AWS_ACCESS_KEY_ID
+aws_secret_access_key=$AWS_SECRET_ACCESS_KEY
+EOF
+
+echo "AWS provider auth for apply prepared"
+echo "AWS ACCESS KEY ID: $AWS_ACCESS_KEY_ID"
+
+# TODO: add error handling
