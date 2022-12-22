@@ -29,10 +29,6 @@ SUB_SERVICE_STATES = {
 }
 
 # need to model the state machine so i am properly counting 
-# pending, planned, discarded (double subtract)
-# pending, planned, run task, applied
-# auto apply got us up to 2
-# pending, run task, applied, left us at 1
 
 # Initialize boto3 client at global scope for connection reuse
 session = boto3.Session(region_name=REGION)
