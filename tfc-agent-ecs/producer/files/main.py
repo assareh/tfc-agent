@@ -86,19 +86,26 @@ def post(event):
     print("Current service count:", int(service_count))
 
     if 'task_result_callback_url' in payload:  # it's a run task
-        post_response = update_service_count(ecs, 'add')
-        print(f"Run task indicates add an agent for {payload['run_id']}.")
-        print(f"{payload['run_app_url']}")
-        if payload['stage'] == 'pre_apply':
+        if payload['task_result_enforcement_level'] == 'test':
+            return {
+                "statusCode": 200,
+                "body": json.dumps(post_response)
+            }
+
+        if payload['stage'] == 'pre_apply' or payload['stage'] == 'pre_plan':
+            post_response = update_service_count(ecs, 'add')
+            print(f"Run task indicates add an agent for {payload['run_id']}.")
+            print(f"{payload['run_app_url']}")
+
             tfc_headers = {'Authorization': 'Bearer ' + payload['access_token'],
-                           'Content-Type': 'application/vnd.api+json'}
+                            'Content-Type': 'application/vnd.api+json'}
             tfc_body = {"data": {"type": "task-results",
-                                 "attributes": {"status": "passed",
+                                    "attributes": {"status": "passed",
                                                 "message": "tfc-agent autosleeper"}}}
             callback_response = requests.patch(
                 payload['task_result_callback_url'], headers=tfc_headers, json=tfc_body)
             print('Callback response:', callback_response.status_code,
-                  callback_response.text)
+                    callback_response.text)
 
     else:  # it's a workspace notification
         if payload and 'run_status' in payload['notifications'][0]:
