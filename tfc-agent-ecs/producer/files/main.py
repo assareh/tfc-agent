@@ -34,7 +34,6 @@ SUB_SERVICE_STATES = {
 # auto apply got us up to 2
 # pending, run task, applied, left us at 1
 
-
 # Initialize boto3 client at global scope for connection reuse
 session = boto3.Session(region_name=REGION)
 ssm = session.client('ssm')
