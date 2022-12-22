@@ -34,7 +34,8 @@ read -r -d '' NOTIFICATION_CONFIGURATION_PAYLOAD << EOM
       "triggers": [
         "run:completed",
         "run:created",
-        "run:errored"
+        "run:errored",
+        "run:needs_attention"
       ]
     }
   }
