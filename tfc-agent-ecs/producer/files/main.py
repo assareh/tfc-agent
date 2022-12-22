@@ -28,8 +28,6 @@ SUB_SERVICE_STATES = {
     'policy_checked'
 }
 
-# need to model the state machine so i am properly counting 
-
 # Initialize boto3 client at global scope for connection reuse
 session = boto3.Session(region_name=REGION)
 ssm = session.client('ssm')
