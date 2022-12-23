@@ -1,4 +1,4 @@
-"""A webhook receiver for autostarting/stopping tfc-agents"""
+"""A webhook receiver for starting/stopping tfc-agents"""
 
 import hashlib
 import hmac
@@ -16,16 +16,10 @@ SERVICE = os.getenv("SERVICE", None)
 SSM_PARAM_NAME = os.getenv("SSM_PARAM_NAME", None)
 
 
-ADD_SERVICE_STATES = {'pending'}
 SUB_SERVICE_STATES = {
     'applied',
     'canceled',
-    'completed',
-    'discarded',
-    'errored',
-    'planned',
-    'planned_and_finished',
-    'policy_checked'
+    'errored'
 }
 
 # Initialize boto3 client at global scope for connection reuse
@@ -41,20 +35,34 @@ def lambda_handler(event, _context):
     secret = bytes(ssm.get_parameter(Name=SALT_PATH, WithDecryption=True)[
                    'Parameter']['Value'], 'utf-8')
     calculated_hash = hmac.new(secret, message, hashlib.sha512)
-    if 'X-Tfe-Notification-Signature' in event['headers']:
-        if calculated_hash.hexdigest() == event['headers']['X-Tfe-Notification-Signature']:
+    headers = {k.lower(): v for k, v in event['headers'].items()}
+
+    if 'x-tfe-notification-signature' in headers: # notification
+        if calculated_hash.hexdigest() == headers['x-tfe-notification-signature']:
             # Notification HMAC verified
-            if event['httpMethod'] == "POST":
-                return post(event)
+            if 'requestContext' in event:
+                if 'http' in event['requestContext']:
+                    if event['requestContext']['http']['method'] == "POST":
+                        return post(event)
+                if 'httpMethod' in event['requestContext']:
+                    if event['requestContext']['httpMethod'] == "POST":
+                        return post(event)
             return get()
-    elif 'X-Tfc-Task-Signature' in event['headers']:
-        if calculated_hash.hexdigest() == event['headers']['X-Tfc-Task-Signature']:
-            # Run Task HMAC verified
-            if event['httpMethod'] == "POST":
-                return post(event)
-            return get()
-    else:
         return 'Invalid HMAC'
+
+    if 'x-tfc-task-signature' in headers: # run task
+        if calculated_hash.hexdigest() == headers['x-tfc-task-signature']:
+            # Run Task HMAC verified
+            if 'requestContext' in event:
+                if 'http' in event['requestContext']:
+                    if event['requestContext']['http']['method'] == "POST":
+                        return post(event)
+                if 'httpMethod' in event['requestContext']:
+                    if event['requestContext']['httpMethod'] == "POST":
+                        return post(event)
+            return get()
+        return 'Invalid HMAC'
+
     return None
 
 
@@ -83,7 +91,7 @@ def post(event):
     )
 
     service_count = ecs_response['services'][0]['desiredCount']
-    print("Current service count:", int(service_count))
+    print(f"Current service count: {int(service_count)}")
 
     if 'task_result_callback_url' in payload:  # it's a run task
         if payload['task_result_enforcement_level'] == 'test':
@@ -104,7 +112,7 @@ def post(event):
                                                 "message": "tfc-agent autosleeper"}}}
             callback_response = requests.patch(
                 payload['task_result_callback_url'], headers=tfc_headers, json=tfc_body)
-            print('Callback response:', callback_response.status_code,
+            print('Callback response from TFC:', callback_response.status_code,
                     callback_response.text)
 
         if payload['stage'] == 'post_plan':
@@ -125,11 +133,7 @@ def post(event):
     else:  # it's a workspace notification
         if payload and 'run_status' in payload['notifications'][0]:
             body = payload['notifications'][0]
-            if body['run_status'] in ADD_SERVICE_STATES:
-                post_response = update_service_count(ecs, 'add')
-                print(f"Run status indicates add an agent for {payload['run_id']}.")
-                print(f"{payload['run_url']}")
-            elif body['run_status'] in SUB_SERVICE_STATES:
+            if body['run_status'] in SUB_SERVICE_STATES:
                 post_response = update_service_count(ecs, 'sub')
                 print(f"Run status indicates subtract an agent for {payload['run_id']}.")
                 print(f"{payload['run_url']}")
@@ -162,5 +166,5 @@ def update_service_count(client, operation):
         desiredCount=desired_count
     )
 
-    print("Updated service count:", desired_count)
+    print(f"Updated service count: {desired_count}")
     return ("Updated service count:", desired_count)

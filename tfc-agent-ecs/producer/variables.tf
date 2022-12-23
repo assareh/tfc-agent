@@ -1,3 +1,10 @@
+variable "api_gateway_enabled" {
+  description = "Whether to deploy an API gateway for the Lambda"
+  # when to use function url vs api gateway
+  # https://aws.amazon.com/blogs/aws/announcing-aws-lambda-function-urls-built-in-https-endpoints-for-single-function-microservices/
+  default = false
+}
+
 variable "app_version" {
   description = "Version of lambda to deploy"
   default     = "1.0.0"

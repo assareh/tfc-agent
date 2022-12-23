@@ -10,5 +10,5 @@ output "vpc_id" {
 
 output "webhook_url" {
   description = "Webhook URL if using autoscaling through workspace notifications"
-  value       = aws_api_gateway_deployment.webhook.invoke_url
+  value       = var.api_gateway_enabled ? aws_api_gateway_deployment.webhook[0].invoke_url : aws_lambda_function_url.webhook[0].function_url
 }

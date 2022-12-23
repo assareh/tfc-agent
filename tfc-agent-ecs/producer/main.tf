@@ -226,12 +226,12 @@ resource "aws_route_table_association" "main" {
 
 # from here to EOF is optional, for lambda autoscaling
 resource "aws_lambda_function" "webhook" {
-  function_name           = "${var.prefix}-webhook"
-  description             = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
-  code_signing_config_arn = aws_lambda_code_signing_config.this.arn
-  role                    = aws_iam_role.lambda_exec.arn
-  handler                 = "main.lambda_handler"
-  runtime                 = "python3.7"
+  function_name = "${var.prefix}-webhook"
+  description   = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
+  #  code_signing_config_arn = aws_lambda_code_signing_config.this.arn
+  role    = aws_iam_role.lambda_exec.arn
+  handler = "main.lambda_handler"
+  runtime = "python3.7"
 
   s3_bucket = aws_s3_bucket.webhook.bucket
   s3_key    = aws_s3_object.webhook.id
@@ -247,6 +247,22 @@ resource "aws_lambda_function" "webhook" {
     }
   }
 }
+
+# resource "aws_signer_signing_profile" "this" {
+#   platform_id = "AWSLambda-SHA384-ECDSA"
+# }
+
+# resource "aws_lambda_code_signing_config" "this" {
+#   allowed_publishers {
+#     signing_profile_version_arns = [
+#       aws_signer_signing_profile.this.arn,
+#     ]
+#   }
+
+#   policies {
+#     untrusted_artifact_on_deployment = "Warn"
+#   }
+# }
 
 resource "aws_ssm_parameter" "current_count" {
   name        = "${var.prefix}-tfc-agent-current-count"
@@ -337,7 +353,33 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_lambda_attachment" {
 # when to use function url vs api gateway
 # https://aws.amazon.com/blogs/aws/announcing-aws-lambda-function-urls-built-in-https-endpoints-for-single-function-microservices/
 
+resource "aws_lambda_function_url" "webhook" {
+  count = var.api_gateway_enabled ? 0 : 1
+
+  function_name      = aws_lambda_function.webhook.function_name
+  authorization_type = "NONE"
+}
+
+resource "aws_lambda_permission" "lambda_permission" {
+  count = var.api_gateway_enabled ? 0 : 1
+
+  statement_id           = "AllowPublicInvoke"
+  action                 = "lambda:InvokeFunctionUrl"
+  function_name          = aws_lambda_function.webhook.function_name
+  principal              = "*"
+  function_url_auth_type = aws_lambda_function_url.webhook[0].authorization_type
+}
+
+resource "aws_api_gateway_rest_api" "webhook" {
+  count = var.api_gateway_enabled ? 1 : 0
+
+  name        = "${var.prefix}-webhook"
+  description = "TFC webhook receiver for autoscaling tfc-agent"
+}
+
 resource "aws_lambda_permission" "apigw" {
+  count = var.api_gateway_enabled ? 1 : 0
+
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.webhook.function_name
@@ -345,32 +387,32 @@ resource "aws_lambda_permission" "apigw" {
 
   # The "/*/*" portion grants access from any method on any resource
   # within the API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.webhook.execution_arn}/*/*"
-}
-
-# api gateway
-resource "aws_api_gateway_rest_api" "webhook" {
-  name        = "${var.prefix}-webhook"
-  description = "TFC webhook receiver for autoscaling tfc-agent"
+  source_arn = "${aws_api_gateway_rest_api.webhook[0].execution_arn}/*/*"
 }
 
 resource "aws_api_gateway_resource" "proxy" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  parent_id   = aws_api_gateway_rest_api.webhook.root_resource_id
+  count = var.api_gateway_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.webhook[0].id
+  parent_id   = aws_api_gateway_rest_api.webhook[0].root_resource_id
   path_part   = "{proxy+}"
 }
 
 resource "aws_api_gateway_method" "proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.webhook.id
-  resource_id   = aws_api_gateway_resource.proxy.id
+  count = var.api_gateway_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.webhook[0].id
+  resource_id   = aws_api_gateway_resource.proxy[0].id
   http_method   = "ANY"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "lambda" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  resource_id = aws_api_gateway_method.proxy.resource_id
-  http_method = aws_api_gateway_method.proxy.http_method
+  count = var.api_gateway_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.webhook[0].id
+  resource_id = aws_api_gateway_method.proxy[0].resource_id
+  http_method = aws_api_gateway_method.proxy[0].http_method
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -378,16 +420,20 @@ resource "aws_api_gateway_integration" "lambda" {
 }
 
 resource "aws_api_gateway_method" "proxy_root" {
-  rest_api_id   = aws_api_gateway_rest_api.webhook.id
-  resource_id   = aws_api_gateway_rest_api.webhook.root_resource_id
+  count = var.api_gateway_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.webhook[0].id
+  resource_id   = aws_api_gateway_rest_api.webhook[0].root_resource_id
   http_method   = "ANY"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "lambda_root" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  resource_id = aws_api_gateway_method.proxy_root.resource_id
-  http_method = aws_api_gateway_method.proxy_root.http_method
+  count = var.api_gateway_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.webhook[0].id
+  resource_id = aws_api_gateway_method.proxy_root[0].resource_id
+  http_method = aws_api_gateway_method.proxy_root[0].http_method
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -395,27 +441,13 @@ resource "aws_api_gateway_integration" "lambda_root" {
 }
 
 resource "aws_api_gateway_deployment" "webhook" {
+  count = var.api_gateway_enabled ? 1 : 0
+
   depends_on = [
     aws_api_gateway_integration.lambda,
     aws_api_gateway_integration.lambda_root,
   ]
 
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
+  rest_api_id = aws_api_gateway_rest_api.webhook[0].id
   stage_name  = "test"
-}
-
-resource "aws_signer_signing_profile" "this" {
-  platform_id = "AWSLambda-SHA384-ECDSA"
-}
-
-resource "aws_lambda_code_signing_config" "this" {
-  allowed_publishers {
-    signing_profile_version_arns = [
-      aws_signer_signing_profile.this.arn,
-    ]
-  }
-
-  policies {
-    untrusted_artifact_on_deployment = "Warn"
-  }
 }

@@ -33,9 +33,7 @@ read -r -d '' NOTIFICATION_CONFIGURATION_PAYLOAD << EOM
       "token": "$HMAC_SALT",
       "triggers": [
         "run:completed",
-        "run:created",
-        "run:errored",
-        "run:needs_attention"
+        "run:errored"
       ]
     }
   }
