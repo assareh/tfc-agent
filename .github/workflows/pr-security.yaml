@@ -1,0 +1,32 @@
+---
+# onemedical/<repo>/.github/workflows/pr-security.yaml
+#
+# This is the workflow for distribution to repositories across the organization.
+# It will call the reusable PR security workflow, and run scans against each PR.
+name: PR Security
+
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    branches: [main, master]
+
+
+permissions:
+  # Required for workflows in private repositories.
+  contents: read
+
+  # Required for SARIF results upload to GHAS.
+  security-events: write
+  actions: read
+
+
+jobs:
+  # Run the reusable workflow.
+  run-workflow:
+    name: Run Workflow
+    # yamllint disable-line rule:line-length
+    uses: onemedical/github-reusable-workflows/.github/workflows/reusable-pr-security.yaml@main
+    # The detect-secrets tool is used in some repositories, and generates false
+    # positives like the one below. Add comment to ignore.
+    secrets: inherit  # pragma: allowlist secret
