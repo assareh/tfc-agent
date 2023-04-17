@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devwebapp-annotations
+  labels:
+    app: devwebapp-annotations
+  annotations:
+    vault.hashicorp.com/agent-inject: 'true'
+    vault.hashicorp.com/namespace: 'admin/'
+    vault.hashicorp.com/role: 'devweb-app'
+    vault.hashicorp.com/tls-skip-verify: 'true'
+    vault.hashicorp.com/log-level : 'debug'
+    vault.hashicorp.com/agent-inject-secret-credentials.txt: 'secret/data/devwebapp/config'
+spec:
+  serviceAccountName: internal-app
+  containers:
+    - name: app
+      image: burtlo/devwebapp-ruby:k8s
+      env:
+      - name: VAULT_SKIP_VERIFY
+        value: "true"
+      - name: VAULT_ADDR
+        value: "https://hcp-vault-cluster.vault.11eb13d3-0dd1-af4a-9eb3-0242ac110018.aws.hashicorp.cloud:8200"
+      - name: VAULT_NAMESPACE
+        value: "admin"
