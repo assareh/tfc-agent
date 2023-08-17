@@ -114,3 +114,9 @@ variable "pd_ml_production_account_id" {
   default     = "602771406891"
   type        = string
 }
+
+variable "dev_shared_account_id" {
+  description = "Account ID for dev-shared AWS account"
+  default     = "064278168143"
+  type        = string
+}

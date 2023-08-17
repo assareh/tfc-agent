@@ -126,7 +126,8 @@ data "aws_iam_policy_document" "agent_assume_role_policy_definition" {
       "arn:aws:iam::${var.staging_account_id}:role/tfe-prod-staging-iam_role",
       "arn:aws:iam::${var.production_account_id}:role/tfe-prod-production-iam_role",
       "arn:aws:iam::${var.pd_ml_staging_account_id}:role/tfe-prod-pd-ml-staging-iam_role",
-      "arn:aws:iam::${var.pd_ml_production_account_id}:role/tfe-prod-pd-ml-production-iam_role"
+      "arn:aws:iam::${var.pd_ml_production_account_id}:role/tfe-prod-pd-ml-production-iam_role",
+      "arn:aws:iam::${var.dev_shared_account_id}:role/tfe-prod-pd-ml-production-iam_role"
     ]
   }
 }
