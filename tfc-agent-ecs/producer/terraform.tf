@@ -1,8 +1,9 @@
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.31.0"
+  cloud {
+    organization = "hashidemos"
+
+    workspaces {
+      name = "tfc-agent-ecs-producer"
     }
   }
 }

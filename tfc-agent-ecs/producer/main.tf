@@ -1,4 +1,8 @@
 provider "aws" {
+  access_key = data.doormat_aws_credentials.creds.access_key
+  secret_key = data.doormat_aws_credentials.creds.secret_key
+  token      = data.doormat_aws_credentials.creds.token
+
   region = var.region
 
   default_tags {
@@ -282,7 +286,16 @@ resource "aws_s3_bucket" "webhook" {
   bucket = var.prefix
 }
 
+resource "aws_s3_bucket_ownership_controls" "webhook" {
+  bucket = aws_s3_bucket.webhook.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "webhook" {
+  depends_on = [aws_s3_bucket_ownership_controls.webhook]
+
   bucket = aws_s3_bucket.webhook.id
   acl    = "private"
 }
