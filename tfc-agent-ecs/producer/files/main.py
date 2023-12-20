@@ -115,7 +115,7 @@ def post(event):
             print('Callback response from TFC:', callback_response.status_code,
                     callback_response.text)
 
-        if payload['stage'] == 'post_plan':
+        if payload['stage'] == 'post_apply' or payload['stage'] == 'post_plan':
             post_response = update_service_count(ecs, 'sub')
             print(f"Run task indicates subtract an agent for {payload['run_id']}.")
             print(f"{payload['run_app_url']}")
