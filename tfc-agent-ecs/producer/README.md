@@ -24,18 +24,18 @@ Additionally, these may now be created and managed with Terraform due to the add
 Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the Terraform Cloud API. Those scripts remain available [here](files/README.md).
 
 ## Autoscaling tfc-agent with a Lambda Function
-I've included a Lambda function that, when combined with [Terraform Cloud notifications](https://www.terraform.io/docs/cloud/workspaces/notifications.html), enables autoscaling the number of Terraform Cloud Agents running.
+I've included a sample Lambda function that, when combined with [Run Tasks](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/run-tasks) and [Workspace Notifications](https://www.terraform.io/docs/cloud/workspaces/notifications.html), enables autoscaling the number of Terraform Cloud Agents running.
 
-![notification_config](./files/notification_config.png)
+Before a plan is started, a pre-plan task will boot an agent for the plan. Once the plan completes, a post-plan task will remove it. When the plan is confirmed, a pre-apply task will boot an agent for the apply. When that completes, a workspace event notification will remove it.
 
 To use it, you'll need to:
 1. Configure the `desired_count` and `max_count` Terraform variables as desired. `desired_count` sets the baseline number of agents to always be running. `max_count` sets the maximum number of agents allowed to be running at one time.
 
 2. Configure a [generic notification](https://www.terraform.io/docs/cloud/workspaces/notifications.html#creating-a-notification-configuration) on each Terraform Cloud workspace that will be using an agent (workspace [execution mode](https://www.terraform.io/docs/cloud/workspaces/settings.html#execution-mode) set to `Agent`). I've included a helper script that will create them for you, however you can always create and manage these in the Terraform Cloud workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
 
-That's it! When a run is queued, Terraform Cloud will send a notification to the Lambda function, increasing the number of running agents. When the run is completed, Terraform Cloud will send another notification to the Lambda function, decreasing the number of running agents.
+3. In your organization settings, create three run tasks, one for each stage. Provide the webhook lambda URL as the `Endpoint URL`. The `HMAC key` must match what was provided as the `notification_token` terraform variable.
 
-Note: [Speculative Plans](https://www.terraform.io/docs/cloud/run/index.html#speculative-plans) do not trigger this autoscaling.
+4. In the consumer workspace settings, add each run task, one for pre-plan, one for post-plan, and one for pre-apply. 
 
 ### Add Notification to Workspaces script
 
@@ -47,7 +47,7 @@ Note: [Speculative Plans](https://www.terraform.io/docs/cloud/run/index.html#spe
 
 Example usage:
 ```
-→ ./files/add_notification_to_workspaces.sh hashidemos andys-lab https://h8alki27g6.execute-api.us-west-2.amazonaws.com/test
+→ ./files/add_notification_to_workspaces.sh hashidemos andys-lab https://z27xbc52zarorvekotaweysk3y0xexqm.lambda-url.us-west-2.on.aws/
 ```
 
 Here's an example usage with the [TFE provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs):
@@ -56,7 +56,7 @@ resource "tfe_notification_configuration" "agent_lambda_webhook" {
  name                      = "tfc-agent"
  enabled                   = true
  destination_type          = "generic"
- triggers                  = ["run:created", "run:completed", "run:errored"]
+ triggers                  = ["run:completed", "run:errored"]
  url                       = data.terraform_remote_state.tfc-agent-ecs-producer.outputs.webhook_url
  workspace_external_id     = tfe_workspace.test.id
 }

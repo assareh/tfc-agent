@@ -29,7 +29,17 @@ data "aws_ami" "amazon-linux" {
   }
 }
 
+resource "aws_vpc" "example" {
+  cidr_block = var.cidr_block
+}
+
+resource "aws_subnet" "example" {
+  vpc_id     = aws_vpc.example.id
+  cidr_block = var.cidr_block
+}
+
 resource "aws_instance" "example" {
   ami           = data.aws_ami.amazon-linux.id
   instance_type = "t3.micro"
+  subnet_id     = aws_subnet.example.id
 }
