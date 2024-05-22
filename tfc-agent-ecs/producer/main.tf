@@ -231,7 +231,7 @@ resource "aws_lambda_function" "webhook" {
   code_signing_config_arn = aws_lambda_code_signing_config.this.arn
   role                    = aws_iam_role.lambda_exec.arn
   handler                 = "main.lambda_handler"
-  runtime                 = "python3.7"
+  runtime                 = "python3.9"
 
   s3_bucket = aws_s3_bucket.webhook.bucket
   s3_key    = aws_s3_object.webhook.id
@@ -266,7 +266,16 @@ resource "aws_s3_bucket" "webhook" {
   bucket = var.prefix
 }
 
+resource "aws_s3_bucket_ownership_controls" "webhook" {
+  bucket = aws_s3_bucket.webhook.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "webhook" {
+  depends_on = [aws_s3_bucket_ownership_controls.webhook]
+
   bucket = aws_s3_bucket.webhook.id
   acl    = "private"
 }
