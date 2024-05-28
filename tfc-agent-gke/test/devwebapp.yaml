@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devwebapp
+  labels:
+    app: devwebapp
+spec:
+  serviceAccountName: internal-app
+  containers:
+    - name: app
+      image: burtlo/devwebapp-ruby:k8s
+      env:
+      - name: VAULT_SKIP_VERIFY
+        value: "true"
+      - name: VAULT_ADDR
+        value: "https://54.202.212.187:8200"
+      - name: VAULT_NAMESPACE
+        value: "admin"
+      - name: VAULT_TOKEN
+        value: ""
