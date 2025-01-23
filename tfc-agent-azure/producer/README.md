@@ -89,6 +89,9 @@ Verify it was created with `az role definition list -n "Custom Contributor"`.
 3. Follow [these](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret#creating-a-service-principal) steps to generate your service principal for Terraform, using the `Custom Contributor` role.
 
 ## Autosleeping tfc-agent with an Azure Function
+
+-> **Note:** Please review the latest [tfc-agent-ecs example](../../tfc-agent-ecs/producer/) to see how this should be updated to use [Run Tasks](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/run-tasks) instead of [Notifications](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/notifications).
+
 I've included an Azure function that, when combined with [HCP Terraform notifications](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/notifications), enables automatically starting the agent when needed, and shutting it down when complete. If you have an entitlement for multiple agents, this function could be adapted to autoscale the number of running agents. Please refer to [this code](../../tfc-agent-ecs/producer/files/main.py) for an example implementation.
 
 ![notification_config](./files/notification_config.png)
