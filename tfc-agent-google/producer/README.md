@@ -1,25 +1,25 @@
-# Terraform Cloud Agent in Google Compute Engine Producer Workspace
+# HCP Terraform Agent in Google Compute Engine Producer Workspace
 
 This workspace will require GCP access/credentials to provision. ([Steps](#google-credentials-for-terraform))
 
 ## Usage
 
 ### Variables
-Please provide values for the following required [variables](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables):
+Please provide values for the following required [variables](https://developer.hashicorp.com/terraform/language/values/variables#assigning-values-to-root-module-variables):
 * `gcp_project`: your GCP project name
-* `tfc_agent_token`: The Terraform Cloud agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in Terraform Cloud. (See the next section for how to create this.)
+* `tfc_agent_token`: The HCP Terraform Agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in HCP Terraform. (See the next section for how to create this.)
 
-In addition, I recommend that you review all other variables and configure their values according to your specifications. You can adjust the machine type with `machine_type`. (Refer to the [Google docs](https://cloud.google.com/compute/docs/machine-types) for the supported sizes.) As of this writing, the terraform run environment built in to Terraform Cloud provides 2 cores and 2GB of RAM. However, I have used the agent with as little as 256MB of RAM. YMMV
+In addition, I recommend that you review all other variables and configure their values according to your specifications. You can adjust the machine type with `machine_type`. (Refer to the [Google docs](https://cloud.google.com/compute/docs/machine-types) for the supported sizes.) As of this writing, the terraform run environment built in to HCP Terraform provides 2 cores and 2GB of RAM. However, I have used the agent with as little as 256MB of RAM. YMMV
 
-### Terraform Cloud Agent Token
-An agent token is a secret value that is used to uniquely identify your agents and allow them to register themselves with your Terraform Cloud organization. Please refer to the [documentation](https://www.terraform.io/docs/cloud/agents/index.html#managing-agent-pools) for an explanation of what an agent pool is and how to create an agent token in the Terraform Cloud Settings console.
+### HCP Terraform Agent Token
+An agent token is a secret value that is used to uniquely identify your agents and allow them to register themselves with your HCP Terraform organization. Please refer to the [documentation](https://developer.hashicorp.com/terraform/cloud-docs/agents/agent-pools) for an explanation of what an agent pool is and how to create an agent token in the HCP Terraform Settings console.
 
 Additionally, these may now be created and managed with Terraform due to the addition of the following resources and data sources in version 0.24.0 of the [tfe provider](https://registry.terraform.io/providers/hashicorp/tfe/latest):
 * [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_pool) resource
 * [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/agent_pool) data source
 * [`tfe_agent_token`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_token) resource
 
-Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the Terraform Cloud API. Those scripts remain available [here](../../tfc-agent-ecs/producer/files/README.md).
+Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the HCP Terraform API. Those scripts remain available [here](../../tfc-agent-ecs/producer/files/README.md).
 
 ### Google credentials for Terraform
 
@@ -49,11 +49,11 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-Q: How to generate credentials for Terraform Cloud?
+Q: How to generate credentials for HCP Terraform?
 
 On a Mac:
 ```
 cat /Users/<your username>/.config/gcloud/application_default_credentials.json | tr -d "\n"
 ```
 
-Set the output of the above command as the GOOGLE_CREDENTIALS (sensitive) environment variable in your Terraform Cloud workspace.
+Set the output of the above command as the GOOGLE_CREDENTIALS (sensitive) environment variable in your HCP Terraform workspace.

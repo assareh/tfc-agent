@@ -1,10 +1,5 @@
-variable "app_version" {
-  description = "Version of lambda to deploy"
-  default     = "1.0.0"
-}
-
 variable "desired_count" {
-  description = "Desired count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2. May want to set this lower as desired if using lamdba autoscaling."
+  description = "Desired count of tfc-agents to run"
   default     = 4
 }
 
@@ -19,7 +14,7 @@ variable "ip_cidr_agent_subnet" {
 }
 
 variable "max_count" {
-  description = "Maximum count of tfc-agents to run. Suggested 2 * run concurrency. Default TFCB concurrency is 2."
+  description = "Maximum count of tfc-agents to run"
   default     = 4
 }
 
@@ -58,7 +53,7 @@ variable "task_def_mem" {
 }
 
 variable "tfc_agent_token" {
-  description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
+  description = "HCP Terraform Agent token. (mark as sensitive) (HCP Terraform Organization Settings >> Agents)"
 }
 
 // OPTIONAL Tags
@@ -72,7 +67,7 @@ locals {
   common_tags = {
     owner              = "your-name-here"
     se-region          = "your-region-here"
-    purpose            = "Default state is dormant with no active resources. Runs a Terraform Cloud Agent when a run is queued."
+    purpose            = "Default state is dormant with no active resources. Runs a HCP Terraform Agent when a run is queued."
     ttl                = var.ttl # hours
     terraform          = "true"  # true/false
     hc-internet-facing = "false" # true/false

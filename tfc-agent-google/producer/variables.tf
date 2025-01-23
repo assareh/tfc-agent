@@ -23,5 +23,5 @@ variable "prefix" {
 }
 
 variable "tfc_agent_token" {
-  description = "Terraform Cloud agent token. (mark as sensitive) (TFC Organization Settings >> Agents)"
+  description = "HCP Terraform Agent token. (mark as sensitive) (HCP Terraform Organization Settings >> Agents)"
 }

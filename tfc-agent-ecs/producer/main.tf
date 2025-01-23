@@ -16,6 +16,7 @@ resource "aws_ecs_service" "tfc_agent" {
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.tfc_agent.arn
   desired_count   = var.desired_count
+
   network_configuration {
     security_groups  = [aws_security_group.tfc_agent.id]
     subnets          = [aws_subnet.tfc_agent.id]
@@ -71,7 +72,7 @@ resource "aws_ecs_task_definition" "tfc_agent" {
 
 resource "aws_ssm_parameter" "agent_token" {
   name        = "${var.prefix}-tfc-agent-token"
-  description = "Terraform Cloud agent token"
+  description = "HCP Terraform agent token"
   type        = "SecureString"
   value       = var.tfc_agent_token
 }
@@ -225,16 +226,52 @@ resource "aws_route_table_association" "main" {
 }
 
 # from here to EOF is optional, for lambda autoscaling
+resource "null_resource" "install_layer_dependencies" {
+  provisioner "local-exec" {
+    command = "pip install -r files/layer/requirements.txt -t files/layer/python/lib/python3.9/site-packages"
+  }
+
+  triggers = {
+    trigger = timestamp()
+  }
+}
+
+data "archive_file" "layer_zip" {
+  type        = "zip"
+  source_dir  = "files/layer"
+  output_path = "layer.zip"
+  depends_on = [
+    null_resource.install_layer_dependencies
+  ]
+}
+
+resource "aws_lambda_layer_version" "lambda_layer" {
+  filename         = "layer.zip"
+  source_code_hash = data.archive_file.layer_zip.output_base64sha256
+  layer_name       = "python_dependencies"
+
+  compatible_runtimes = ["python3.9"]
+  depends_on = [
+    data.archive_file.layer_zip
+  ]
+}
+
+data "archive_file" "function_zip" {
+  type        = "zip"
+  source_dir  = "files/function"
+  output_path = "function.zip"
+}
+
 resource "aws_lambda_function" "webhook" {
   function_name           = "${var.prefix}-webhook"
-  description             = "Receives webhook notifications from TFC and automatically adjusts the number of tfc agents running."
+  description             = "Receives webhook notifications from HCP Terraform and automatically adjusts the number of tfc agents running."
   code_signing_config_arn = aws_lambda_code_signing_config.this.arn
   role                    = aws_iam_role.lambda_exec.arn
   handler                 = "main.lambda_handler"
   runtime                 = "python3.9"
 
-  s3_bucket = aws_s3_bucket.webhook.bucket
-  s3_key    = aws_s3_object.webhook.id
+  filename         = "function.zip"
+  source_code_hash = data.archive_file.function_zip.output_base64sha256
 
   environment {
     variables = {
@@ -246,55 +283,50 @@ resource "aws_lambda_function" "webhook" {
       SSM_PARAM_NAME = aws_ssm_parameter.current_count.name
     }
   }
+
+  layers = [
+    aws_lambda_layer_version.lambda_layer.arn
+  ]
+
+  depends_on = [
+    data.archive_file.function_zip,
+    aws_lambda_layer_version.lambda_layer
+  ]
+}
+
+resource "aws_lambda_function_url" "webhook" {
+  function_name      = aws_lambda_function.webhook.function_name
+  authorization_type = "NONE"
+}
+
+resource "aws_signer_signing_profile" "this" {
+  platform_id = "AWSLambda-SHA384-ECDSA"
+}
+
+resource "aws_lambda_code_signing_config" "this" {
+  allowed_publishers {
+    signing_profile_version_arns = [
+      aws_signer_signing_profile.this.arn,
+    ]
+  }
+
+  policies {
+    untrusted_artifact_on_deployment = "Warn"
+  }
 }
 
 resource "aws_ssm_parameter" "current_count" {
   name        = "${var.prefix}-tfc-agent-current-count"
-  description = "Terraform Cloud agent current count"
+  description = "HCP Terraform agent current count"
   type        = "String"
   value       = var.desired_count
 }
 
 resource "aws_ssm_parameter" "notification_token" {
   name        = "${var.prefix}-tfc-notification-token"
-  description = "Terraform Cloud webhook notification token"
+  description = "HCP Terraform webhook notification token"
   type        = "SecureString"
   value       = var.notification_token
-}
-
-resource "aws_s3_bucket" "webhook" {
-  bucket = var.prefix
-}
-
-resource "aws_s3_bucket_ownership_controls" "webhook" {
-  bucket = aws_s3_bucket.webhook.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
-}
-
-resource "aws_s3_bucket_acl" "webhook" {
-  depends_on = [aws_s3_bucket_ownership_controls.webhook]
-
-  bucket = aws_s3_bucket.webhook.id
-  acl    = "private"
-}
-
-resource "aws_s3_bucket_public_access_block" "webhook" {
-  bucket = aws_s3_bucket.webhook.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_s3_object" "webhook" {
-  bucket = aws_s3_bucket.webhook.id
-  key    = "v${var.app_version}/webhook.zip"
-  source = "${path.module}/files/webhook.zip"
-
-  etag = filemd5("${path.module}/files/webhook.zip")
 }
 
 resource "aws_iam_role" "lambda_exec" {
@@ -341,87 +373,4 @@ data "aws_iam_policy_document" "lambda_policy_definition" {
 resource "aws_iam_role_policy_attachment" "cloudwatch_lambda_attachment" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-}
-
-resource "aws_lambda_permission" "apigw" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.webhook.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  # The "/*/*" portion grants access from any method on any resource
-  # within the API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.webhook.execution_arn}/*/*"
-}
-
-# api gateway
-resource "aws_api_gateway_rest_api" "webhook" {
-  name        = "${var.prefix}-webhook"
-  description = "TFC webhook receiver for autoscaling tfc-agent"
-}
-
-resource "aws_api_gateway_resource" "proxy" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  parent_id   = aws_api_gateway_rest_api.webhook.root_resource_id
-  path_part   = "{proxy+}"
-}
-
-resource "aws_api_gateway_method" "proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.webhook.id
-  resource_id   = aws_api_gateway_resource.proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "lambda" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  resource_id = aws_api_gateway_method.proxy.resource_id
-  http_method = aws_api_gateway_method.proxy.http_method
-
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.webhook.invoke_arn
-}
-
-resource "aws_api_gateway_method" "proxy_root" {
-  rest_api_id   = aws_api_gateway_rest_api.webhook.id
-  resource_id   = aws_api_gateway_rest_api.webhook.root_resource_id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "lambda_root" {
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  resource_id = aws_api_gateway_method.proxy_root.resource_id
-  http_method = aws_api_gateway_method.proxy_root.http_method
-
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.webhook.invoke_arn
-}
-
-resource "aws_api_gateway_deployment" "webhook" {
-  depends_on = [
-    aws_api_gateway_integration.lambda,
-    aws_api_gateway_integration.lambda_root,
-  ]
-
-  rest_api_id = aws_api_gateway_rest_api.webhook.id
-  stage_name  = "test"
-}
-
-resource "aws_signer_signing_profile" "this" {
-  platform_id = "AWSLambda-SHA384-ECDSA"
-}
-
-resource "aws_lambda_code_signing_config" "this" {
-  allowed_publishers {
-    signing_profile_version_arns = [
-      aws_signer_signing_profile.this.arn,
-    ]
-  }
-
-  policies {
-    untrusted_artifact_on_deployment = "Warn"
-  }
 }
