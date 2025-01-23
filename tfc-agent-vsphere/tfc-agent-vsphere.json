@@ -19,7 +19,7 @@
     {
       "type": "vsphere-iso",
 
-      "notes": "Created by <name>\nRunning TFC agents connected to my Terraform Cloud organization\nUsed for Terraform vSphere demo",
+      "notes": "Created by <name>\nRunning HCP Terraform agents connected to my HCP Terraform organization\nUsed for Terraform vSphere demo",
 
       "vcenter_server":      "{{user `vcenter_server`}}",
       "username":            "{{user `vcenter_username`}}",

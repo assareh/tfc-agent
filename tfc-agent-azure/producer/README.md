@@ -1,28 +1,28 @@
-# Terraform Cloud Agent in Azure Container Instances Producer Workspace
+# HCP Terraform Agent in Azure Container Instances Producer Workspace
 
 This workspace will require Azure access/credentials to provision. See [Azure Permissions](README.md#azure-permissions) section below for an important note.
 
 ## Usage
 
 ### Variables
-Please provide values for the following required [variables](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables):
+Please provide values for the following required [variables](https://developer.hashicorp.com/terraform/language/values/variables#assigning-values-to-root-module-variables):
 * `resource_group_name`: The name of an existing resource group where the containerized agent and other resources will be deployed.
-* `tfc_agent_token`: The Terraform Cloud agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in Terraform Cloud. (See the next section for how to create this.)
+* `tfc_agent_token`: The HCP Terraform Agent token you would like to use. NOTE: This is a secret and should be marked as sensitive in HCP Terraform. (See the next section for how to create this.)
 
 In addition, I recommend that you review all other variables and configure their values according to your specifications.
 
-### Terraform Cloud Agent Token
-An agent token is a secret value that is used to uniquely identify your agents and allow them to register themselves with your Terraform Cloud organization. Please refer to the [documentation](https://www.terraform.io/docs/cloud/agents/index.html#managing-agent-pools) for an explanation of what an agent pool is and how to create an agent token in the Terraform Cloud Settings console.
+### HCP Terraform Agent Token
+An agent token is a secret value that is used to uniquely identify your agents and allow them to register themselves with your HCP Terraform organization. Please refer to the [documentation](https://developer.hashicorp.com/terraform/cloud-docs/agents/agent-pools) for an explanation of what an agent pool is and how to create an agent token in the HCP Terraform Settings console.
 
 Additionally, these may now be created and managed with Terraform due to the addition of the following resources and data sources in version 0.24.0 of the [tfe provider](https://registry.terraform.io/providers/hashicorp/tfe/latest):
 * [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_pool) resource
 * [`tfe_agent_pool`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/data-sources/agent_pool) data source
 * [`tfe_agent_token`](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs/resources/agent_token) resource
 
-Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the Terraform Cloud API. Those scripts remain available [here](../../tfc-agent-ecs/producer/files/README.md).
+Prior to the addition of these resources to the tfe provider, I had written helper scripts to create and revoke agent tokens using the HCP Terraform API. Those scripts remain available [here](../../tfc-agent-ecs/producer/files/README.md).
 
 ### Other Notes
-I have not exposed them as terraform variables yet but you can adjust the resource allocations for the agent task in main.tf. As of this writing, the terraform run environment built in to Terraform Cloud provides 2 cores and 2GB of RAM. However, I have used the agent with as little as 256MB of RAM. YMMV
+I have not exposed them as terraform variables yet but you can adjust the resource allocations for the agent task in main.tf. As of this writing, the terraform run environment built in to HCP Terraform provides 2 cores and 2GB of RAM. However, I have used the agent with as little as 256MB of RAM. YMMV
 
 If you have an entitlement for more than one agent, this code can be updated to provide additional agents.
 
@@ -89,17 +89,20 @@ Verify it was created with `az role definition list -n "Custom Contributor"`.
 3. Follow [these](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret#creating-a-service-principal) steps to generate your service principal for Terraform, using the `Custom Contributor` role.
 
 ## Autosleeping tfc-agent with an Azure Function
-I've included an Azure function that, when combined with [Terraform Cloud notifications](https://www.terraform.io/docs/cloud/workspaces/notifications.html), enables automatically starting the agent when needed, and shutting it down when complete. If you have an entitlement for multiple agents, this function could be adapted to autoscale the number of running agents. Please refer to [this code](../../tfc-agent-ecs/producer/files/main.py) for an example implementation.
+
+-> **Note:** Please review the latest [tfc-agent-ecs example](../../tfc-agent-ecs/producer/) to see how this should be updated to use [Run Tasks](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/run-tasks) instead of [Notifications](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/notifications).
+
+I've included an Azure function that, when combined with [HCP Terraform notifications](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/notifications), enables automatically starting the agent when needed, and shutting it down when complete. If you have an entitlement for multiple agents, this function could be adapted to autoscale the number of running agents. Please refer to [this code](../../tfc-agent-ecs/producer/files/main.py) for an example implementation.
 
 ![notification_config](./files/notification_config.png)
 
-To use it, you'll need to configure a [generic notification](https://www.terraform.io/docs/cloud/workspaces/notifications.html#creating-a-notification-configuration) on each Terraform Cloud workspace that you'd like to be able to automatically launch an agent. I've included a helper script that will create them for you, however you can always create and manage these in the Terraform Cloud workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
+To use it, you'll need to configure a [generic notification](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/notifications#creating-a-notification-configuration) on each HCP Terraform workspace that you'd like to be able to automatically launch an agent. I've included a helper script that will create them for you, however you can always create and manage these in the HCP Terraform workspace Settings. You could also use the [Terraform Enterprise provider](https://registry.terraform.io/providers/hashicorp/tfe/latest/docs).
 
-That's it! When a run is queued, Terraform Cloud will send a notification to the function, booting an agent. When the run is completed, Terraform Cloud will send another notification to the function, stopping the agent.
+That's it! When a run is queued, HCP Terraform will send a notification to the function, booting an agent. When the run is completed, HCP Terraform will send another notification to the function, stopping the agent.
 
-Note: The function is restricted to only accept requests coming from Terraform Cloud source IP addresses only. This can be adjusted in the terraform code.
+Note: The function is restricted to only accept requests coming from HCP Terraform source IP addresses only. This can be adjusted in the terraform code.
 
-Note: [Speculative Plans](https://www.terraform.io/docs/cloud/run/index.html#speculative-plans) do not trigger this autoscaling.
+Note: [Speculative Plans](https://developer.hashicorp.com/terraform/cloud-docs/run/remote-operations#speculative-plans) do not trigger this autoscaling.
 
 Note: The agent will remain running as long as a run is in the Needs Confirmation state. An alternative approach could be taken to avoid this limitation.
 
@@ -115,7 +118,7 @@ If you'd like to modify the function after you've provisioned with Terraform, yo
 ### Add Notification to Workspaces script
 
 `../../tfc-agent-ecs/producer/files/add_notification_to_workspaces.sh` will add the notification configuration to one or more workspaces in the organization specified. You must provide:
-1. a Terraform Cloud organization or admin user token as the environment variable `TOKEN`.
+1. a HCP Terraform organization or admin user token as the environment variable `TOKEN`.
 2. the notification token you've configured (Terraform variable `notification_token`) as the environment variable `HMAC_SALT`.
 3. the workspace(s) to which you'd like to add the notification configuration.
 4. the webhook URL output from Terraform.
@@ -138,6 +141,6 @@ resource "tfe_notification_configuration" "agent_webhook" {
 ```
 
 ## References
-* [Terraform Cloud Agents](https://www.terraform.io/docs/cloud/workspaces/agent.html)
-* [Agent Pools and Agents API](https://www.terraform.io/docs/cloud/api/agents.html)
-* [Agent Tokens API](https://www.terraform.io/docs/cloud/api/agent-tokens.html)
+* [HCP Terraform Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents)
+* [Agent Pools and Agents API](https://developer.hashicorp.com/terraform/cloud-docs/api-docs/agents)
+* [Agent Tokens API](https://developer.hashicorp.com/terraform/cloud-docs/api-docs/agent-tokens)
